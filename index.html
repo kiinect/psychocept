@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Psychocept — Player Stats</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0f0f0f;
+    color: #d0d0d0;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 40px 24px;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; }
+
+  h1 {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 4px;
+    font-weight: normal;
+  }
+
+  .sub {
+    color: #555;
+    font-size: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .stat-label { font-size: 11px; color: #555; margin-bottom: 2px; }
+  .stat-value { font-size: 16px; color: #fff; }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  input, select {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #d0d0d0;
+    padding: 7px 10px;
+    font-family: monospace;
+    font-size: 13px;
+    outline: none;
+    border-radius: 4px;
+  }
+
+  input { width: 200px; }
+  input:focus, select:focus { border-color: #555; }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 11px;
+    color: #555;
+    border-bottom: 1px solid #1e1e1e;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  thead th:hover { color: #aaa; }
+  tbody tr { border-bottom: 1px solid #141414; }
+  tbody tr:hover { background: #141414; }
+  tbody td { padding: 10px 12px; }
+
+  .rank { color: #555; }
+  .rank-1 { color: #FFD700; }
+  .rank-2 { color: #C0C0C0; }
+  .rank-3 { color: #CD7F32; }
+  .username { color: #fff; }
+  .time-val { color: #64dc64; }
+  .truetime-val { color: #5bc0ff; }
+  .spent-val { color: #ffc832; }
+  .updated-val { color: #444; font-size: 12px; }
+
+  .empty { text-align: center; padding: 40px; color: #444; }
+
+  .footer-bar {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    font-size: 12px;
+    color: #444;
+    border-top: 1px solid #1e1e1e;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>psychocept — player stats</h1>
+  <p class="sub" id="lastRefresh">loading...</p>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-label">players</div><div class="stat-value" id="statPlayers">—</div></div>
+    <div class="stat"><div class="stat-label">total time</div><div class="stat-value" id="statTime">—</div></div>
+    <div class="stat"><div class="stat-label">total earned</div><div class="stat-value" id="statEarned">—</div></div>
+    <div class="stat"><div class="stat-label">total R$ spent</div><div class="stat-value" id="statSpent">—</div></div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="search username..." oninput="renderTable()">
+    <select id="sortCol" onchange="renderTable()">
+      <option value="time_balance">sort: time</option>
+      <option value="true_time">sort: true time</option>
+      <option value="amount_spent">sort: R$ spent</option>
+      <option value="username">sort: username</option>
+      <option value="last_updated">sort: last seen</option>
+    </select>
+    <select id="sortDir" onchange="renderTable()">
+      <option value="desc">desc</option>
+      <option value="asc">asc</option>
+    </select>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>username</th>
+        <th>time</th>
+        <th>true time</th>
+        <th>R$ spent</th>
+        <th>last seen</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td colspan="6" class="empty">loading...</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer-bar">
+    <span id="countLabel"></span>
+    <span>refreshes every 60s</span>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = "https://towpdqzmvtlgslctqjhs.supabase.co"
+const SUPABASE_KEY = "sb_publishable_R9ds_WLrjL9_TM_G06GI8w__-EqRM18"
+
+let allPlayers = []
+
+function formatTime(minutes) {
+  if (!minutes || minutes <= 0) return "0m"
+  const y = Math.floor(minutes / 525600)
+  const mo = Math.floor((minutes % 525600) / 43800)
+  const d = Math.floor((minutes % 43800) / 1440)
+  const h = Math.floor((minutes % 1440) / 60)
+  const m = minutes % 60
+  const parts = []
+  if (y > 0) parts.push(y + "y")
+  if (mo > 0) parts.push(mo + "mo")
+  if (d > 0) parts.push(d + "d")
+  if (h > 0) parts.push(h + "h")
+  if (m > 0) parts.push(m + "m")
+  return parts.join(" ") || "0m"
+}
+
+function formatDate(str) {
+  if (!str) return "—"
+  const diff = Math.floor((new Date() - new Date(str)) / 1000)
+  if (diff < 60) return "just now"
+  if (diff < 3600) return Math.floor(diff / 60) + "m ago"
+  if (diff < 86400) return Math.floor(diff / 3600) + "h ago"
+  return Math.floor(diff / 86400) + "d ago"
+}
+
+async function fetchPlayers() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/players?select=*&limit=1000`, {
+      headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY }
+    })
+    allPlayers = await res.json()
+    renderTable()
+    document.getElementById("statPlayers").textContent = allPlayers.length
+    document.getElementById("statTime").textContent = formatTime(allPlayers.reduce((a, p) => a + (p.time_balance || 0), 0))
+    document.getElementById("statEarned").textContent = formatTime(allPlayers.reduce((a, p) => a + (p.true_time || 0), 0))
+    document.getElementById("statSpent").textContent = "R$" + allPlayers.reduce((a, p) => a + (p.amount_spent || 0), 0).toLocaleString()
+    document.getElementById("lastRefresh").textContent = "updated " + new Date().toLocaleTimeString()
+  } catch(e) {
+    document.getElementById("tbody").innerHTML = `<tr><td colspan="6" class="empty">failed to load</td></tr>`
+  }
+}
+
+function renderTable() {
+  const search = document.getElementById("search").value.toLowerCase()
+  const sortCol = document.getElementById("sortCol").value
+  const sortDir = document.getElementById("sortDir").value
+
+  let filtered = allPlayers.filter(p => (p.username || "").toLowerCase().includes(search))
+
+  filtered.sort((a, b) => {
+    if (sortCol === "last_updated") {
+      const at = a.last_updated ? new Date(a.last_updated).getTime() : 0
+      const bt = b.last_updated ? new Date(b.last_updated).getTime() : 0
+      return sortDir === "asc" ? at - bt : bt - at
+    }
+    const av = a[sortCol] ?? 0
+    const bv = b[sortCol] ?? 0
+    if (typeof av === "string") return sortDir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av)
+    return sortDir === "asc" ? av - bv : bv - av
+  })
+
+  const tbody = document.getElementById("tbody")
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty">no players found</td></tr>`
+    document.getElementById("countLabel").textContent = ""
+    return
+  }
+
+  tbody.innerHTML = filtered.map((p, i) => {
+    const rank = i + 1
+    const rc = rank === 1 ? "rank rank-1" : rank === 2 ? "rank rank-2" : rank === 3 ? "rank rank-3" : "rank"
+    return `<tr>
+      <td class="${rc}">${rank}</td>
+      <td class="username">${p.username || "unknown"}</td>
+      <td class="time-val">${formatTime(p.time_balance)}</td>
+      <td class="truetime-val">${formatTime(p.true_time)}</td>
+      <td class="spent-val">${p.amount_spent ? "R$" + p.amount_spent.toLocaleString() : "—"}</td>
+      <td class="updated-val">${formatDate(p.last_updated)}</td>
+    </tr>`
+  }).join("")
+
+  document.getElementById("countLabel").textContent = filtered.length + " players"
+}
+
+fetchPlayers()
+setInterval(fetchPlayers, 60000)
+</script>
+</body>
+</html>
