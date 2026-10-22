@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Tack_Shooter_(BTD6)"],"data":{"id":"tack","name":"Tack Shooter","category":"Primary","costMedium":260,"footprintRadius":6,"range":23,"waterOnly":false,
+"targeting":["Close"],
+"base":{"cooldown":1.12,"tacks":8,"angle":360,"pierce":1,"damage":1,"damageType":"Sharp","projectileSpeed":160,"lifespan":0.2,"camo":false,"lead":false},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Faster Shooting","cost":150,"effects":{"cooldown":0.84}},
+{"name":"Even Faster Shooting","cost":220,"effects":{"cooldown":0.63}},
+{"name":"Hot Shots","cost":600,"effects":{"damage":3,"lead":true,"frozen":true}},
+{"name":"Ring of Fire","cost":3500,"effects":{"attack":"fire ring AoE replaces tacks","cooldown":0.315,"damage":5,"pierce":30,"damageType":"Fire","note":"cannot pop purple; +1 dmg with More Tacks, +2 with Even More Tacks; pierce 45 with Super Range Tacks"}},
+{"name":"Inferno Ring","cost":45500,"effects":{"damage":8,"moabBonus":4,"pierce":"+15 (45)","range":"+11.5 (34.5)","cooldown":0.1,"meteor":{"damage":700,"targeting":"any target on screen","explosion":"burning blast, Explosion type"}}}],
+"2":[
+{"name":"Long Range Tacks","cost":100,"effects":{"range":"+3.91 (+17%)","projectileSpeed":"+17%","lifespan":"+17%"}},
+{"name":"Super Range Tacks","cost":225,"effects":{"range":"+3.91 more (+34% total)","pierce":"+3 (4)","lifespan":"~+12.44%"}},
+{"name":"Blade Shooter","cost":550,"effects":{"pierce":8,"range":46,"projectileRadius":4,"damageType":"Shatter"}},
+{"name":"Blade Maelstrom","cost":2700,"effects":{"damage":2},"ability":{"cooldown":null,"duration":3,"effect":"fires 2 blades at a time with 100 pierce in all directions; main attack continues"},"uncertain":true},
+{"name":"Super Maelstrom","cost":15000,"effects":{"damage":5,"bonusCeramic":5,"damageType":"Normal"},"ability":{"duration":9,"effect":"4 blades at a time, pierce 300, +8 ceramic dmg"},"uncertain":true}],
+"3":[
+{"name":"More Tacks","cost":150,"effects":{"tacks":10}},
+{"name":"Even More Tacks","cost":150,"effects":{"tacks":12}},
+{"name":"Tack Sprayer","cost":450,"effects":{"tacks":16,"pierce":"+1"}},
+{"name":"Overdrive","cost":3200,"effects":{"cooldownMult":0.333,"cooldown":0.3733}},
+{"name":"The Tack Zone","cost":20000,"effects":{"tacks":32,"cooldown":0.224,"range":30,"moabDamage":"+1"}}]},
+"paragon":{"name":"Crucible of Steel and Flame","cost":200000,"effect":"Four rotating streams of blades that burst into 8-tack novas, fires constantly; Maelstrom ability (9s, 20s cooldown, longer lifespan + fire ring); Meteor Impact ability (60s cooldown, huge meteor + 32 homing fireballs). Camo only via Ascended Shadow. Requires 3 tier-5 Tack Shooters.","uncertain":true}}}

@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Monkey_Ace_(BTD6)"],"data":{"id":"ace","name":"Monkey Ace","category":"Military","costMedium":800,"footprint":{"shape":"rect","width":28,"height":18},"range":22,"waterOnly":false,
+"targeting":["Circle","Infinite Figure","Figure Eight","Centered Path (from Sharper... path3 tier2)"],
+"base":{"cooldown":1.68,"darts":8,"angle":360,"pierce":5,"damage":1,"damageType":"Sharp","projectileSpeed":120,"lifespan":1.4,"flightSpeed":60,"firesWithoutTarget":true,"ignoresBlockers":true,"camo":false,"lead":false},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Rapid Fire","cost":450,"effects":{"cooldown":1.26}},
+{"name":"Lots More Darts","cost":550,"effects":{"darts":12}},
+{"name":"Fighter Plane","cost":1000,"effects":{"flightSpeed":"+20%","missiles":{"count":2,"cooldown":3,"damage":18,"pierce":4,"targets":"MOAB-class only, Strong, homing, cannot hurt Black/DDT"}}},
+{"name":"Operation: Dart Storm","cost":3300,"effects":{"attackSpeed":"x2 darts and missiles","darts":16,"missileDamage":24}},
+{"name":"Sky Shredder","cost":42500,"effects":{"darts":32,"damage":3,"ceramicBonus":2,"pierce":8,"cooldown":0.315,"damageType":"Normal","projectileSpeed":360,"missile":{"damage":150,"ceramicBonus":2,"pierce":5,"cooldown":1.5}}}],
+"2":[
+{"name":"Exploding Pineapple","cost":200,"effects":{"pineapple":{"interval":1.6,"fuse":2,"damage":1,"pierce":20,"radius":35,"damageType":"Explosion"}}},
+{"name":"Spy Plane","cost":350,"effects":{"camo":true,"camoDamageMult":2,"note":"except MOAB missiles"}},
+{"name":"Bomber Ace","cost":900,"effects":{"bombingRun":{"bombs":4,"cooldown":1.6,"fuse":2,"damage":3,"pierce":20,"radius":35,"onlyOverTrack":true,"blackImmune":true}}},
+{"name":"Ground Zero","cost":16000,"effects":{"bombDamage":15,"bombPierce":40},"ability":{"cooldown":35,"initialCooldown":11.67,"delay":0.7,"effect":"Full-screen bomb 700 damage, 2000 pierce, all bloon types"}},
+{"name":"Tsar Bomba","cost":26000,"effects":{"bombDamage":20,"camoBonus":20,"ceramicBonus":10},"ability":{"cooldown":35,"effect":"3000 damage to up to 5000 bloons, 8s stun on survivors, 2x camo damage"}}],
+"3":[
+{"name":"Sharper Darts","cost":500,"effects":{"pierce":8,"pineappleBombPierce":"+12"}},
+{"name":"Centered Path","cost":550,"effects":{"targeting":"Centered Path","orbitRadius":90}},
+{"name":"Neva-Miss Targeting","cost":2550,"effects":{"homing":true,"lifespanNote":"~3.33s listed, effectively 1s homing lifespan"}},
+{"name":"Spectre","cost":23400,"effects":{"mainDartDamage":3,"barrage":{"cooldown":0.06,"alternates":["dart 6 dmg pierce 4 Sharp","bomb 3 dmg +4 ceramic pierce 20 Explosion"],"homing":true,"targeting":"First"}}},
+{"name":"Flying Fortress","cost":90000,"effects":{"barrage":{"projectilesPerShot":3,"targets":"First/Last/Close","cooldownMult":0.667,"dartMoabBonus":14,"bombDamage":5,"bombPierce":30},"mainDartDamage":6,"damageType":"Normal"}}]},
+"paragon":{"name":"Goliath Doomship","cost":900000,"effect":"Volleys of 12 non-homing piercing missiles; volleys of 8 homing missiles at strongest; forward twin dart streams; ability Carpet Bomb (3 planes drop 8 bombs each along line after 3-4s, 8s stun); starts with Centered Path targeting. Requires 3 tier-5 Aces.","uncertain":true}}}

@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Glue_Gunner_(BTD6)"],"data":{"id":"glue","name":"Glue Gunner","category":"Primary","costMedium":225,"footprintRadius":6,"range":46,"waterOnly":false,
+"targeting":["First","Last","Close","Strong"],
+"base":{"cooldown":1,"pierce":1,"damage":0,"projectileSpeed":300,"lifespan":0.43,"glueSpeedMult":0.5,"glueDuration":11,"glueLayers":3,"glueLevel":1,"camo":false,"moabClass":false},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Glue Soak","cost":200,"effects":{"glueLayers":"all (not MOAB-class layers)"}},
+{"name":"Corrosive Glue","cost":300,"effects":{"dot":{"damage":1,"interval":2,"type":"Acid"},"moabTargetable":true,"overridesOtherGlue":true}},
+{"name":"Bloon Dissolver","cost":2000,"effects":{"dotInterval":0.5,"dotCeramicBonus":2,"pierce":"+1","cooldown":0.5,"glueLevel":3}},
+{"name":"Bloon Liquefier","cost":5000,"effects":{"dotInterval":0.1,"glueLevel":4,"acidPuddle":{"damage":4,"pierce":3,"duration":7.7,"onFullPop":true}}},
+{"name":"The Bloon Solver","cost":22500,"effects":{"dotCeramicBonus":9,"dotMoabBonus":4,"puddleDamage":15,"pierce":4,"glueLevel":6,"globsPerShot":2,"spreadDeg":10,"cooldown":0.25,"splatter":"each glob splats on impact"}}],
+"2":[
+{"name":"Bigger Globs","cost":100,"effects":{"pierce":"+1 (2)","projectileRadius":"+25%"}},
+{"name":"Glue Splatter","cost":650,"effects":{"splatterPierce":4,"totalHit":5,"note":"6 splatter pierce with More Splatty Glue"}},
+{"name":"Glue Hose","cost":1950,"effects":{"cooldown":0.34,"range":58}},
+{"name":"Glue Strike","cost":4500,"effects":{},"ability":{"cooldown":40,"initialCooldown":13.333,"duration":11,"effect":"Glues all bloons on screen incl MOAB-class, +2 damage taken from all sources, removes lead/frozen immunity (6 layers)"}},
+{"name":"Glue Storm","cost":16000,"effects":{},"ability":{"cooldown":40,"duration":20,"effect":"Reapplies Glue Strike effect every second for 20s; glue lasts 11s"}}],
+"3":[
+{"name":"Stickier Glue","cost":280,"effects":{"glueDuration":18}},
+{"name":"Stronger Glue","cost":400,"effects":{"glueSpeedMult":0.25}},
+{"name":"MOAB Glue","cost":3600,"effects":{"moabTargetable":true,"moabGlueDuration":9,"moabSpeedMult":0.625,"glueLevel":5}},
+{"name":"Relentless Glue","cost":4000,"effects":{"moabGlueDuration":12,"glueLevel":7,"onPopSplat":{"damage":0,"pierce":6,"radius":12,"stun":1,"moabStun":0.25,"ddtStun":0.2}}},
+{"name":"Super Glue","cost":24000,"effects":{"pierce":"+5","nonMoabSpeedMult":0,"moabGlueDuration":13.5,"damage":1,"moabDot":{"damage":30,"interval":0.95},"splatPierce":11,"stunsBFBZOMG":true,"canReglue":true}}]},
+"paragon":null,"paragonNote":"Wiki page lists no Paragon for Glue Gunner."}}

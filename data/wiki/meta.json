@@ -1,0 +1,1186 @@
+{
+ "source": [
+  "https://bloons.fandom.com/wiki/Experience_Points",
+  "https://bloons.fandom.com/wiki/Monkey_Money",
+  "https://bloons.fandom.com/wiki/Powers_(BTD6)",
+  "https://bloons.fandom.com/wiki/Sell",
+  "https://bloons.fandom.com/wiki/Fast_Forward",
+  "https://bloons.fandom.com/wiki/Bloon",
+  "https://bloons.fandom.com/wiki/Round"
+ ],
+ "data": {
+  "xp": {
+   "rank_table": {
+    "fields": [
+     "rank",
+     "total_xp_at_rank",
+     "xp_to_next_rank"
+    ],
+    "rows": [
+     [
+      1,
+      0,
+      480
+     ],
+     [
+      2,
+      480,
+      620
+     ],
+     [
+      3,
+      1100,
+      1100
+     ],
+     [
+      4,
+      2200,
+      1150
+     ],
+     [
+      5,
+      3350,
+      2500
+     ],
+     [
+      6,
+      5850,
+      3000
+     ],
+     [
+      7,
+      8850,
+      3500
+     ],
+     [
+      8,
+      12350,
+      3500
+     ],
+     [
+      9,
+      15850,
+      4000
+     ],
+     [
+      10,
+      19850,
+      4250
+     ],
+     [
+      11,
+      24100,
+      4500
+     ],
+     [
+      12,
+      28600,
+      4500
+     ],
+     [
+      13,
+      33100,
+      4900
+     ],
+     [
+      14,
+      38000,
+      7000
+     ],
+     [
+      15,
+      45000,
+      8000
+     ],
+     [
+      16,
+      53000,
+      9000
+     ],
+     [
+      17,
+      62000,
+      10000
+     ],
+     [
+      18,
+      72000,
+      12000
+     ],
+     [
+      19,
+      84000,
+      12000
+     ],
+     [
+      20,
+      96000,
+      13000
+     ],
+     [
+      21,
+      109000,
+      14000
+     ],
+     [
+      22,
+      123000,
+      15000
+     ],
+     [
+      23,
+      138000,
+      16000
+     ],
+     [
+      24,
+      154000,
+      17000
+     ],
+     [
+      25,
+      171000,
+      18000
+     ],
+     [
+      26,
+      189000,
+      19000
+     ],
+     [
+      27,
+      208000,
+      20000
+     ],
+     [
+      28,
+      228000,
+      21000
+     ],
+     [
+      29,
+      249000,
+      25000
+     ],
+     [
+      30,
+      274000,
+      30000
+     ],
+     [
+      31,
+      304000,
+      35000
+     ],
+     [
+      32,
+      339000,
+      40000
+     ],
+     [
+      33,
+      379000,
+      45000
+     ],
+     [
+      34,
+      424000,
+      50000
+     ],
+     [
+      35,
+      474000,
+      55000
+     ],
+     [
+      36,
+      529000,
+      60000
+     ],
+     [
+      37,
+      589000,
+      65000
+     ],
+     [
+      38,
+      654000,
+      70000
+     ],
+     [
+      39,
+      724000,
+      75000
+     ],
+     [
+      40,
+      799000,
+      80000
+     ],
+     [
+      41,
+      879000,
+      85000
+     ],
+     [
+      42,
+      964000,
+      90000
+     ],
+     [
+      43,
+      1054000,
+      95000
+     ],
+     [
+      44,
+      1149000,
+      100000
+     ],
+     [
+      45,
+      1249000,
+      105000
+     ],
+     [
+      46,
+      1354000,
+      110000
+     ],
+     [
+      47,
+      1464000,
+      115000
+     ],
+     [
+      48,
+      1579000,
+      120000
+     ],
+     [
+      49,
+      1699000,
+      130000
+     ],
+     [
+      50,
+      1829000,
+      140000
+     ],
+     [
+      51,
+      1969000,
+      150000
+     ],
+     [
+      52,
+      2119000,
+      160000
+     ],
+     [
+      53,
+      2279000,
+      170000
+     ],
+     [
+      54,
+      2449000,
+      180000
+     ],
+     [
+      55,
+      2629000,
+      190000
+     ],
+     [
+      56,
+      2819000,
+      200000
+     ],
+     [
+      57,
+      3019000,
+      210000
+     ],
+     [
+      58,
+      3229000,
+      220000
+     ],
+     [
+      59,
+      3449000,
+      230000
+     ],
+     [
+      60,
+      3679000,
+      240000
+     ],
+     [
+      61,
+      3919000,
+      250000
+     ],
+     [
+      62,
+      4169000,
+      260000
+     ],
+     [
+      63,
+      4429000,
+      270000
+     ],
+     [
+      64,
+      4699000,
+      280000
+     ],
+     [
+      65,
+      4979000,
+      290000
+     ],
+     [
+      66,
+      5269000,
+      300000
+     ],
+     [
+      67,
+      5569000,
+      310000
+     ],
+     [
+      68,
+      5879000,
+      320000
+     ],
+     [
+      69,
+      6199000,
+      330000
+     ],
+     [
+      70,
+      6529000,
+      340000
+     ],
+     [
+      71,
+      6869000,
+      350000
+     ],
+     [
+      72,
+      7219000,
+      360000
+     ],
+     [
+      73,
+      7579000,
+      370000
+     ],
+     [
+      74,
+      7949000,
+      380000
+     ],
+     [
+      75,
+      8329000,
+      390000
+     ],
+     [
+      76,
+      8719000,
+      400000
+     ],
+     [
+      77,
+      9119000,
+      410000
+     ],
+     [
+      78,
+      9529000,
+      420000
+     ],
+     [
+      79,
+      9949000,
+      430000
+     ],
+     [
+      80,
+      10379000,
+      440000
+     ],
+     [
+      81,
+      10819000,
+      450000
+     ],
+     [
+      82,
+      11269000,
+      460000
+     ],
+     [
+      83,
+      11729000,
+      470000
+     ],
+     [
+      84,
+      12199000,
+      480000
+     ],
+     [
+      85,
+      12679000,
+      490000
+     ],
+     [
+      86,
+      13169000,
+      500000
+     ],
+     [
+      87,
+      13669000,
+      510000
+     ],
+     [
+      88,
+      14179000,
+      520000
+     ],
+     [
+      89,
+      14699000,
+      530000
+     ],
+     [
+      90,
+      15229000,
+      540000
+     ],
+     [
+      91,
+      15769000,
+      550000
+     ],
+     [
+      92,
+      16319000,
+      560000
+     ],
+     [
+      93,
+      16879000,
+      570000
+     ],
+     [
+      94,
+      17449000,
+      580000
+     ],
+     [
+      95,
+      18029000,
+      590000
+     ],
+     [
+      96,
+      18619000,
+      600000
+     ],
+     [
+      97,
+      19219000,
+      610000
+     ],
+     [
+      98,
+      19829000,
+      620000
+     ],
+     [
+      99,
+      20449000,
+      630000
+     ],
+     [
+      100,
+      21079000,
+      650000
+     ],
+     [
+      101,
+      21729000,
+      700000
+     ],
+     [
+      102,
+      22429000,
+      750000
+     ],
+     [
+      103,
+      23179000,
+      800000
+     ],
+     [
+      104,
+      23979000,
+      850000
+     ],
+     [
+      105,
+      24829000,
+      900000
+     ],
+     [
+      106,
+      25729000,
+      950000
+     ],
+     [
+      107,
+      26679000,
+      1000000
+     ],
+     [
+      108,
+      27679000,
+      1050000
+     ],
+     [
+      109,
+      28729000,
+      1100000
+     ],
+     [
+      110,
+      29829000,
+      1150000
+     ],
+     [
+      111,
+      30979000,
+      1200000
+     ],
+     [
+      112,
+      32179000,
+      1250000
+     ],
+     [
+      113,
+      33429000,
+      1300000
+     ],
+     [
+      114,
+      34729000,
+      1350000
+     ],
+     [
+      115,
+      36079000,
+      1400000
+     ],
+     [
+      116,
+      37479000,
+      1450000
+     ],
+     [
+      117,
+      38929000,
+      1500000
+     ],
+     [
+      118,
+      40429000,
+      1550000
+     ],
+     [
+      119,
+      41979000,
+      1600000
+     ],
+     [
+      120,
+      43579000,
+      1650000
+     ],
+     [
+      121,
+      45229000,
+      1700000
+     ],
+     [
+      122,
+      46929000,
+      1750000
+     ],
+     [
+      123,
+      48679000,
+      1800000
+     ],
+     [
+      124,
+      50479000,
+      1850000
+     ],
+     [
+      125,
+      52329000,
+      1900000
+     ],
+     [
+      126,
+      54229000,
+      1950000
+     ],
+     [
+      127,
+      56179000,
+      2000000
+     ],
+     [
+      128,
+      58179000,
+      2050000
+     ],
+     [
+      129,
+      60229000,
+      2100000
+     ],
+     [
+      130,
+      62329000,
+      2150000
+     ],
+     [
+      131,
+      64479000,
+      2200000
+     ],
+     [
+      132,
+      66679000,
+      2250000
+     ],
+     [
+      133,
+      68929000,
+      2300000
+     ],
+     [
+      134,
+      71229000,
+      2350000
+     ],
+     [
+      135,
+      73579000,
+      2400000
+     ],
+     [
+      136,
+      75979000,
+      2450000
+     ],
+     [
+      137,
+      78429000,
+      2500000
+     ],
+     [
+      138,
+      80929000,
+      2550000
+     ],
+     [
+      139,
+      83479000,
+      2600000
+     ],
+     [
+      140,
+      86079000,
+      2650000
+     ],
+     [
+      141,
+      88729000,
+      2700000
+     ],
+     [
+      142,
+      91429000,
+      2750000
+     ],
+     [
+      143,
+      94179000,
+      2800000
+     ],
+     [
+      144,
+      96979000,
+      2850000
+     ],
+     [
+      145,
+      99829000,
+      2900000
+     ],
+     [
+      146,
+      102729000,
+      2950000
+     ],
+     [
+      147,
+      105679000,
+      3000000
+     ],
+     [
+      148,
+      108679000,
+      3050000
+     ],
+     [
+      149,
+      111729000,
+      8271000
+     ],
+     [
+      150,
+      120000000,
+      10000000
+     ],
+     [
+      151,
+      130000000,
+      11000000
+     ],
+     [
+      152,
+      141000000,
+      12000000
+     ],
+     [
+      153,
+      153000000,
+      13000000
+     ],
+     [
+      154,
+      166000000,
+      14000000
+     ]
+    ],
+    "uncertain": true,
+    "note": "parsed from BTD6 section; max rank not confirmed (wiki text cites 200 for another section)"
+   },
+   "round_tower_xp": {
+    "formula": "round XP = 40 + 20*(r-1) for r<=20; then +40 per round to r50 (wiki lists 460 at r21); then +90 per round from r51 (wiki lists 1710 at r51)",
+    "uncertain": true
+   },
+   "tower_xp_split": "XP for tower = round XP * tower sell value / total sell value of all towers (BTD6: each round XP is split across placed towers by cash spent)",
+   "difficulty_bonus": "+10% per map difficulty above Beginner (Expert = +30%)",
+   "freeplay": "30% of normal XP in freeplay; 10% after round 100 in freeplay (heroes not cut)",
+   "hero_xp_multiplier": {
+    "1.0": [
+     "Quincy",
+     "Gwendolin",
+     "Striker Jones",
+     "Obyn Greenfoot",
+     "Etienne",
+     "Geraldo"
+    ],
+    "1.425": [
+     "Ezili",
+     "Pat Fusty",
+     "Admiral Brickell",
+     "Sauda",
+     "Corvus"
+    ],
+    "1.5": [
+     "Benjamin",
+     "Psi",
+     "Silas"
+    ],
+    "1.71": [
+     "Captain Churchill",
+     "Adora"
+    ]
+   },
+   "hero_xp_note": "Adora Blood Sacrifice: 4x sacrificed tower money as XP; Corvus Nourishment spends all Mana on XP",
+   "hero_xp_per_round": "fixed amount by round formula, independent of pops"
+  },
+  "monkey_money": {
+   "earning": "Beating maps earns MM; harder maps and difficulties earn more; first-time completions earn substantially more; Mo' Monkey Money MK boosts wins",
+   "daily_chest": "50 to 200 MM occasionally",
+   "spending": [
+    "Powers",
+    "Continues",
+    "unlocking Heroes",
+    "hero skins",
+    "Monkey Knowledge points",
+    "re-entering Race Events more than once per 4 hours"
+   ],
+   "exact_formula": "not found in fetched sources",
+   "uncertain": true
+  },
+  "sell": {
+   "sellback_rate_btd6": 0.7,
+   "sellback_rate_other_games_default": 0.8,
+   "note": "Sellback = % of total cash spent (placing + upgrades); sacrificed towers absorb sellback value"
+  },
+  "income": {
+   "note": "BTD6 cash-per-round / tower income rules not fetched; Round page is cross-game",
+   "uncertain": true
+  },
+  "camo_detection": {
+   "rule": "Camo bloons can only be hit by towers with camo detection (default or via upgrade)",
+   "source_page": "Bloon"
+  },
+  "powers": {
+   "list": [
+    {
+     "name": "Super Monkey Storm",
+     "description": "It's a bird. It's a plane. It's a squadron of flying super-powered laser-beamin' monkeys who destroy every single Bloon on screen and do big damage to MOAB-Class Bloons.",
+     "cost": 100,
+     "effect": "Deals 4000 damage to every Bloon on-screen (5000 with {{MK Icon|Powerful Monkey Storm}}). Against MOAB-Class Bloons, the damage is only dealt to their outer layers and does not soak through.",
+     "uncertain": false
+    },
+    {
+     "name": "Monkey Boost",
+     "description": "Let's turn it up to 11! All towers attack twice as fast for 15 seconds.",
+     "cost": 100,
+     "effect": "Doubles the attack speed of all towers on-screen for 15 seconds (20 seconds with {{MK Icon|Longer Boosts}}).",
+     "uncertain": false
+    },
+    {
+     "name": "Thrive",
+     "description": "Increase cash production from all of your towers and Bloon pops by 25% for the rest of the round and the entire next round!",
+     "cost": 70,
+     "effect": "Increases cash gained from popping Bloons and from other sources of income (Banana Farms, Merchantmen, etc) by 25% (30% with {{MK Icon|Supa-Thrive}}) for the current round and the following round.",
+     "uncertain": false
+    },
+    {
+     "name": "Time Stop",
+     "description": "If sometimes things just move too quickly, use Time Stop to briefly halt all action so you can focus on managing your monkeys.",
+     "cost": 50,
+     "effect": "Reduces all Bloons' movement speeds and all non-Paragon towers' attack speeds (and movement speeds for non-stationary towers) for 10 seconds (15 seconds with {{MK Icon|Longer Time Stop}}). Bloons are slowed to 10% of their movement speed, except BADs and Boss Bloons, which are slowed to 30%, while non-Paragon towers' attack speeds and movement speeds are slowed to 60%.",
+     "uncertain": false
+    },
+    {
+     "name": "Cash Drop",
+     "description": "Need a quick cash top-up? Get Monkey Command to fire down one of these bad boys stacked with cash asap!",
+     "cost": 200,
+     "effect": "Spawns a crate that grants $2500 when collected.",
+     "uncertain": false
+    },
+    {
+     "name": "Banana Farmer",
+     "description": "Tired of picking up all those bananas yourself? So is this guy but at least he's paid to do it. Farmer will auto-gather all bananas in his radius so you don't have to.",
+     "cost": 50,
+     "effect": "Placed as a tower. Automatically collects all collectables, including bananas, crates, and Bloon Traps, within its range of 60 units (72 units with {{MK Icon|Fit Farmers}}).",
+     "uncertain": false
+    },
+    {
+     "name": "Pontoon",
+     "description": "Place almost any land tower on water with the Pontoon! Deploy the Pontoon on water, then place your land tower on top.",
+     "cost": 50,
+     "effect": "Placed as a tower on water. Allows land-based towers to be placed on top of it, with its area being large enough to fit a Banana Farm.",
+     "uncertain": false
+    },
+    {
+     "name": "Road Spikes",
+     "description": "A huge stack of Road Spikes ready to lay down wherever you need them most!",
+     "cost": 50,
+     "effect": "Placed on the track. Each pile can pop up to 20 Bloons that touch it (21 with {{MK Icon|Just One More}}), including Lead Bloons and Camo Bloons. Each purchase grants five stacks of Road Spikes.",
+     "uncertain": false
+    },
+    {
+     "name": "Glue Trap",
+     "description": "This sticky trap will slow the first 300 Bloons that go over it before it disappears.",
+     "cost": 50,
+     "effect": "Placed on the track. Glues up to 300 Bloons on contact, reducing their movement speed by 50% for 30 seconds and soaking through all layers. With {{MK Icon|Supersize Glue Trap}}, it can also glue all MOAB-Class Bloons except BADs and Boss Bloons. Each purchase grants two Glue Traps.",
+     "uncertain": false
+    },
+    {
+     "name": "MOAB Mine",
+     "description": "A powerful mine that detects the presence of MOAB-Class Bloons and will explode causing lots of damage.",
+     "cost": 50,
+     "effect": "Placed on the track. Explodes on contact with up to 10 MOAB-Class Bloons, dealing 5000 damage to each (6250 with {{MK Icon|Mauling MOAB Mines}}). The damage is only dealt to their outer layers and does not soak through. The mine can re-hit the same target and children targets with 1 second cooldown.",
+     "uncertain": false
+    },
+    {
+     "name": "Camo Trap",
+     "description": "Monkey Engineering at its finest, this trap will remove Camo status from the first 500 Bloons that touch it.",
+     "cost": 50,
+     "effect": "Placed on the track. Removes Camo from up to 500 Camo Bloons on contact (600 with {{MK Icon|Bigger Camo Trap}}). Each purchase grants two Camo Traps.",
+     "uncertain": false
+    },
+    {
+     "name": "Portable Lake",
+     "description": "Nowhere to float your boat? Smart monkeys know they can place a Portable Lake on land, allowing any water unit to be deployed within its waters.",
+     "cost": 50,
+     "effect": "Placed as a tower on land. Allows water-based towers to be placed on top of it, including Monkey Subs, Monkey Buccaneers, Admiral Brickell, and even Sun Temples.",
+     "uncertain": false
+    },
+    {
+     "name": "Tech Bot",
+     "description": "Tech Bot can activate abilities for you as soon as they are ready for optimum efficiency.",
+     "cost": 50,
+     "effect": "Placed as a tower. Can be \"linked\" to any tower with at least one valid Activated Ability, which causes it to automatically activate those abilities as soon as they are usable. With {{MK Icon|Ambush Tech}}, it can also be set to not activate those abilities unless the Bloons have reached a specified point on the track.",
+     "uncertain": false
+    },
+    {
+     "name": "Energizing Totem",
+     "description": "Let's Energize! This totem will increase attack speed of all Monkeys in range by 25%. Lasts 5 rounds and can be recharged.",
+     "cost": 80,
+     "effect": "Placed as a tower. Increases the attack speed of all towers within its range of 54 units by 33.3% (as it reduces attack cooldown by 25%) for five rounds. It can be fully recharged at any time after the first round for {{Monkey Money BTD6}}20.",
+     "uncertain": false
+    },
+    {
+     "name": "Cave Monkey Cave Monkey (hidden)",
+     "description": "Cave Monkey smash Bloon with club. Bloon so scared Bloon stop.",
+     "cost": 150,
+     "effect": "Placed as a tower. It attacks using a wooden club, which pops a single layer and stuns Bloons (including MOAB-Class, but not BADs or Bosses) for a short amount of time. Requires the hidden achievement \"They call me Cave Monkey!\" to be unlocked first before being available as a Power.",
+     "uncertain": false
+    },
+    {
+     "name": "Banana Farmer Pro",
+     "description": "Pro Banana Farmer farms bananas like a pro with increased range and collection speed.",
+     "cost": 100,
+     "effect": "Placed as a tower. It functions just like the Banana Farmer, but with a faster collection speed and more range at base level.",
+     "uncertain": false
+    },
+    {
+     "name": "Super Monkey Beacon",
+     "description": "A placeable Super Monkey Beacon with a Beacon Storm ability on a long cooldown.",
+     "cost": 400,
+     "effect": "Placed as a tower, with a Beacon Storm ability that summons a Super Monkey Storm at no extra cost. It functions as the spiritual successor to the Monkey Storm Beacon upgrades from BTD3 and BTD4, albeit with major differences.",
+     "uncertain": false
+    },
+    {
+     "name": "Hype Boost Monkey",
+     "description": "Hype up your Monkeys with a High Intensity Hype ability boosting all Monkeys in radius.",
+     "cost": 400,
+     "effect": "Placed as a tower, which can buff nearby towers with its High Intensity Hype ability for 15 seconds; the ability has a cooldown of 90 seconds, and must undergo the full cooldown before the first use.",
+     "uncertain": false
+    },
+    {
+     "name": "Tech Bot Prime",
+     "description": "Yoooooo Tech Bot got some upgrades!",
+     "cost": 100,
+     "effect": "Placed as a tower; like regular Tech Bots, it can be linked to a tower to activate abilities automatically, but can also set an ambush even if the {{MK|Ambush Tech}} MK point is not yet unlocked.",
+     "uncertain": false
+    },
+    {
+     "name": "Sword of Protection",
+     "description": "Summon She-Ra's Sword to the strike at Bloons with incredible power.",
+     "cost": 6,
+     "effect": "Summons the Sword of Protection at the middle of the map, creating multiple purple Balls of Light in quick succession that pop all Bloon types including Camo. This sword lasts up to 60 seconds.",
+     "uncertain": true
+    },
+    {
+     "name": "Battle Cat",
+     "description": "Bring Cringer from Masters of the Universe (TM) to the Bloon battlefield! Activate the transformation into Battle Cat for 4 rounds. Fully powered Battle Cat hits Bloons hard, also tearing away Camo property and Bloon immunities.",
+     "cost": 6,
+     "effect": "Placed as a tower. and it will attack bloons in its range. Has an activated ability that tranforms it into Battle Cat for 4 rounds. While in this form, Battle Cat deals more damage, strips Camo property and Bloon immunities, and knockbacks Bloons including MOAB-class bloons. When the effect ends, Cringer will disappear.",
+     "uncertain": true
+    },
+    {
+     "name": "Havoc Staff",
+     "description": "Summon Skeletor's Havoc Staff from Masters of the Universe (TM) to throw Tek Bombs on the screen, stunning and damaging Bloons, while Skeletor claims cash from the Bloons.",
+     "cost": 6,
+     "effect": "Throws stunning Tek Bombs on the whole map, and create many hands that instakill lightweight Bloons and generate extra cash every time the hands come out.",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Super Vampire Storm Super Vampire Storm",
+     "description": "<div style=\"text-align:center>Custom Power - Super Vampire Storm</div>Wipe out those Bloons vampire style, complete with swarm of bats{{sic}}",
+     "cost": 20,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - The Grim Farmer Grim Farmer",
+     "description": "<div style=\"text-align:center;\">Custom Power - The Grim Farmer</div>The bell tolls for your farm crops, and the Grim Farmer is here to collect. Limited Time Collector's Item!",
+     "cost": 50,
+     "effect": "align=center|Halloween",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Coffin Drop Coffin Drop",
+     "description": "<div style=\"text-align:center;\">Custom Power - Coffin Drop</div>Bat deliveries full of cash are totally a thing, drones are SO previous update. Limited Time Collector's Item!",
+     "cost": 25,
+     "effect": "align=center|Halloween",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Bauble Mine Bauble Mine",
+     "description": "<div style=\"text-align:center;\">Custom Power - Bauble Mine</div>Blow up MOABs then decorate the Christmas tree! Limited Time Collector's Item!",
+     "cost": 20,
+     "effect": "align=center|Christmas",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Retro Techbot Retro Techbot",
+     "description": "<div style=\"text-align:center;\">Custom Power - Retro Techbot</div>Keep on top of your activated abilities with this super-groovy retro techbot. Batteries not included. Limited Time Collector's Item!",
+     "cost": 20,
+     "effect": "align=center|Christmas",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Iceberg Pontoon Iceberg Pontoon",
+     "description": "<div style=\"text-align:center;\">Custom Power - Iceberg Pontoon</div>Watch your Bloon troubles melt away with this super cool Iceberg Pontoon.",
+     "cost": 35,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Portable Lava Lake Portable Lava Lake",
+     "description": "<div style=\"text-align:center;\">Custom Power - Portable Lava Lake</div>It's getting hot in here! Boil your cares away in this hunka pool-a burnin' lava!",
+     "cost": 35,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Fireworks Monkey Boost Fireworks Monkey Boost",
+     "description": "<div style=\"text-align:center;\">Custom Power - Fireworks Monkey Boost</div>Boost your Monkeys and inspire them to greater deeds with this huge fireworks display. Limited Time Collector's Item!",
+     "cost": 35,
+     "effect": "align=center|American Independence",
+     "uncertain": true
+    },
+    {
+     "name": "Thrive Stonks",
+     "description": "<div style=\"text-align:center;\">Custom Power - Thrive Stonks</div>Ben says invest everything into Bananacoin, it's going to the moon!",
+     "cost": 45,
+     "effect": "align=center|Always available",
+     "uncertain": false
+    },
+    {
+     "name": "Custom Power - Dart Time Stop Dart Time Stop",
+     "description": "<div style=\"text-align:center;\">Custom Power - Dart Time Stop</div>This is not a glitch, you haven't seen this before but you're going to like it, we promise",
+     "cost": 55,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Christmas Tree Energising Totem Energised Christmas Tree",
+     "description": "<div style=\"text-align:center;\">Custom Power - Christmas Tree Energising Totem</div>Keep your monkeys energized with this colorful Christmas Tree! Limited Time Collector's Item!",
+     "cost": 55,
+     "effect": "align=center|Christmas",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Flower Patch Spikes Flower Patch Spikes",
+     "description": "<div style=\"text-align:center;\">Custom Power - Flower Patch Spikes</div>Who says Road Spikes need to look rough, industrial fasteners? You try to pick these flowers, you get the thorns!",
+     "cost": 60,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Sugar Rush Boost Sugar Rush Boost",
+     "description": "<div style=\"text-align:center;\">Custom Power - Sugar Rush Boost</div>Humans: we all know we perform better under the influence of copious amounts of sugary awesomeness. Monkeys: same.",
+     "cost": 60,
+     "effect": "align=center|Easter",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Honey Bee Trap Honey Bee Trap",
+     "description": "<div style=\"text-align:center;\">Custom Power - Honey Bee Glue Trap</div>Even a Bloon slows down when it's covered in bees!",
+     "cost": 70,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Banana Farmer Banana Costume Banana Farmer Costume",
+     "description": "<div style=\"text-align:center;\">Custom Power - Banana Farmer Banana Costume</div>Is there such a thing as too much banana? \"Shucks, no!\" says the Banana Farmer. Get the Banana Farmer banana costume to make banana farming just that little bit more bananana.",
+     "cost": 100,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Lawn Sprinkler Camo Trap Lawn Sprinkler Trap",
+     "description": "<div style=\"text-align:center;\">Custom Power - Lawn Sprinkler Camo Trap</div>Give Camo Bloons a revealing spray of water when they run through this Lawn Sprinkler Camo Trap.",
+     "cost": 100,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Pinata Cash Drop Pinata Drop",
+     "description": "<div style=\"text-align:center;\">Custom Power - Pinata Cash Drop</div>Switch out your Cash Drops for a Pinata full of candy. There's healthy bananas, too, but you really just want the candy don't you?",
+     "cost": 100,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Custom Power - Chocolate Bar Pontoon Chocolate Bar Pontoon",
+     "description": "<div style=\"text-align:center;\">Custom Power - Chocolate Bar Pontoon</div>Change your Pontoons into a chocolate bar made from ethical chocolate! Banana oil, a touch of salt. A delicious Limited Time Collectors Item!",
+     "cost": 100,
+     "effect": "align=center|Easter",
+     "uncertain": true
+    },
+    {
+     "name": "Battle Cat Battle Cat Booster Pack",
+     "description": "30 Battle Cat powers. Five tier 3 Insta-Monkeys.",
+     "cost": 5,
+     "effect": "align=center|Limited",
+     "uncertain": true
+    },
+    {
+     "name": "Battle Cat Battle Cat Prestige Pack",
+     "description": "30 Battle Cat powers. Exclusive Avatar and Banner for your profile. Three tier 5 Beast Handler Insta-Monkeys.",
+     "cost": 10,
+     "effect": "align=center|Limited",
+     "uncertain": true
+    },
+    {
+     "name": "Powers Attack Pack",
+     "description": "An assortment of 10 battle focused Monkey Powers.",
+     "cost": 0,
+     "effect": "align=center|Always available",
+     "uncertain": true
+    },
+    {
+     "name": "Powers Pandamonium",
+     "description": "With our powers combined! 60 of the best Monkey Powers you can get in a single pack.",
+     "cost": 4,
+     "effect": "align=center|Limited",
+     "uncertain": true
+    }
+   ],
+   "note": "parsed from Powers (BTD6) table; rows with uncertain:true are packs/custom/noisy parses"
+  },
+  "fast_forward": {
+   "speed": "3x (BTD6 and others; 2x BTD4, 4x BTD5 Flash per wiki)",
+   "rule": "toggle option, speeds up game for quicker rounds",
+   "uncertain": false
+  },
+  "round_skip": {
+   "value": null,
+   "uncertain": true,
+   "note": "not found in fetched sources"
+  },
+  "autoplay": {
+   "value": null,
+   "uncertain": true,
+   "note": "not found in fetched sources"
+  }
+ }
+}

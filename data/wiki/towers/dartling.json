@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Dartling_Gunner_(BTD6)"],"data":{"id":"dartling","name":"Dartling Gunner","category":"Military","costMedium":850,"footprintRadius":7,"range":"infinite (display 20); aimed at cursor","waterOnly":false,
+"targeting":["Normal","Locked","Target Independent (from Bloon Area Denial System)"],
+"base":{"cooldown":0.2,"spreadAngle":23,"pierce":1,"damage":1,"damageType":"Sharp","projectileSpeed":350,"lifespan":1.1429,"rotationSpeed":180,"camo":false,"lead":false},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Focused Firing","cost":300,"effects":{"spread":"-60%","lifespan":"+40%"}},
+{"name":"Laser Shock","cost":900,"effects":{"shock":{"damage":1,"duration":1},"shockBonusFromOtherPath1Dartlings":1}},
+{"name":"Laser Cannon","cost":3000,"effects":{"damage":2,"damageType":"Energy","pierce":6,"moabBonus":2,"shockDuration":2,"frozen":true,"purple":false}},
+{"name":"Plasma Accelerator","cost":11750,"effects":{"beam":{"tick":0.2,"damage":1,"pierce":50,"tipDamage":2,"tipMoabBonus":10},"shockDuration":5,"damageType":"Plasma","lead":true}},
+{"name":"Ray of Doom","cost":75000,"effects":{"beamDamage":30,"firstTargetBonus":110,"pierce":999,"beamRadius":6,"shock":{"damage":20,"duration":30},"beamRange":"until obstacle or map edge"}}],
+"2":[
+{"name":"Advanced Targeting","cost":250,"effects":{"camo":true}},
+{"name":"Faster Barrel Spin","cost":950,"effects":{"cooldown":0.132}},
+{"name":"Hydra Rocket Pods","cost":4500,"effects":{"missile":{"damage":0,"pierce":6,"pierceCostPerHit":2,"maxExplosions":3},"explosion":{"damage":2,"pierce":6,"radius":8},"hitsAllTypes":true}},
+{"name":"Rocket Storm","cost":5000,"effects":{"pierceBonus":"+2 missile and explosion"},"ability":{"name":"Rocket Storm","effect":"Waves of erratic purple missiles in wide cone, high damage low pierce","cooldown":null},"uncertain":true},
+{"name":"M.A.D","cost":65000,"effects":{"cooldown":0.396,"explosionDamage":3,"missileMoabBonus":450,"missilePierce":20,"explosionPierce":8},"ability":{"name":"Rocket Storm (M.A.D)","effect":"explosion pierce 18, +5 ceramic, +250 MOAB damage","cooldown":null},"uncertain":true}],
+"3":[
+{"name":"Faster Swivel","cost":150,"effects":{"rotationSpeed":440}},
+{"name":"Powerful Darts","cost":1200,"effects":{"pierce":"+2 (3)","damageType":"Shatter","frozen":true}},
+{"name":"Buckshot","cost":3000,"effects":{"cooldown":1.2,"pellets":6,"damage":3,"pierce":4,"projectileSpeed":520,"lifespan":0.25,"spreadDeg":46,"knockback":"non-blimp, 0.2s"}},
+{"name":"Bloon Area Denial System","cost":12000,"effects":{"barrels":4,"cooldown":0.3,"targetIndependent":"First, Last, Close, Strong"}},
+{"name":"Bloon Exclusion Zone","cost":58000,"effects":{"barrels":6,"cooldown":0.2,"pellets":12,"damage":6,"pierce":6,"targetIndependent":"First, Last, Close, Strong, First, Strong"}}]},
+"paragon":null,"paragonNote":"No Paragon section on wiki page."}}

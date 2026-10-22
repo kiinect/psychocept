@@ -1,0 +1,463 @@
+{
+ "source": [
+  "https://bloons.fandom.com/wiki/Bloon (card stats, speeds, RBE)",
+  "https://bloons.fandom.com/wiki/Bloon_Properties",
+  "https://bloons.fandom.com/wiki/Regrow_Bloon",
+  "https://bloons.fandom.com/wiki/Late_Game_and_Freeplay_(BTD6_Era)",
+  "per-bloon pages (Black/White/Purple/Zebra/Lead/Super_Ceramic/MOAB-class)"
+ ],
+ "data": {
+  "units": "speed_rel = multiple of Red speed; speed_px_per_s = speed_rel*25 (Red base speed 25 px/s per wiki). hp = HP of that layer only; rbe = hp + sum(children rbe); fortified doubles Ceramic/MOAB-class layer hp, Lead layer hp 1->4. leak_lives = rbe (BTD6 lives lost).",
+  "bloons": {
+   "red": {
+    "name": "Red",
+    "hp": 1,
+    "speed_rel": 1.0,
+    "speed_px_per_s": 25.0,
+    "rbe": 1,
+    "children": [],
+    "immunities": [],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 1,
+    "leak_lives": 1
+   },
+   "blue": {
+    "name": "Blue",
+    "hp": 1,
+    "speed_rel": 1.4,
+    "speed_px_per_s": 35.0,
+    "rbe": 2,
+    "children": [
+     {
+      "id": "red",
+      "count": 1
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 3,
+    "leak_lives": 2
+   },
+   "green": {
+    "name": "Green",
+    "hp": 1,
+    "speed_rel": 1.8,
+    "speed_px_per_s": 45.0,
+    "rbe": 3,
+    "children": [
+     {
+      "id": "blue",
+      "count": 1
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 6,
+    "leak_lives": 3
+   },
+   "yellow": {
+    "name": "Yellow",
+    "hp": 1,
+    "speed_rel": 3.2,
+    "speed_px_per_s": 80.0,
+    "rbe": 4,
+    "children": [
+     {
+      "id": "green",
+      "count": 1
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 11,
+    "leak_lives": 4
+   },
+   "pink": {
+    "name": "Pink",
+    "hp": 1,
+    "speed_rel": 3.5,
+    "speed_px_per_s": 87.5,
+    "rbe": 5,
+    "children": [
+     {
+      "id": "yellow",
+      "count": 1
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 15,
+    "leak_lives": 5
+   },
+   "black": {
+    "name": "Black",
+    "hp": 1,
+    "speed_rel": 1.8,
+    "speed_px_per_s": 45.0,
+    "rbe": 11,
+    "children": [
+     {
+      "id": "pink",
+      "count": 2
+     }
+    ],
+    "immunities": [
+     "explosion"
+    ],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 20,
+    "leak_lives": 11
+   },
+   "white": {
+    "name": "White",
+    "hp": 1,
+    "speed_rel": 2.0,
+    "speed_px_per_s": 50.0,
+    "rbe": 11,
+    "children": [
+     {
+      "id": "pink",
+      "count": 2
+     }
+    ],
+    "immunities": [
+     "freeze"
+    ],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 22,
+    "leak_lives": 11
+   },
+   "purple": {
+    "name": "Purple",
+    "hp": 1,
+    "speed_rel": 3.0,
+    "speed_px_per_s": 75.0,
+    "rbe": 11,
+    "children": [
+     {
+      "id": "pink",
+      "count": 2
+     }
+    ],
+    "immunities": [
+     "energy",
+     "fire",
+     "plasma"
+    ],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 25,
+    "leak_lives": 11
+   },
+   "lead": {
+    "name": "Lead",
+    "hp": 1,
+    "speed_rel": 1.0,
+    "speed_px_per_s": 25.0,
+    "rbe": 23,
+    "children": [
+     {
+      "id": "black",
+      "count": 2
+     }
+    ],
+    "immunities": [
+     "sharp",
+     "cold(most ice)",
+     "energy",
+     "shatter"
+    ],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": true,
+    "pop_cash": 1,
+    "first_round": 28,
+    "hp_fortified": 4,
+    "rbe_fortified": 26,
+    "leak_lives": 23
+   },
+   "zebra": {
+    "name": "Zebra",
+    "hp": 1,
+    "speed_rel": 1.8,
+    "speed_px_per_s": 45.0,
+    "rbe": 23,
+    "children": [
+     {
+      "id": "black",
+      "count": 1
+     },
+     {
+      "id": "white",
+      "count": 1
+     }
+    ],
+    "immunities": [
+     "explosion",
+     "freeze"
+    ],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 26,
+    "leak_lives": 23
+   },
+   "rainbow": {
+    "name": "Rainbow",
+    "hp": 1,
+    "speed_rel": 2.2,
+    "speed_px_per_s": 55.0,
+    "rbe": 47,
+    "children": [
+     {
+      "id": "zebra",
+      "count": 2
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": false,
+    "pop_cash": 1,
+    "first_round": 35,
+    "leak_lives": 47
+   },
+   "ceramic": {
+    "name": "Ceramic",
+    "hp": 10,
+    "speed_rel": 2.5,
+    "speed_px_per_s": 62.5,
+    "rbe": 104,
+    "children": [
+     {
+      "id": "rainbow",
+      "count": 2
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": true,
+    "pop_cash": 1,
+    "first_round": 38,
+    "hp_fortified": 20,
+    "rbe_fortified": 114,
+    "leak_lives": 104
+   },
+   "super_ceramic": {
+    "name": "Super Ceramic",
+    "hp": 60,
+    "speed_rel": 2.5,
+    "speed_px_per_s": 62.5,
+    "rbe": 107,
+    "children": [
+     {
+      "id": "rainbow",
+      "count": 2
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": true,
+    "regrow_allowed": true,
+    "fortifiable": true,
+    "pop_cash": 1,
+    "first_round": 81,
+    "note": "Replaces ceramic from round 81 (freeplay rules). Round>=81: 2-child bloons spawn 1 child (rainbow->1 zebra, zebra->black only, black/white/purple->1 pink, lead->1 black); wiki RBE 68 / 128 fortified is derived from this.",
+    "hp_fortified": 120,
+    "rbe_fortified": 167,
+    "leak_lives": 107
+   },
+   "moab": {
+    "name": "MOAB",
+    "hp": 200,
+    "speed_rel": 1.0,
+    "speed_px_per_s": 25.0,
+    "rbe": 616.0,
+    "children": [
+     {
+      "id": "ceramic",
+      "count": 4
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": false,
+    "regrow_allowed": false,
+    "fortifiable": true,
+    "pop_cash": 1,
+    "first_round": 40,
+    "hp_fortified": 400,
+    "blimp": true,
+    "easy_mode_round40_hp": 133,
+    "rbe_fortified": 856.0,
+    "leak_lives": 616.0
+   },
+   "bfb": {
+    "name": "BFB",
+    "hp": 700,
+    "speed_rel": 0.25,
+    "speed_px_per_s": 6.25,
+    "rbe": 3164.0,
+    "children": [
+     {
+      "id": "moab",
+      "count": 4
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": false,
+    "regrow_allowed": false,
+    "fortifiable": true,
+    "pop_cash": 1,
+    "first_round": 60,
+    "hp_fortified": 1400,
+    "blimp": true,
+    "rbe_fortified": 4824.0,
+    "leak_lives": 3164.0
+   },
+   "zomg": {
+    "name": "ZOMG",
+    "hp": 4000,
+    "speed_rel": 0.18,
+    "speed_px_per_s": 4.5,
+    "rbe": 16656.0,
+    "children": [
+     {
+      "id": "bfb",
+      "count": 4
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": false,
+    "regrow_allowed": false,
+    "fortifiable": true,
+    "pop_cash": 1,
+    "first_round": 80,
+    "hp_fortified": 8000,
+    "blimp": true,
+    "rbe_fortified": 27296.0,
+    "leak_lives": 16656.0
+   },
+   "ddt": {
+    "name": "DDT",
+    "hp": 400,
+    "speed_rel": 2.64,
+    "speed_px_per_s": 66.0,
+    "rbe": 816.0,
+    "children": [
+     {
+      "id": "ceramic",
+      "count": 4
+     }
+    ],
+    "immunities": [
+     "sharp",
+     "explosion"
+    ],
+    "camo_allowed": true,
+    "regrow_allowed": false,
+    "fortifiable": true,
+    "pop_cash": 1,
+    "first_round": 90,
+    "note": "Always camo; children are Camo Regrow Ceramics (Camo Regrow Super Ceramic from r81).",
+    "hp_fortified": 800,
+    "blimp": true,
+    "inherent": [
+     "camo",
+     "lead",
+     "black"
+    ],
+    "children_flags": [
+     "camo",
+     "regrow"
+    ],
+    "rbe_fortified": 1256.0,
+    "leak_lives": 816.0
+   },
+   "bad": {
+    "name": "BAD",
+    "hp": 20000,
+    "speed_rel": 0.18,
+    "speed_px_per_s": 4.5,
+    "rbe": 55760.0,
+    "children": [
+     {
+      "id": "zomg",
+      "count": 2
+     },
+     {
+      "id": "ddt",
+      "count": 3
+     }
+    ],
+    "immunities": [],
+    "camo_allowed": false,
+    "regrow_allowed": false,
+    "fortifiable": true,
+    "pop_cash": 1,
+    "first_round": 100,
+    "note": "Immune to all stuns/slows/knockback and nearly all instakills.",
+    "hp_fortified": 40000,
+    "blimp": true,
+    "hp_first_encounter_r100": 28000,
+    "rbe_fortified": 98360.0,
+    "leak_lives": 55760.0
+   }
+  },
+  "rules": {
+   "camo": "any non-MOAB bloon may be camo; DDT is always camo; other MOAB-class cannot. Children inherit camo (and regrow).",
+   "regrow": {
+    "applies_to": "non-MOAB only",
+    "interval_s_per_layer": 3.0,
+    "cap": "original type",
+    "note": "regenerated layers do not count for pop count since v38"
+   },
+   "fortified": {
+    "applies_to": [
+     "lead",
+     "ceramic",
+     "moab",
+     "bfb",
+     "zomg",
+     "ddt",
+     "bad"
+    ],
+    "effect": "hp x2 (lead 1->4); children inherit fortified (fortified MOAB -> fortified ceramics)"
+   },
+   "moab_class": {
+    "targeted_by": "blimp attacks; only blimp-specific stuns affect them",
+    "bad": "immune to stun/slow/knockback"
+   },
+   "pop_cash": "$1 per pop before round-based tax (see rounds.json cash_per_pop_tax_percent_from_round)",
+   "freeplay_from_round_81": {
+    "ceramic_becomes": "super_ceramic",
+    "two_child_bloons_spawn_one": true,
+    "health_ramp_moab_class": "r81-100: 1+0.02*(r-80); r101-124: 1.45+0.05*(r-101); r125-150: 2.75+0.15*(r-125); r151-250: 6.85+0.35*(r-151); 251-300 +1.0/r; 301-400 +1.5/r; 401-500 +2.5/r; 501+ +5/r (hp scaling only to MOAB-class layers)",
+    "speed_ramp_all_bloons": "r81-100: 1+0.02*(r-80); r101-150: 1.6+0.02*(r-101); r151-200: 3.0+0.02*(r-151); r201-251: 4.5+0.02*(r-201); r252+: 6+0.02*(r-252)"
+   }
+  }
+ }
+}

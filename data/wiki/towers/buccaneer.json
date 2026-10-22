@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Monkey_Buccaneer_(BTD6)"],"data":{"id":"buccaneer","name":"Monkey Buccaneer","category":"Military","costMedium":400,"footprintRadius":8,"range":60,"waterOnly":true,
+"targeting":["First","Last","Close","Strong","Camo Prioritization (from Crow's Nest)"],
+"base":{"cooldown":1,"copies":2,"copiesNote":"fires from both sides if targets on both","pierce":4,"damage":1,"damageType":"Sharp","projectileSpeed":200,"lifespan":0.6,"camo":false,"lead":false},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Faster Shooting","cost":275,"effects":{"cooldown":0.75}},
+{"name":"Double Shot","cost":425,"effects":{"dartsPerCannon":2,"grapeBonus":"+1 grape if Grape Shot"}},
+{"name":"Destroyer","cost":3350,"effects":{"cooldown":0.15,"grapeCooldown":0.2025,"note":"5x attack speed, no other upgrades"}},
+{"name":"Aircraft Carrier","cost":8000,"effects":{"aircraft":{"max":3,"deployCooldown":1.25,"attack":"radial strafe + missiles at MOAB-class"}}},
+{"name":"Carrier Flagship","cost":26000,"effects":{"aircraftWeaponsImproved":true,"auraBuff":"all water towers and Monkey Aces on screen incl itself: -20% attack cooldown","platforms":2,"hotShotDot":"4 to 9"}}],
+"2":[
+{"name":"Grape Shot","cost":550,"effects":{"grapes":5,"spreadDeg":90,"damage":1,"pierce":1,"cooldown":1.35,"damageType":"Sharp"}},
+{"name":"Hot Shot","cost":500,"effects":{"grapeDamageType":"Fire","lead":true,"frozen":true,"purple":false,"dot":{"damage":2,"interval":1.5,"duration":3.1}}},
+{"name":"Cannon Ship","cost":900,"effects":{"replacesDarts":true,"bomb":{"cooldown":1.3,"damage":2,"pierce":20,"radius":40,"damageType":"Explosion","frags":8},"grapeDamage":3}},
+{"name":"Monkey Pirates","cost":3900,"effects":{"bombsPerShot":3,"bombDamage":3,"bombMoabBonus":5,"grapeDamage":4,"grapeCeramicBonus":2},"ability":{"name":"MOAB Takedown","cooldown":45,"effect":"Harpoons and destroys one MOAB/BFB/visible DDT (strongest first)"}},
+{"name":"Pirate Lord","cost":29000,"effects":{"cooldownMult":0.65,"grapeDamage":8,"grapeCeramicBonus":4,"dotDamage":9,"bombMoabBonus":8,"fragDamage":6,"fragMoabBonus":3},"ability":{"name":"MOAB Takedown","cooldown":30,"hooks":6,"zomgCost":3,"effect":"+100% pop income on hooked bloons"}}],
+"3":[
+{"name":"Long Range","cost":200,"effects":{"range":71,"pierce":"+2","projectileSpeed":"+25%"}},
+{"name":"Crow's Nest","cost":350,"effects":{"camo":true}},
+{"name":"Merchantman","cost":2400,"effects":{"cashPerRound":200,"damageMult":"x2 if cash >= $10,000"}},
+{"name":"Favored Trades","cost":5500,"effects":{"cashPerRound":500,"dartCooldown":0.5,"grapeCooldown":0.75,"damageMult":"x2 at $10k-49,999; x3 at >= $50k","sellValueAura":"+4% stacking x3 (max 12%, cap 95% of cost)","hotShotDot":4}},
+{"name":"Trade Empire","cost":23000,"effects":{"cashPerRound":800,"buff":"up to 20 other Merchantmen/Favored Trades: +cash scaling, +1 damage, +1 ceramic, +1 MOAB","damageMult":"x2/x3 by cash","hotShotDot":9}}]},
+"paragon":{"name":"Navarch of the Seas","cost":550000,"effect":"6 triple-barrel turrets (exploding cannonballs + grapes), 3 fighter planes, 10 auto grappling hooks on MOAB-class; ability instantly destroys strongest MOAB-class incl BADs; land platforms, end-round income, sell-value aura, -cooldown for water towers and Aces, buffs up to 40 Merchantmen/Favored Trades. Requires 3 tier-5 Buccaneers.","uncertain":true}}}

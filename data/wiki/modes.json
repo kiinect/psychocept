@@ -1,0 +1,108 @@
+{
+ "source": [
+  "https://bloons.fandom.com/wiki/Standard_Mode",
+  "https://bloons.fandom.com/wiki/Easy_Difficulty",
+  "https://bloons.fandom.com/wiki/Medium_Difficulty",
+  "https://bloons.fandom.com/wiki/Hard_Difficulty",
+  "https://bloons.fandom.com/wiki/Impoppable_(BTD6)",
+  "https://bloons.fandom.com/wiki/Primary_Only",
+  "https://bloons.fandom.com/wiki/Military_Only",
+  "https://bloons.fandom.com/wiki/Magic_Monkeys_Only",
+  "https://bloons.fandom.com/wiki/Deflation_(BTD6)",
+  "https://bloons.fandom.com/wiki/Half_Cash",
+  "https://bloons.fandom.com/wiki/Apopalypse_(BTD6)",
+  "https://bloons.fandom.com/wiki/Double_HP_MOABs",
+  "https://bloons.fandom.com/wiki/C.H.I.M.P.S.",
+  "https://bloons.fandom.com/wiki/Reverse_Mode",
+  "https://bloons.fandom.com/wiki/Sandbox_Mode"
+ ],
+ "data": {
+  "status": "fetched via Fandom api.php (curl); from wiki prose. Round-range/win-round values not verified.",
+  "difficulties": {
+   "easy": {
+    "starting_cash": 650,
+    "lives": 200,
+    "tower_cost_mult": 0.85,
+    "bloon_speed_mult": 0.9,
+    "r40_moab_hp_mult": 0.66,
+    "uncertain": true
+   },
+   "medium": {
+    "starting_cash": 650,
+    "lives": 150,
+    "tower_cost_mult": 1.0,
+    "bloon_speed_mult": 1.0,
+    "uncertain": true
+   },
+   "hard": {
+    "starting_cash": 650,
+    "lives": 100,
+    "tower_cost_mult": 1.08,
+    "bloon_speed_mult": 1.15,
+    "uncertain": true
+   },
+   "impoppable": {
+    "lives": 1,
+    "tower_cost_mult": 1.2,
+    "start_round": 6,
+    "end_round": 100,
+    "notes": "no lives regen; freeplay scaling after 80",
+    "uncertain": true
+   }
+  },
+  "modes": {
+   "standard": {
+    "rules": "no modifiers beyond difficulty; Sandbox set by default",
+    "uncertain": true
+   },
+   "primary_only": {
+    "rules": "only Primary monkeys + hero; otherwise Easy standard (200 lives, towers 85%)",
+    "unlock": "beat Easy Standard on the map",
+    "uncertain": true
+   },
+   "military_only": {
+    "rules": "only Military monkeys (Sniper, Sub, Buccaneer, Ace, Heli, Mortar, Dartling) + hero; sub-mode of Medium",
+    "unlock": "beat Standard Medium",
+    "uncertain": true
+   },
+   "magic_only": {
+    "rules": "only Magic monkeys (Ninja, Wizard, Super, Alchemist, Druid, Mermonkey) + hero",
+    "unlock": "beat Standard Hard",
+    "uncertain": true
+   },
+   "deflation": {
+    "starting_cash": 20000,
+    "income": "all income disabled except Three Mines crystals; no continues; selling refunds; start round 31",
+    "uncertain": true
+   },
+   "half_cash": {
+    "rules": "all income halved (cash drops, thrives); Monkey Bank rate unchanged",
+    "unlock": "Magic Only + Double HP MOABs",
+    "uncertain": true
+   },
+   "reverse": {
+    "rules": "bloons spawn from exit and exit at entrance; reverse medal",
+    "uncertain": true
+   },
+   "apopalypse": {
+    "rules": "randomized waves, no break; next round starts when prior round's bloons all sent",
+    "unlock": "Military Only on that track",
+    "uncertain": true
+   },
+   "double_hp_moabs": {
+    "rules": "all MOAB-class HP x2 (stacks with fortified); MOAB 400, BFB 1400",
+    "unlock": "Magic Only",
+    "uncertain": true
+   },
+   "chimps": {
+    "rules": "no continues, hearts lost, income, Monkey Knowledge, powers, selling; start round 6",
+    "unlock": "beat Impoppable",
+    "uncertain": true
+   },
+   "sandbox": {
+    "start": "$9,999,999 cash, 999,999,999 lives (BTD6, changeable)",
+    "uncertain": true
+   }
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Mortar_Monkey_(BTD6)"],"data":{"id":"mortar","name":"Mortar Monkey","category":"Military","costMedium":600,"footprintRadius":11,"range":30,"rangeNote":"display range 30; targeting range infinite; player picks target point","waterOnly":false,
+"targeting":["Manual target point (player-placed)"],"targetingUncertain":true,
+"base":{"cooldown":2,"spread":18,"damage":2,"damageType":"Explosion","pierce":25,"blastRadius":20,"ignoresBlockers":true,"camo":false,"lead":true,"black":false},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Bigger Blast","cost":300,"effects":{"pierce":"+20","radiusMult":1.4,"blastRadius":28}},
+{"name":"Bloon Buster","cost":500,"effects":{"damage":3}},
+{"name":"Shell Shock","cost":825,"effects":{"blastRadius":38,"stunBlast":{"radius":19,"stun":0.5,"excludes":"Black, Zebra"},"shockwave":{"radius":57,"damage":1,"innerExclusion":"50% of blast radius","excludes":"DDT"}}},
+{"name":"The Big One","cost":7000,"effects":{"main":{"radius":58,"pierce":85,"damage":10},"shockwave":{"radius":87,"pierce":85,"damage":2,"ceramicBonus":2,"damageType":"Normal"},"stun":{"radius":29,"pierce":85,"duration":0.75}}},
+{"name":"The Biggest One","cost":36000,"effects":{"pierce":200,"main":{"damage":25,"radius":74,"ceramicMoabBonus":30},"shockwave":{"radius":111,"ceramicBonus":20},"stun":{"radius":37,"moab":0.4,"bfbDdt":0.2,"zomg":0.1}}}],
+"2":[
+{"name":"Faster Reload","cost":400,"effects":{"cooldown":1.5}},
+{"name":"Rapid Reload","cost":500,"effects":{"cooldown":1.08}},
+{"name":"Heavy Shells","cost":900,"effects":{"attackSpeed":"+33%","damageType":"Normal","bonusDamage":{"lead":1,"moab":1,"fortified":1,"stunned":2,"ceramic":3}}},
+{"name":"Artillery Battery","cost":6500,"effects":{"cooldown":0.27,"barrels":3},"ability":{"name":"Bombardment","cooldown":60,"duration":8,"effect":"4x attack speed (0.0675s), +15% blast radius"}},
+{"name":"Pop and Awe","cost":38000,"effects":{"attackSpeed":"4x vs Artillery Battery","stunnedBonus":8,"blastRadius":23},"ability":{"cooldown":60,"duration":8,"effect":"Stuns all bloons (not BAD/boss), 20 damage/s to all on screen and on spawn; Artillery Batteries get +1 BAD/boss damage"}}],
+"3":[
+{"name":"Increased Accuracy","cost":200,"effects":{"spread":8,"camo":true}},
+{"name":"Burny Stuff","cost":400,"effects":{"burn":{"damage":1,"interval":1.25,"duration":3.85,"type":"Fire"}}},
+{"name":"Signal Flare","cost":1100,"effects":{"decamoBlast":{"pierce":50,"radius":52,"damage":0}}},
+{"name":"Shattering Shells","cost":9500,"effects":{"strips":"Camo, Regrow, Fortified (up to BFB)","burn":{"damage":5,"moabDamage":20,"moabOnlyTotal":25}}},
+{"name":"Blooncineration","cost":40000,"effects":{"wallOfFire":{"damage":1,"pierce":20,"rehit":0.1,"duration":4.5,"radius":15},"burn":{"interval":0.75,"damage":5,"moabDamage":100},"defortifiesDDT":true}}]},
+"paragon":null,"paragonNote":"No Paragon section on wiki page."}}
