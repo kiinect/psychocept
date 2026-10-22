@@ -1,0 +1,4 @@
+# Task 10-meta-systems
+Repo: this dir (read the existing src/ first: src/sim.ts, src/main.ts, src/towers/*, tests). Original code and art only; never extract/copy/trace game assets. Sim deterministic and DOM-free; data-driven. Wiki tables in data/wiki/*.json (prose; hand-code numbers, mark ambiguity `// uncertain:`), original maps in data/maps.json. `npx tsc && npx vitest run && npx vite build` must be clean. Do not touch .re/ or .tasks/. Add tests for what you build (each tier/feature fires in a headless run). Final message: 5 lines max (files changed, stubs, deviations).
+
+Meta systems: XP and ranks (data/wiki/meta.json table), Monkey Money, powers (all 44 with costs/effects where feasible; implement the main in-game ones), round skip, autoplay, fast-forward, save/resume mid-game and profile in localStorage, achievements-lite, insta-monkeys optional skip, settings. Sell refund rules, income rules from meta.json.

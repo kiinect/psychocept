@@ -1,0 +1,8 @@
+# Task 03: Military towers (Codex worker)
+Repo: this dir. Read src/sim.ts, src/main.ts, src/towers/types.ts, src/towers/index.ts and one existing tower (e.g. bomb.ts, ice.ts) for the established pattern, then data/wiki/towers/{sniper,sub,buccaneer,ace,heli,mortar,dartling}.json (prose stats; keep wiki costs). Original code only; sim deterministic and DOM-free. `npx tsc && npx vitest run && npx vite build` must be clean. Do not touch data/, .re/, .tasks/.
+Do:
+1. Hand-code numeric tier tables for Sniper Monkey, Monkey Sub, Monkey Buccaneer, Monkey Ace, Heli Pilot, Mortar Monkey, Dartling Gunner (all 105 upgrades) following the existing tower framework; mark ambiguous prose with `// uncertain:`.
+2. Needed framework additions, kept small: global range (sniper), manual target point (mortar, heli move-to/dartling aim-at-cursor: simple click-to-set target), flying/circling movement paths (ace loop, heli follows target), water placement (map gets a `water: Rect[]` list; sub/buccaneer water-only, others land-only; add one water pond to the default map off the track), ability system hook (cooldown timer + trigger button, generic; implement each tower's tier-5/4 abilities where cheap, otherwise stub with `// TODO(ability)` and a test marking it skipped), camo detection per tier, pop-count cash for e.g. sniper elite buffs ignored for now.
+3. Shop buttons for all 7; placement validation incl. water rule.
+4. Tests: every tier of every Military tower purchasable and produces an effect in a headless run (water towers placed in water), water/land placement rules, mortar/heli target setting.
+Final message: 5 lines max (files changed, abilities stubbed, deviations).
