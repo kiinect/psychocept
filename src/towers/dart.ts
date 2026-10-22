@@ -1,14 +1,9 @@
 // Original numeric transcription of data/wiki/towers/dart.json. Paths are zero-based.
-export type Tiers = [number, number, number];
-export interface DartStats {
-  damage: number; pierce: number; cooldown: number; range: number;
-  projectileSpeed: number; lifespan: number; camo: boolean; lead: boolean;
-  frozen: boolean; projectiles: number; spread: number; critEvery: number; critDamage: number;
-  ceramicBonus: number; fortifiedBonus: number; leadBonus: number;
-  bounce: boolean; knockback: boolean; split: boolean; fanClub: number;
-}
+import { DEFAULT_STATS, canUpgrade, type TowerStats, type Tiers, type TowerDefinition } from './types';
+export { canUpgrade, type Tiers } from './types';
+export type DartStats = TowerStats;
 export const BASE: DartStats = {
-  damage: 1, pierce: 2, cooldown: 0.95, range: 32, projectileSpeed: 300,
+  ...DEFAULT_STATS, damage: 1, pierce: 2, cooldown: 0.95, range: 32, projectileSpeed: 300,
   lifespan: 0.25, camo: false, lead: false, frozen: false, projectiles: 1, spread: 0,
   critEvery: 0, critDamage: 0, ceramicBonus: 0, fortifiedBonus: 0, leadBonus: 0,
   bounce: false, knockback: false, split: false, fanClub: 0,
@@ -39,11 +34,6 @@ export const DART_TIERS: readonly (readonly DartTier[])[] = [
     tier('Crossbow Master', 21500, { damage: 8, pierce: 8, cooldown: 0.475, range: 80, lifespan: 0.3375, projectileSpeed: 350 * 4 / 3, camo: true, lead: true, frozen: true, projectiles: 2, critEvery: 5, critDamage: 80 }),
   ],
 ];
-export function canUpgrade(tiers: Tiers, path: number): boolean {
-  if (!Number.isInteger(path) || path < 0 || path > 2) return false;
-  const next = [...tiers]; next[path]++;
-  return next.every(n => n >= 0 && n <= 5) && next.filter(n => n > 0).length <= 2 && next.filter(n => n > 2).length <= 1;
-}
 export function dartStats(tiers: Tiers): DartStats {
   const [a, b, c] = tiers;
   const main = a >= 3 ? 0 : c >= 3 ? 2 : b >= 3 ? 1 : -1;
@@ -56,3 +46,5 @@ export function dartStats(tiers: Tiers): DartStats {
   }
   return stats;
 }
+
+export const dart: TowerDefinition = { name: 'Dart Monkey', cost: 200, footprint: 6, color: 0x8a5a2b, base: BASE, paths: DART_TIERS, stats: dartStats };
