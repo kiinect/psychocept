@@ -22,7 +22,9 @@ jobs:
       - run: npm ci
       - run: npx tsc
       - run: npx vitest run
-      - run: npx vite build   # copies public/CNAME into dist/ if present
+      - run: npx vite build   # copies public/CNAME into dist/
+        env:
+          VITE_RELAY_URL: ${{ vars.VITE_RELAY_URL }}   # repo variable: wss://mpt-relay.<account>.workers.dev
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

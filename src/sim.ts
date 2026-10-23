@@ -32,7 +32,7 @@ export interface DamageStatus { until: number; next: number; interval: number; d
 export interface Bloon { goldUntil?: number; concoction?: TowerStats; stickyUntil?: number; noChildren?: boolean; trojan?: boolean; cashMult?: number; burn?: DamageStatus; freezeLayers?: number; slowUntil?: number; icicle?: { until: number; next: number; stats: TowerStats }; shardStats?: TowerStats; frozenUntil?: number; stunnedUntil?: number; slow?: number; glue?: GlueStatus; brittleUntil?: number; brittle?: number; id: number; type: string; dist: number; hp: number; camo?: boolean; fortified?: boolean; regrow?: boolean; lane?: number; regrowMax?: string; regrowAt?: number; spd?: number }
 export const TARGETING = ['First', 'Last', 'Close', 'Strong'] as const;
 export type Targeting = typeof TARGETING[number];
-export interface Tower extends Pt, TowerStats { farmAccounted?: number; farmCreated?: number; farmNext?: number; bank?: number; debt?: number; ultra?: number; overclockUntil?: number; supportTarget?: Tower; mergedInto?: Tower; merges?: Tower[]; degree?: number; paragonPops?: number; opolisIncome?: number; freeDarts?: number; roundUses?: number; magicNext?: Record<string, number>; magicActs?: number; graveyard?: number; abilityUses?: number; purchaseLives?: number; oakLives?: number; wrathDamage?: number; lastDamage?: number; blackHoleUntil?: number; blackHoleReady?: number; blackHoleUses?: number; brew?: { source: Tower; until: number; shots: number; level: number }; dip?: { source: Tower; shots: number }; transformedUntil?: number;  aimAngle: number; targetPoint: Pt; flight: Pt; rotorReady: number; type: TowerKind; tiers: Tiers; cd: number; cost: number; targeting: Targeting; shots: number; abilityReady: number; abilityUntil: number; abilityNext: number; secondaryReady: number; orbitReady: number; blitzRound: number; buffUntil: number }
+export interface Tower extends Pt, TowerStats { /** Co-op: index of the player who bought it. */ player?: number; farmAccounted?: number; farmCreated?: number; farmNext?: number; bank?: number; debt?: number; ultra?: number; overclockUntil?: number; supportTarget?: Tower; mergedInto?: Tower; merges?: Tower[]; degree?: number; paragonPops?: number; opolisIncome?: number; freeDarts?: number; roundUses?: number; magicNext?: Record<string, number>; magicActs?: number; graveyard?: number; abilityUses?: number; purchaseLives?: number; oakLives?: number; wrathDamage?: number; lastDamage?: number; blackHoleUntil?: number; blackHoleReady?: number; blackHoleUses?: number; brew?: { source: Tower; until: number; shots: number; level: number }; dip?: { source: Tower; shots: number }; transformedUntil?: number;  aimAngle: number; targetPoint: Pt; flight: Pt; rotorReady: number; type: TowerKind; tiers: Tiers; cd: number; cost: number; targeting: Targeting; shots: number; abilityReady: number; abilityUntil: number; abilityNext: number; secondaryReady: number; orbitReady: number; blitzRound: number; buffUntil: number }
 export interface Collectible extends Pt { owner:Tower; value:number; until:number }
 export interface RoadItem { owner:Tower; dist:number; until:number; round:number; carry:number; pierce:number; stats:TowerStats; kind: 'spike' | 'foam' | 'trap'; stored:number; lane:number; fragment?:boolean; hit:Set<number> }
 export interface Sentry extends Pt { owner:Tower; until:number; next:number; stats:TowerStats; variant:number }
@@ -76,7 +76,7 @@ const POWER_UNIT_R: Record<string, number> = { pontoon: 32, portable_lake: 14, b
 export interface PowerTrap { id: string; lane: number; dist: number; left: number; upgraded: boolean; hit: Map<number, number> }
 export interface PowerUnit extends Pt { id: string; r: number; range: number; untilRound: number }
 /** Between-rounds state a run save keeps (bloons, projectiles and timed zones are mid-round only). */
-const SAVE_FIELDS = ['cash', 'lives', 'round', 'tick', 'nextId', 'won', 'laneRR', 'towers', 'hero', 'heroPlaced', 'roadItems', 'sentries',
+const SAVE_FIELDS = ['wallets', 'mapSplit', 'lives', 'round', 'tick', 'nextId', 'won', 'laneRR', 'towers', 'hero', 'heroPlaced', 'roadItems', 'sentries',
   'collectibles', 'powerUnits', 'powerTraps', 'activePowers', 'thrive', 'purchased', 'freeTowerUsed'] as const;
 /** JSON-safe encoding: tower references become {$t:index}, Sets/Maps/Infinity get tags, so links (merges, brew sources, owners) survive. */
 function encodeState(v: unknown, towers: unknown[], top = false): unknown {
@@ -149,7 +149,11 @@ export class Sim {
   roadItems: RoadItem[] = []; sentries: Sentry[] = []; roundStartTick=0; modeId?: string;
   activePowers: { id: string; until: number }[] = []; powerTraps: PowerTrap[] = []; powerUnits: PowerUnit[] = [];
   thrive = { untilRound: -1, mult: 1 };
-  cash: number; lives: number; round = 0; tick = 0; nextId = 1; rng = mulberry32(1);
+  /** Co-op: one wallet per player; `cash` is the acting player's wallet (single player = wallets[0]). */
+  wallets: number[] = [0]; actor = 0; private payee: number | null = null; mapSplit = false;
+  get cash() { return this.wallets[this.actor] ?? 0; }
+  set cash(v: number) { this.wallets[this.actor] = v; }
+  lives: number; round = 0; tick = 0; nextId = 1; rng = mulberry32(1);
   roundActive = false; won = false; rules: Rules = { ...STANDARD_RULES };
   lanes: Pt[][]; private lens: number[][] = []; laneRR = 0;
   hero: Hero | null = null;
@@ -203,6 +207,7 @@ export class Sim {
   }
   canPlace(x: number, y: number, type: TowerKind = 'dart', ignore?: Tower) {
     const r = TOWERS[type].footprint;
+    if (this.mapSplit && this.zoneOf(x) !== this.actor) return false;
     if (!this.inBounds(x, y, r)) return false;
     const { contained, overlaps } = this.waterAt(x, y, r);
     const abyssLand = type !== 'mermonkey' && this.towers.some(t => t.type === 'mermonkey' && t.tiers[0] === 5 && Math.hypot(t.x-x,t.y-y) <= 32);
@@ -291,8 +296,9 @@ export class Sim {
     if (this.gameOver || this.cash < cost || this.rules.allowed && !this.rules.allowed(type) || !Number.isFinite(x) || !Number.isFinite(y)) return false;
     if (free) this.freeTowerUsed = true; else if (type === 'dart' && cost === 0) this.freeDartSource()!.freeDarts!--;
     this.purchased.add(type);
+    const player = this.actor;
     this.cash -= cost;
-    this.towers.push({ ...def.base, type, x, y, aimAngle: -Math.PI / 2, targetPoint: { x, y: Math.max(0, y - 40) }, flight: { x, y }, rotorReady: 0, tiers: [0, 0, 0], cd: 0, cost, targeting: type === 'ice' || type === 'tack' ? 'Close' : 'First', shots: 0, abilityReady: 0, abilityUntil: 0, abilityNext: 0, secondaryReady: 0, orbitReady: 0, blitzRound: -1, buffUntil: 0, purchaseLives: this.lives }); return true;
+    this.towers.push({ ...def.base, type, x, y, aimAngle: -Math.PI / 2, targetPoint: { x, y: Math.max(0, y - 40) }, flight: { x, y }, rotorReady: 0, tiers: [0, 0, 0], cd: 0, cost, targeting: type === 'ice' || type === 'tack' ? 'Close' : 'First', shots: 0, abilityReady: 0, abilityUntil: 0, abilityNext: 0, secondaryReady: 0, orbitReady: 0, blitzRound: -1, buffUntil: 0, purchaseLives: this.lives, player }); return true;
   }
   placeTower(x: number, y: number, type: TowerKind) {
     return this.canPlace(x, y, type) && this.addTower(x, y, type);
@@ -1154,6 +1160,9 @@ export class Sim {
   }
   collect(index:number) {
     const t=this.towers[index];if(this.gameOver || !t)return false;
+    return this.payTo(t.player,()=>this.collectFrom(t));
+  }
+  private collectFrom(t:Tower) {
     let collected=false;
     if((t.bank??0)>0){this.earnIncome(t.bank!);t.bank=0;collected=true;}
     for(const banana of [...this.collectibles])if(banana.owner===t){this.collectBanana(banana);collected=true;}
@@ -1168,7 +1177,7 @@ export class Sim {
   }
   private collectBanana(banana:Collectible,fraction=1) {
     banana.owner.farmAccounted=(banana.owner.farmAccounted??0)+banana.value;
-    this.earnIncome(banana.value*fraction);this.collectibles.splice(this.collectibles.indexOf(banana),1);
+    this.payTo(banana.owner.player,()=>this.earnIncome(banana.value*fraction));this.collectibles.splice(this.collectibles.indexOf(banana),1);
   }
   private runCollectibles() {
     for(const banana of [...this.collectibles]) {
@@ -1183,7 +1192,19 @@ export class Sim {
     // uncertain: the loan prose omits repayment fraction; half of subsequent income repays debt.
     let repayment=amount*(this.knowledge.has('Backroom Deals')?0.4:0.5);
     for(const t of this.towers)if((t.debt??0)>0){const paid=Math.min(t.debt!,repayment);t.debt!-=paid;repayment-=paid;amount-=paid;}
-    this.cash+=amount;
+    // Co-op: pop cash and round bonuses go to every player in full; tower income goes to its owner (see payTo).
+    if(this.wallets.length>1 && this.payee===null)for(let i=0;i<this.wallets.length;i++)this.wallets[i]+=amount;
+    else this.wallets[this.payee??this.actor]+=amount;
+  }
+  /** Run fn with income credited to one player (a tower's owner) instead of everyone. */
+  payTo<T>(owner: number | undefined, fn: () => T): T { const prev = this.payee; this.payee = owner ?? 0; try { return fn(); } finally { this.payee = prev; } }
+  /** Co-op setup: n wallets with the same starting cash; map split gives each player a vertical zone. */
+  setPlayers(n: number, split = false) { const c = this.wallets[0]; this.wallets = Array.from({ length: Math.max(1, n) }, () => c); this.mapSplit = split && n > 1; }
+  zoneOf(x: number) { const n = this.wallets.length; return Math.max(0, Math.min(n - 1, Math.floor(x / (this.width / n)))); }
+  /** Co-op: hand cash to another player. */
+  give(to: number, amount: number) {
+    if (this.gameOver || !Number.isInteger(to) || to < 0 || to >= this.wallets.length || to === this.actor || !(amount > 0) || amount > this.cash) return false;
+    this.cash -= amount; this.wallets[to] += amount; return true;
   }
   /** Income (round bonus, farms, banks, heroes): scaled once by the mode's incomeMult before loan repayment. */
   earnIncome(amount:number) { this.credit(amount*this.rules.incomeMult); }
@@ -1211,7 +1232,7 @@ export class Sim {
         const cap=(t.tiers[1]>=4?10000:7000)+(this.knowledge.has('Bigger Banks')?2500:0);
         t.bank=Math.min(cap,((t.bank??0)+(suppress?0:this.roundIncome(t)))*1.15);
         if(t.tiers[2]>=2 && t.bank>=cap)this.collect(this.towers.indexOf(t));
-      } else if(!suppress)this.earnIncome(Math.max(0,this.roundIncome(t)-(t.type==='farm'?(t.farmAccounted??0):0)));
+      } else if(!suppress)this.payTo(t.player,()=>this.earnIncome(Math.max(0,this.roundIncome(t)-(t.type==='farm'?(t.farmAccounted??0):0))));
       if(t.type==='farm' && t.tiers[2]===5)this.lives+=15;
       else if(t.type==='farm' && t.tiers[2]>=3 && this.knowledge.has('Healthy Bananas'))this.lives+=t.tiers[2]===4?3:1;
       if(t.type==='village' && t.tiers[2]>=4)t.freeDarts=(t.freeDarts??0)+1;
@@ -1250,7 +1271,8 @@ export class Sim {
       state.towers.forEach((t: unknown, i: number) => Object.assign(towers[i], decodeState(t, towers)));
       for (const k of SAVE_FIELDS) if (k !== 'towers' && k in state) decoded[k] = decodeState(state[k], towers);
       const arr = (k: string) => decoded[k] === undefined || Array.isArray(decoded[k]), h = decoded.hero as Hero | null | undefined;
-      if (!Number.isFinite(decoded.cash) || !Number.isFinite(decoded.lives) || !Number.isFinite(decoded.round) || !Number.isFinite(decoded.tick)
+      if (decoded.wallets === undefined && Number.isFinite(state.cash)) decoded.wallets = [state.cash]; // saves from before co-op
+      if (!Array.isArray(decoded.wallets) || !(decoded.wallets as unknown[]).every(Number.isFinite) || !Number.isFinite(decoded.lives) || !Number.isFinite(decoded.round) || !Number.isFinite(decoded.tick)
         || !towers.every(t => TOWERS[t.type] && Number.isFinite(t.x) && Number.isFinite(t.y) && Array.isArray(t.tiers) && t.tiers.length === 3)
         || !['roadItems', 'sentries', 'collectibles', 'powerUnits', 'powerTraps', 'activePowers'].every(arr)
         || h != null && (typeof h !== 'object' || !HEROES[h.kind] || !h.stats || !Number.isFinite(h.x) || !Number.isFinite(h.y))) return false;
@@ -1435,7 +1457,7 @@ export class Sim {
         }
       }
       if(item.kind==='trap' && item.stored>0 && (item.pierce<=0 || owner.tiers[1]>=1 || !this.bloons.length)) {
-        this.credit(item.stored*(owner.tiers[2]===5?3:2)*popCashMultiplier(this.round)*this.rules.cashMult);item.pierce=0;
+        this.payTo(owner.player,()=>this.credit(item.stored*(owner.tiers[2]===5?3:2)*popCashMultiplier(this.round)*this.rules.cashMult));item.pierce=0;
       }
       if(item.pierce<=0 || item.until<=this.tick) {
         if(item.kind==='spike' && (owner.tiers[0]>=4 || owner.degree)) {

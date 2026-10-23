@@ -10,7 +10,7 @@ import { initAudio } from './audio';
 import { MAPS, TIERS } from './maps/maps';
 import { drawScene } from './maps/art';
 import { createGame } from './modes/modes';
-import { showScreen } from './screens/screens';
+import { showScreen, type CoopView } from './screens/screens';
 import { initialFlow, transition, type FlowEvent } from './ui/flow';
 import { controlVisibility } from './ui/controls';
 import { priceBadge, upgradeState } from './ui/state';
@@ -21,6 +21,8 @@ import { activeKnowledge, unlockKnowledge, respecKnowledge, settingsSlot, profil
 import { gameRewards, powerButtonState, supportedPowers, type Rewards } from './ui/meta';
 import { modeById } from './modes/modes';
 import { heroControls } from './hero-ui';
+import { execute, type Command } from './net/commands';
+import { Session, validCode } from './net/session';
 import { HEROES, heroStats, type HeroKind } from './heroes';
 
 let flow = initialFlow(location.search);
@@ -45,7 +47,7 @@ root.innerHTML = `
   <main>
   <section id="field" aria-label="Tower defense map"></section>
   <header><div class="resources"><output id="lives" aria-label="Lives"></output><output id="cash" aria-label="Cash"></output></div><output id="active-powers" aria-label="Active powers"></output>
-    <div class="round-box"><output id="hud" aria-label="Round"></output><button id="settings" aria-label="Pause and settings">⚙</button></div><button id="menu" class="sr-only" aria-label="Pause game">Ⅱ</button></header>
+    <div class="round-box"><output id="hud" aria-label="Round"></output><button id="settings" aria-label="Pause and settings">⚙</button></div><div id="players" aria-label="Co-op players" hidden></div><button id="menu" class="sr-only" aria-label="Pause game">Ⅱ</button></header>
   <p id="hint" role="status">Buy a monkey, then choose a spot on the map.</p>
   <aside aria-label="Tower shop">
     <div class="side-title" id="side-title">Monkeys</div><div class="name-plate" id="side-name" aria-live="polite">Monkeys</div>
@@ -71,6 +73,11 @@ root.innerHTML = `
     <div class="dialog-actions"><button id="paragon-cancel">Cancel</button><button id="paragon" class="go">Do it</button></div></dialog>
   </main>`;
 const element = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+/** Co-op session while a co-op game runs (null in single player). */
+let net: Session | null = null;
+/** Every player action goes through here: run now in single player, send to the host in co-op. Co-op returns true = sent. */
+function act(cmd: Command): boolean { if (net) { net.act(cmd); return true; } return execute(sim, 0, cmd); }
+const mine = (i: number) => !net || (sim.towers[i]?.player ?? 0) === net.me;
 const hud = element<HTMLOutputElement>('hud');
 const field = element<HTMLElement>('field');
 const hint = element<HTMLParagraphElement>('hint');
@@ -101,7 +108,7 @@ const towerSelect = element<HTMLSelectElement>('tower-select');
 const details = element<HTMLElement>('details');
 const target = element<HTMLButtonElement>('target');
 const abilityButton = element<HTMLButtonElement>('ability');
-abilityButton.addEventListener('click', () => { sim.activate(selected); refresh(); });
+abilityButton.addEventListener('click', () => { act({ k: 'ability', i: selected }); refresh(); });
 const aim = element<HTMLButtonElement>('aim');
 const aimX = element<HTMLInputElement>('aim-x'), aimY = element<HTMLInputElement>('aim-y');
 aim.addEventListener('click', () => {
@@ -110,7 +117,7 @@ aim.addEventListener('click', () => {
   refresh();
 });
 element<HTMLButtonElement>('apply-aim').addEventListener('click', () => {
-  if (sim.setTarget(selected, { x: aimX.valueAsNumber, y: aimY.valueAsNumber })) {
+  if (act({ k: 'aim', i: selected, x: aimX.valueAsNumber, y: aimY.valueAsNumber })) {
     aiming = false; hint.textContent = 'Target point updated.'; refresh();
   } else hint.textContent = `Use coordinates within the map: X 0–${sim.width}, Y 0–${sim.height}.`;
 });
@@ -120,7 +127,7 @@ const upgradeRows = [0, 1, 2].map(path => {
   const row = document.createElement('div'); row.className = 'up-row';
   row.innerHTML = '<span class="pips v" aria-hidden="true"></span><div class="up-cur"><b></b><small></small></div><button class="up-next"></button><div class="up-closed" hidden>🔒 Path closed</div>';
   const button = row.querySelector<HTMLButtonElement>('.up-next')!;
-  button.addEventListener('click', () => { const tower = sim.towers[selected]; sim.upgrade(selected, path); selected = sim.towers.indexOf(tower); refresh(); });
+  button.addEventListener('click', () => { const tower = sim.towers[selected]; act({ k: 'upgrade', i: selected, path }); selected = sim.towers.indexOf(tower); refresh(); });
   upgrades.appendChild(row); return { row, button };
 });
 const upgradeButtons = upgradeRows.map(r => r.button);
@@ -130,10 +137,10 @@ element('paragon-investment').oninput = () => refresh();
 const paragonDialog = element<HTMLDialogElement>('paragon-dialog');
 element('paragon-open').onclick = () => { (element<HTMLInputElement>('paragon-investment')).value = '0'; refresh(); paragonDialog.showModal(); };
 element('paragon-cancel').onclick = () => paragonDialog.close();
-element<HTMLButtonElement>('collect').addEventListener('click',()=>{sim.collect(selected);refresh();});
-element<HTMLButtonElement>('support-target').addEventListener('click',()=>{if(sim.setSupportTarget(selected,Number(allySelect.value)))hint.textContent='Buff target selected.';refresh();});
-element<HTMLButtonElement>('merge').addEventListener('click',()=>{hint.textContent=sim.mergeBeast(Number(allySelect.value),selected,Number(element<HTMLSelectElement>('merge-path').value))?'Beast power merged.':'Choose an unmerged handler with a beast on the same path.';refresh();});
-element<HTMLButtonElement>('paragon').addEventListener('click',()=>{const tower=sim.towers[selected];if(sim.makeParagon(selected,Number(element<HTMLInputElement>('paragon-investment').value))){selected=sim.towers.indexOf(tower);hint.textContent='Paragon created.';}paragonDialog.close();refresh();});
+element<HTMLButtonElement>('collect').addEventListener('click',()=>{act({k:'collect',i:selected});refresh();});
+element<HTMLButtonElement>('support-target').addEventListener('click',()=>{if(act({k:'support',i:selected,target:Number(allySelect.value)}))hint.textContent='Buff target selected.';refresh();});
+element<HTMLButtonElement>('merge').addEventListener('click',()=>{hint.textContent=act({k:'merge',src:Number(allySelect.value),dst:selected,path:Number(element<HTMLSelectElement>('merge-path').value)})?'Beast power merged.':'Choose an unmerged handler with a beast on the same path.';refresh();});
+element<HTMLButtonElement>('paragon').addEventListener('click',()=>{const tower=sim.towers[selected];if(act({k:'paragon',i:selected,invest:Number(element<HTMLInputElement>('paragon-investment').value)})){selected=sim.towers.indexOf(tower);hint.textContent='Paragon created.';}paragonDialog.close();refresh();});
 const app = new Application();
 await app.init({ width: 960, height: 540, background: '#182b21', antialias: true });
 field.appendChild(app.canvas);
@@ -149,28 +156,17 @@ function resizeMap() {
 }
 new ResizeObserver(resizeMap).observe(field);
 resizeMap();
-function beginRound() { if (flow.screen !== 'game') return; if (sim.roundActive) cycleSpeed(); else if (!sim.gameOver && !sim.won) sim.startRound(roundGroups(sim.round + 1)); refresh(); }
+function beginRound() { if (flow.screen !== 'game') return; if (sim.roundActive) cycleSpeed(); else if (!sim.gameOver && !sim.won) act({ k: 'round' }); refresh(); }
 start.addEventListener('click', beginRound);
-function cycleSpeed() { speed = speed % 3 + 1; element<HTMLButtonElement>('speed').textContent = `×${speed}`; }
+function cycleSpeed() { if (net) { net.requestSpeed(net.speed % 3 + 1); return; } speed = speed % 3 + 1; element<HTMLButtonElement>('speed').textContent = `×${speed}`; }
 element<HTMLButtonElement>('speed').addEventListener('click', cycleSpeed);
 element<HTMLButtonElement>('autoplay').addEventListener('click', () => { autoplay = !autoplay; refresh(); });
 element('powers-toggle').onclick = () => { placingPower = null; category = category === 'Powers' ? 'Monkeys' : 'Powers'; refresh(); };
 element('close-inspector').onclick = () => { selected = -1; heroTools = false; refresh(); };
-target.addEventListener('click', () => { sim.cycleTargeting(selected); refresh(); });
+target.addEventListener('click', () => { act({ k: 'target', i: selected, dir: 1 }); refresh(); });
 element('target-next').onclick = () => target.click();
-element('target-prev').onclick = () => {
-  const original = sim.towers[selected]?.targeting;
-  if (!original) return;
-  let previous = original;
-  for (let i = 0; i < 20; i++) {
-    sim.cycleTargeting(selected);
-    if (sim.towers[selected].targeting === original) break;
-    previous = sim.towers[selected].targeting;
-  }
-  sim.towers[selected].targeting = previous;
-  refresh();
-};
-sell.addEventListener('click', () => { if (sim.sell(selected)) selected = -1; refresh(); });
+element('target-prev').onclick = () => { act({ k: 'target', i: selected, dir: -1 }); refresh(); };
+sell.addEventListener('click', () => { if (act({ k: 'sell', i: selected })) selected = -1; refresh(); });
 towerSelect.addEventListener('change', () => { selected = Number(towerSelect.value); placingPower = null; placing = null; aiming = false; heroTools = false; refresh(); });
 function newGame(map: string, mode: string) {
   runStore.clear(); contextStore.clear();
@@ -201,11 +197,50 @@ function changeSetting<K extends keyof Settings>(key: K, value: Settings[K]) {
   root.classList.toggle('reduced-motion', reducedMotion);
 }
 syncAudio();
+// ----- co-op -----
+let session: Session | null = null, coopReady = false;
+let coopName = (() => { try { return localStorage.getItem('mpt.name') || 'Monkey'; } catch { return 'Monkey'; } })();
+function coopView(): CoopView {
+  const S = session;
+  return { name: coopName, code: S?.code ?? '', status: S?.status ?? 'idle', error: S?.error ?? '', host: !!S?.host, myId: S?.id ?? '',
+    lobby: S?.lobby ?? { players: [], map: flow.map, mode: 'easy', split: true }, canStart: !!S?.canStart, ready: coopReady,
+    setName: n => { coopName = n; try { localStorage.setItem('mpt.name', n); } catch { /* private mode */ } },
+    create: () => startSession(x => x.create()),
+    join: code => { if (validCode(code)) startSession(x => x.join(code)); else { const x = new Session(coopName); x.error = 'Codes are 6 letters or digits.'; x.status = 'closed'; session = x; renderScreen(); } },
+    leave: () => { const was = session; session = null; net = null; was?.leave(); if (flow.screen === 'lobby') send({ type: 'back' }); else renderScreen(); },
+    setReady: r => { coopReady = r; session?.setReady(r); renderScreen(); },
+    configure: c => session?.configure(c), start: () => session?.start() };
+}
+function startSession(go: (s: Session) => void) {
+  session?.leave(); const S = new Session(coopName); session = S; coopReady = false;
+  S.onChange = () => {
+    if (session !== S) return;
+    if (S.status === 'lobby' && flow.screen === 'social') send({ type: 'lobby' });
+    else if (S.status === 'closed' && flow.screen === 'lobby') send({ type: 'back' });
+    else if (S.status === 'closed' && net === S) { hint.textContent = S.error || 'Disconnected.'; net = null; }
+    else if (flow.screen === 'social' || flow.screen === 'lobby') renderScreen();
+  };
+  S.onStart = coopSim => { net = S; startCoopGame(coopSim); send({ type: 'mpStart' }); };
+  S.onEffect = (c, ok) => {
+    if (c.p !== S.me) return;
+    if (ok && c.cmd.k === 'power') { profile = usePower(profile, c.cmd.id) ?? profile; profileStore.save(profile); }
+    if (ok && c.cmd.k === 'place') { selected = sim.towers.length - 1; hint.textContent = 'Monkey placed.'; }
+    if (!ok) hint.textContent = 'That action could not be done (not enough cash, not your monkey, or out of your zone).';
+  };
+  go(S); renderScreen();
+}
+function startCoopGame(coopSim: typeof sim) {
+  rewards = undefined; recorded = false; mapId = net!.lobby.map; modeId = net!.lobby.mode; rewardedRound = modeById(modeId).startRound - 1;
+  scene.reset(); sim = coopSim; drawScene(bg, MAPS[mapId]); resizeMap();
+  placingPower = null; placingHero = null; heroUI.cancel(); selected = -1; placing = null; aiming = false; acc = 0; ended = false; pointer = null; heroTools = false; category = 'Monkeys';
+  hint.textContent = `Co-op on ${MAPS[mapId].name}. You are P${net!.me + 1}.`;
+}
 function renderScreen() {
   showScreen(root, flow, send, sim.round, {
     profile, settings: savedSettings, hasRun: !!runStore.load(), rewards, supported,
     change: changeSetting,
     buy: id => { if (!supported.has(id)) return; profile = purchasePower(profile, id); profileStore.save(profile); renderScreen(); },
+    coop: coopView(),
     knowledge: {
       learn: name => { profile = unlockKnowledge(profile, name); profileStore.save(profile); renderScreen(); },
       respec: () => { profile = respecKnowledge(profile); profileStore.save(profile); renderScreen(); },
@@ -217,7 +252,9 @@ function renderScreen() {
   if (flow.screen === 'game') start.focus();
 }
 function consumePower(id: string, point?: { x: number; y: number }) {
-  if (!(profile.powers[id] > 0) || !sim.usePower(id, point)) return false;
+  if (!(profile.powers[id] > 0) || !sim.canUsePower(id, point)) return false;
+  if (net) { net.act({ k: 'power', id, ...point }); placingPower = null; hint.textContent = `${POWER_BY_ID[id].name} sent.`; return true; } // inventory drops when it lands (onEffect)
+  if (!act({ k: 'power', id, ...point })) return false;
   profile = usePower(profile, id)!; profileStore.save(profile);
   placingPower = null; hint.textContent = `${POWER_BY_ID[id].name} used.`; return true;
 }
@@ -258,6 +295,8 @@ function send(event: FlowEvent) {
   const before = flow;
   flow = transition(flow, event);
   if (flow === before) return;
+  if (net && (event.type === 'restart' || event.type === 'continue')) { flow = before; return; } // co-op games can't be restarted locally
+  if (event.type === 'home' && session) { session.leave(); session = null; net = null; }
   if (event.type === 'restart' || event.type === 'hero') newGame(flow.map, flow.mode);
   if (event.type === 'continue') { sim.rules.winRound = Infinity; sim.won = false; ended = false; }
   if (flow.screen !== 'game') { placingPower = null; placing = null; placingHero = null; aiming = false; heroUI.cancel(); acc = 0; }
@@ -315,7 +354,7 @@ app.canvas.addEventListener('pointerdown', e => {
     refresh(); return;
   }
   if (aiming) {
-    if (sim.setTarget(selected, { x, y })) { aiming = false; hint.textContent = 'Target point updated.'; }
+    if (act({ k: 'aim', i: selected, x, y })) { aiming = false; hint.textContent = 'Target point updated.'; }
     refresh(); return;
   }
   if (placingHero) {
@@ -323,12 +362,13 @@ app.canvas.addEventListener('pointerdown', e => {
     else hint.textContent = 'Choose a valid location clear of the track, water restrictions, and towers.';
     refresh(); return;
   }
-  if(!placing && sim.collectAt({x,y})){refresh();return;}
+  if(!placing && sim.collectibles.some(b=>Math.hypot(x-b.x,y-b.y)<=(b.owner.tiers[2]>=1?75:50)) && act({k:'collectAt',x,y})){refresh();return;}
   const hit = sim.towers.findIndex(t => Math.hypot(t.x - x, t.y - y) < 16);
   if (hit >= 0) { selected = hit; heroTools = false; placing = null; }
   else if (placing) {
     if (!sim.canPlace(x, y, placing)) hint.textContent = `Choose ${TOWERS[placing].waterOnly ? 'water' : 'grass'}, clear of the track and other towers.`;
-    else if (sim.placeTower(x, y, placing)) { selected = sim.towers.length - 1; heroTools = false; placing = null; hint.textContent = 'Monkey placed. Select upgrades below.'; }
+    else if (net) { act({ k: 'place', x, y, kind: placing }); placing = null; hint.textContent = 'Placing monkey…'; }
+    else if (act({ k: 'place', x, y, kind: placing })) { selected = sim.towers.length - 1; heroTools = false; placing = null; hint.textContent = 'Monkey placed. Select upgrades below.'; }
   } else selected = -1;
   refresh();
 });
@@ -363,6 +403,12 @@ function refresh() {
   const heroKey = heroKind + heroCost;
   if (heroTile.dataset.key !== heroKey) { heroTile.innerHTML = `${portrait('hero', HEROES[heroKind].name, HEROES[heroKind].color)}<b>${HEROES[heroKind].name}</b><span class="price">${heroCost}</span>`; heroTile.dataset.key = heroKey; }
   heroTile.setAttribute('aria-pressed', String(heroTools)); heroTile.classList.toggle('placed', !!sim.hero);
+  heroTile.hidden = !!net; // uncertain: heroes are single-player only for now (one shared hero would desync)
+  const players = element('players'); players.hidden = !net;
+  if (net) {
+    const html = net.lobby.players.map((p, i) => `<span class="pchip p${i + 1}${i === net!.me ? ' me' : ''}"><b>P${i + 1}</b>${p.name} <em>$${Math.floor(sim.wallets[i] ?? 0).toLocaleString()}</em>${i !== net!.me ? `<button data-give="${i}" aria-label="Give $100 to ${p.name}">+$100</button>` : ''}</span>`).join('') + (net.desync ? '<span class="pchip warn">resync at round end</span>' : '');
+    if (players.dataset.html !== html) { players.innerHTML = html; players.dataset.html = html; players.querySelectorAll<HTMLButtonElement>('[data-give]').forEach(b => b.onclick = () => act({ k: 'give', to: Number(b.dataset.give), amount: 100 })); }
+  }
   element('hero-host').hidden = !heroTools;
   element('inspector').hidden = selected < 0 && !heroTools;
   root.classList.toggle('insp-left', !element('inspector').hidden && !element('inspector').classList.contains('dock-right'));
@@ -375,6 +421,7 @@ function refresh() {
     button.hidden = !!sim.rules.allowed && !sim.rules.allowed(type);
     button.disabled = state.disabled;
     button.classList.toggle('unaffordable', state.unaffordable);
+    button.title = `${TOWERS[type].name} · ${state.label}${state.need ? ' · ' + state.need : ''}`;
     button.setAttribute('aria-pressed', String(placing === type));
   });
   field.classList.toggle('placing', placingPower !== null || placing !== null || placingHero !== null || aiming);
@@ -406,7 +453,7 @@ function refresh() {
   target.textContent = t.targeting; target.disabled = sim.gameOver;
   element<HTMLButtonElement>('target-prev').disabled = sim.gameOver;
   element<HTMLButtonElement>('target-next').disabled = sim.gameOver;
-  element('sell-value').textContent = `$${sim.sellValue(t).toLocaleString()}`; sell.textContent = 'Sell'; sell.disabled = sim.gameOver || sim.rules.noSell;
+  element('sell-value').textContent = `$${sim.sellValue(t).toLocaleString()}`; sell.textContent = 'Sell'; sell.disabled = sim.gameOver || sim.rules.noSell || !mine(selected);
   const collect = element<HTMLButtonElement>('collect'); collect.hidden = !controls.collect;
   collect.textContent = t.type === 'farm' && t.tiers[1] >= 3 ? `Collect bank · $${(t.bank ?? 0).toFixed(0)}` : t.type === 'engineer' ? 'Collect trap' : 'Collect bananas';
   element('support-controls').hidden = !controls.support && !controls.merge;
@@ -441,7 +488,7 @@ function refresh() {
     row.querySelector('.up-cur small')!.textContent = owned ? 'Owned' : 'Not upgraded';
     const html = !capped && next ? `<b>${next.name}</b><span class="price">$${cost.toLocaleString()}</span>${state.reason ? `<small>${state.reason}</small>` : ''}` : '<b>Max upgrades</b>';
     if (button.innerHTML !== html) button.innerHTML = html;
-    button.disabled = state.disabled || capped; button.classList.toggle('max', capped); button.classList.toggle('broke', !capped && sim.cash < cost);
+    button.disabled = state.disabled || capped || !mine(selected); button.classList.toggle('max', capped); button.classList.toggle('broke', !capped && sim.cash < cost);
     button.title = next ? upgradeDescription(owned ? tiers[owned - 1].stats : TOWERS[t.type].base, next.stats) : 'Path complete';
   });
 }
@@ -450,10 +497,17 @@ refresh();
 root.classList.toggle('reduced-motion', reducedMotion);
 renderScreen();
 app.ticker.add(t => {
-  if (flow.screen !== 'game') return;
+  if (flow.screen !== 'game' && !net) return;
+  if (net) {
+    // Co-op: the host's clock drives everyone (pausing doesn't stop a shared game).
+    if (net.host && autoplay && !sim.roundActive && !sim.gameOver && !sim.won && flow.screen === 'game') act({ k: 'round' });
+    acc = Math.min(acc + Math.min(t.deltaMS / 1000, 0.25) * net.speed, 0.75);
+    const steps = Math.floor(acc / DT); acc -= steps * DT; net.frame(steps);
+  } else {
   if (autoplay && !sim.roundActive && !sim.gameOver && !sim.won) beginRound();
   acc = Math.min(acc + Math.min(t.deltaMS / 1000, 0.25) * speed, 0.75);
-  while (acc >= DT) {
+  }
+  while (!net && acc >= DT) {
     const active = sim.roundActive, round = sim.round;
     sim.step(); acc -= DT;
     if (active && !sim.gameOver && (!sim.roundActive || sim.round > round)) saveRun(round);
@@ -461,6 +515,11 @@ app.ticker.add(t => {
   }
   initAudio(sim);
   g.clear();
+  if (net && sim.mapSplit) {
+    const n = sim.wallets.length, w = sim.width / n;
+    for (let z = 0; z < n; z++) if (z !== net.me) g.rect(z * w, 0, w, sim.height).fill({ color: 0x000000, alpha: 0.22 });
+    for (let z = 1; z < n; z++) g.moveTo(z * w, 0).lineTo(z * w, sim.height).stroke({ color: 0xffffff, width: 1, alpha: 0.5 });
+  }
   const chosen = sim.towers[selected];
   if (!ended && (sim.gameOver || sim.won)) {
     ended = true; const won = sim.won && !sim.gameOver;
