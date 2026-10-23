@@ -9,7 +9,9 @@ export interface SaveCodec { decode(raw: unknown): Envelope | null; meaningful(d
 const object = (r: any) => !!r && typeof r === 'object' && !Array.isArray(r);
 const nonnegative = (n: any) => typeof n === 'number' && Number.isFinite(n) && n >= 0;
 function codec<T>(s: Slot<T>, valid: (raw: any) => boolean, meaningful: (data: T) => boolean): SaveCodec {
-  return { decode(raw: any) { return object(raw) && valid(raw.data) ? s.decode(raw) : null; }, meaningful: data => meaningful(data as T) };
+  return { decode(raw: any) {
+    try { return object(raw) && valid(raw.data) ? s.decode(raw) : null; } catch { return null; }
+  }, meaningful: data => meaningful(data as T) };
 }
 function validProfile(p: any) {
   return object(p) && nonnegative(p.xp) && nonnegative(p.mm ?? p.money)
