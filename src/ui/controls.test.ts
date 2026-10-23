@@ -1,21 +1,22 @@
 import { expect, it } from 'vitest';
 import { createGame } from '../modes/modes';
 import { controlVisibility } from './controls';
+import { spots } from '../test-spots';
 
 it('hides special controls on a base dart and shows only eligible paragons', () => {
-  const s = createGame('monkey_meadow', 'sandbox');
-  s.placeTower(100, 100, 'dart');
+  const s = createGame('monkey_meadow', 'sandbox'); const [a, b, c] = spots(s, 'dart', 3);
+  s.placeTower(a.x, a.y, 'dart');
   expect(controlVisibility(s, 0)).toMatchObject({ aim: false, support: false, merge: false, collect: false, paragon: false, paragonHint: false });
   s.towers[0].tiers = [5, 0, 0];
   expect(controlVisibility(s, 0)).toMatchObject({ paragon: false, paragonHint: true });
-  s.placeTower(150, 100, 'dart'); s.towers[1].tiers = [0, 5, 0];
-  s.placeTower(200, 100, 'dart'); s.towers[2].tiers = [0, 0, 5];
+  s.placeTower(b.x, b.y, 'dart'); s.towers[1].tiers = [0, 5, 0];
+  s.placeTower(c.x, c.y, 'dart'); s.towers[2].tiers = [0, 0, 5];
   expect(controlVisibility(s, 0)).toMatchObject({ paragon: true, paragonHint: false });
 });
 
 it('uses aim eligibility and actual collectable resources', () => {
-  const s = createGame('monkey_meadow', 'sandbox');
-  s.placeTower(100, 100, 'engineer');
+  const s = createGame('monkey_meadow', 'sandbox'); const [e] = spots(s, 'engineer');
+  s.placeTower(e.x, e.y, 'engineer');
   expect(controlVisibility(s, 0).aim).toBe(false);
   s.towers[0].tiers = [0, 3, 0];
   expect(controlVisibility(s, 0).aim).toBe(true);
@@ -26,12 +27,12 @@ it('uses aim eligibility and actual collectable resources', () => {
 });
 
 it('requires a valid ally for support and a shared beast path for merging', () => {
-  const s = createGame('monkey_meadow', 'sandbox');
-  s.placeTower(100, 100, 'engineer'); s.towers[0].tiers = [0, 4, 0];
+  const s = createGame('monkey_meadow', 'sandbox'); const [e, b1, b2] = spots(s, 'beast', 3);
+  s.placeTower(e.x, e.y, 'engineer'); s.towers[0].tiers = [0, 4, 0];
   expect(controlVisibility(s, 0).support).toBe(false);
-  s.placeTower(150, 100, 'beast');
+  s.placeTower(b1.x, b1.y, 'beast');
   expect(controlVisibility(s, 0).support).toBe(true);
-  s.placeTower(200, 100, 'beast');
+  s.placeTower(b2.x, b2.y, 'beast');
   expect(controlVisibility(s, 1).merge).toBe(false);
   s.towers[1].tiers = [0, 1, 0]; s.towers[2].tiers = [0, 1, 0];
   expect(controlVisibility(s, 1).merge).toBe(true);

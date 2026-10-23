@@ -100,6 +100,28 @@ function decodeState(v: any, towers: object[]): any {
     return [k, decodeState(x, towers)];
   }));
 }
+/** Calibration knob: share of a footprint radius that must clear real-map area polygons (track edge, water, no-build).
+ * 1 = whole circle. The game is laxer than the full circle (towers fit Cornfield's ~8-unit corn rows, dart radius 6). */
+export const AREA_FOOTPRINT = 0.5;
+export function inPoly(p: Pt, poly: Pt[]) {
+  let c = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const a = poly[i], b = poly[j];
+    if ((a.y > p.y) !== (b.y > p.y) && p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x) c = !c;
+  }
+  return c;
+}
+function edgeDist(p: Pt, poly: Pt[]) {
+  let d = Infinity;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const a = poly[j], b = poly[i], dx = b.x - a.x, dy = b.y - a.y;
+    const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1)));
+    d = Math.min(d, Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy));
+  }
+  return d;
+}
+/** Circle (p, r) overlaps / lies fully inside a polygon. */
+export const touchesPoly = (p: Pt, r: number, poly: Pt[]) => inPoly(p, poly) || edgeDist(p, poly) < r;
 export interface Rules { cashMult: number; incomeMult: number; noSell: boolean; noPowers?: boolean; moabHpMult: number; winRound: number; auto: boolean; allowed?: (k: string) => boolean }
 export const STANDARD_RULES: Rules = { cashMult: 1, incomeMult: 1, noSell: false, moabHpMult: 1, winRound: Infinity, auto: false };
 // regrow restores along single-child chains only (blue->red etc.), reverse-derived from bloons.json.
@@ -129,6 +151,21 @@ export class Sim {
   private undead: { dist: number; lane: number; life: number; stats: TowerStats; hit: Set<number> }[] = [];
   private puddles: (Pt & { until: number; next: number; stats: TowerStats })[] = [];
   spawnQ: (Omit<Bloon, 'id' | 'hp' | 'dist'> & { at: number })[] = [];
+  /** Play-area bounds; createGame sets the real map's size (BTD6 units, e.g. 300x230). Test sims keep 960x540. */
+  width = 960; height = 540;
+  /** Real-map polygons (BTD6 layouts). Empty for test sims, which use water rects, blocked circles and the lane buffer. */
+  private _polys: { track: Pt[][]; water: Pt[][]; land: Pt[][]; blocked: Pt[][] } = { track: [], water: [], land: [], blocked: [] };
+  /** water/land/blocked polygons, smallest first: where they nest, the smallest containing polygon decides the ground. */
+  private areas: { kind: 'water' | 'land' | 'blocked'; poly: Pt[] }[] = [];
+  get polys() { return this._polys; }
+  set polys(p: { track: Pt[][]; water: Pt[][]; land: Pt[][]; blocked: Pt[][] }) {
+    this._polys = p;
+    const area = (q: Pt[]) => Math.abs(q.reduce((a, v, i) => { const w = q[(i + 1) % q.length]; return a + v.x * w.y - w.x * v.y; }, 0)) / 2;
+    this.areas = (['water', 'land', 'blocked'] as const).flatMap(kind => p[kind].map(poly => ({ kind, poly, a: area(poly) })))
+      .sort((x, y) => x.a - y.a).map(({ kind, poly }) => ({ kind, poly }));
+  }
+  /** Ground under a point on a real map: the smallest containing area polygon, else plain land. */
+  groundAt(p: Pt): 'water' | 'land' | 'blocked' { return this.areas.find(a => inPoly(p, a.poly))?.kind ?? 'land'; }
   constructor(public path: Pt[], public difficulty: Difficulty = 'medium', public water: Rect[] = [], lanes?: Pt[][], public blocked: Circle[] = []) {
     this.lanes = lanes ?? [path];
     const mode = modeJson.data.difficulties[difficulty];
@@ -159,20 +196,39 @@ export class Sim {
   }
   canPlace(x: number, y: number, type: TowerKind = 'dart', ignore?: Tower) {
     const r = TOWERS[type].footprint;
-    if (!Number.isFinite(x) || !Number.isFinite(y) || x < r || y < r || x > 960 - r || y > 540 - r) return false;
-    const contained = this.water.some(w => x - r >= w.x && x + r <= w.x + w.width && y - r >= w.y && y + r <= w.y + w.height);
-    const overlaps = this.water.some(w => Math.hypot(x - Math.max(w.x, Math.min(x, w.x + w.width)),
-      y - Math.max(w.y, Math.min(y, w.y + w.height))) < r);
+    if (!this.inBounds(x, y, r)) return false;
+    const { contained, overlaps } = this.waterAt(x, y, r);
     const abyssLand = type !== 'mermonkey' && this.towers.some(t => t.type === 'mermonkey' && t.tiers[0] === 5 && Math.hypot(t.x-x,t.y-y) <= 32);
     const onUnit = (id: string) => this.powerUnits.some(u => u.id === id && Math.hypot(u.x - x, u.y - y) + r <= u.r);
     if (TOWERS[type].waterOnly ? !contained && !abyssLand && !onUnit('portable_lake') : overlaps && !onUnit('pontoon')) return false;
     if (this.powerUnits.some(u => u.id !== 'pontoon' && (u.id !== 'portable_lake' || !TOWERS[type].waterOnly) && Math.hypot(u.x - x, u.y - y) < u.r + r)) return false;
     if (this.hero && Math.hypot(this.hero.x - x, this.hero.y - y) < HEROES[this.hero.kind].footprint + r) return false;
     if (this.towers.some(t => t !== ignore && !t.mergedInto && Math.hypot(t.x - x, t.y - y) < TOWERS[t.type].footprint + r)) return false;
-    if (this.blocked.some(o => Math.hypot(o.x - x, o.y - y) < o.r + r)) return false;
+    if (this.isBlocked(x, y, r)) return false;
     return this.offTrack(x, y, r);
   }
+  private inBounds(x: number, y: number, r: number) {
+    return Number.isFinite(x) && Number.isFinite(y) && x >= r && y >= r && x <= this.width - r && y <= this.height - r;
+  }
+  // ponytail: footprint sampled at centre + 8 rim points; exact circle-vs-nested-polygon tests if thin slivers matter.
+  private footprint(x: number, y: number, r: number) {
+    const k = r * AREA_FOOTPRINT;
+    return [{ x, y }, ...Array.from({ length: 8 }, (_, i) => ({ x: x + Math.cos(i * Math.PI / 4) * k, y: y + Math.sin(i * Math.PI / 4) * k }))];
+  }
+  /** Water under a circle: rects (test sims) or the real map's nested area polygons. */
+  private waterAt(x: number, y: number, r: number) {
+    const ground = this.areas.length ? this.footprint(x, y, r).map(p => this.groundAt(p)) : [];
+    const contained = this.water.some(w => x - r >= w.x && x + r <= w.x + w.width && y - r >= w.y && y + r <= w.y + w.height)
+      || ground.length > 0 && ground.every(g => g === 'water');
+    const overlaps = this.water.some(w => Math.hypot(x - Math.max(w.x, Math.min(x, w.x + w.width)), y - Math.max(w.y, Math.min(y, w.y + w.height))) < r)
+      || ground.some(g => g === 'water');
+    return { contained, overlaps };
+  }
+  private isBlocked(x: number, y: number, r: number) {
+    return this.blocked.some(o => Math.hypot(o.x - x, o.y - y) < o.r + r) || this.areas.length > 0 && this.footprint(x, y, r).some(p => this.groundAt(p) === 'blocked');
+  }
   private offTrack(x: number, y: number, r: number) {
+    if (this.polys.track.length) return !this.polys.track.some(t => touchesPoly({ x, y }, r * AREA_FOOTPRINT, t));
     return !this.lanes.some(path => path.slice(1).some((b, i) => {
       const a = path[i], dx = b.x - a.x, dy = b.y - a.y;
       const along = Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / (dx * dx + dy * dy || 1)));
@@ -192,14 +248,13 @@ export class Sim {
   canPlaceHero(x: number, y: number, kind: HeroKind, moving = false) {
     if (!HEROES[kind] || this.gameOver || !moving && this.heroPlaced) return false;
     const def = HEROES[kind], r = def.footprint;
-    if (!Number.isFinite(x) || !Number.isFinite(y) || x < r || y < r || x > 960 - r || y > 540 - r) return false;
-    const contained = this.water.some(w => x - r >= w.x && x + r <= w.x + w.width && y - r >= w.y && y + r <= w.y + w.height);
-    const overlaps = this.water.some(w => Math.hypot(x - Math.max(w.x, Math.min(x, w.x + w.width)), y - Math.max(w.y, Math.min(y, w.y + w.height))) < r);
+    if (!this.inBounds(x, y, r)) return false;
+    const { contained, overlaps } = this.waterAt(x, y, r);
     if (def.waterOnly ? !contained : !def.amphibious && overlaps) return false;
+    if (this.isBlocked(x, y, r)) return false;
     if (this.towers.some(t => Math.hypot(t.x - x, t.y - y) < TOWERS[t.type].footprint + r)) return false;
     if (this.powerUnits.some(u => Math.hypot(u.x - x, u.y - y) < u.r + r)) return false;
-    const p = this.nearestTrack({ x, y });
-    return Math.hypot(p.x - x, p.y - y) >= 20 + r;
+    return this.offTrack(x, y, r);
   }
   placeHero(x: number, y: number, kind: HeroKind) {
     if (!this.canPlaceHero(x, y, kind) || this.cash < HEROES[kind].cost[this.difficulty]) return false;
@@ -263,7 +318,7 @@ export class Sim {
   setTarget(towerIdx: number, p: Pt) {
     const t = this.towers[towerIdx];
     if (this.gameOver || !t || !this.canSetTarget(t) ||
-      !Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.x > 960 || p.y < 0 || p.y > 540) return false;
+      !Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.x > this.width || p.y < 0 || p.y > this.height) return false;
     if((t.type==='engineer' || t.type==='spike') && Math.hypot(p.x-t.x,p.y-t.y)>this.effectiveStats(t).range)return false;
     if(t.type === 'mermonkey') {
       if(this.tick < (t.magicNext?.totem ?? 0) || t.tiers[2] < 5 && Math.hypot(p.x-t.x,p.y-t.y)>t.range*1.35) return false;
@@ -334,7 +389,7 @@ export class Sim {
     }
     if (a.kind === 'cash') this.earnIncome(a.damage);
     if (a.kind === 'blast') {
-      this.burst({ x: 480, y: 270 }, this.source(t, { damage: a.damage, damageType: 'normal', camo: true,
+      this.burst({ x: this.width / 2, y: this.height / 2 }, this.source(t, { damage: a.damage, damageType: 'normal', camo: true,
         frozen: true, pierce: a.count, moabBonus: 0, ceramicBonus: 0, fortifiedBonus: 0, leadBonus: 0, camoBonus: t.tiers[1] === 5 ? a.damage : 0, stun: a.duration, moabStun: a.duration }), 2000);
     }
     if (a.kind === 'strike') {
@@ -450,7 +505,7 @@ export class Sim {
       this.globalAbility(t); t.abilityNext = this.tick + 60;
     }
     if (t.ability.kind === 'awe') {
-      this.burst({ x: 480, y: 270 }, this.source(t, { damage: t.ability.damage, damageType: 'normal',
+      this.burst({ x: this.width / 2, y: this.height / 2 }, this.source(t, { damage: t.ability.damage, damageType: 'normal',
         camo: true, frozen: true, pierce: 1e6, moabBonus: 0, ceramicBonus: 0, fortifiedBonus: 0, leadBonus: 0, stun: 1.1, moabStun: 1.1 }), 2000);
       t.abilityNext = this.tick + 60;
     }
@@ -922,8 +977,8 @@ export class Sim {
       // uncertain: default orbit radius is absent; use the documented Centered Path radius.
       const center = t.tiers[2] >= 2 ? t.targetPoint : t;
       const angle = this.tick * DT * t.moveSpeed / 90;
-      t.flight = { x: Math.max(0, Math.min(960, center.x + Math.cos(angle) * 90)),
-        y: Math.max(0, Math.min(540, center.y + Math.sin(angle) * 90)) };
+      t.flight = { x: Math.max(0, Math.min(this.width, center.x + Math.cos(angle) * 90)),
+        y: Math.max(0, Math.min(this.height, center.y + Math.sin(angle) * 90)) };
     } else if (t.type === 'heli') {
       const first = [...this.bloons].sort((a, b) => b.dist - a.dist)[0];
       const p = t.pursuit && first ? this.posOf(first) : t.targetPoint;
@@ -1029,11 +1084,11 @@ export class Sim {
     if(!point || !Number.isFinite(point.x) || !Number.isFinite(point.y))return false;
     if(POWER_BY_ID[id].kind==='trap')return !!this.trackSpot(point);
     const r=POWER_UNIT_R[id],{x,y}=point,h=this.hero;
-    if(x<r || y<r || x>960-r || y>540-r || !this.offTrack(x,y,r) || this.blocked.some(o=>Math.hypot(o.x-x,o.y-y)<o.r+r)
+    if(!this.inBounds(x,y,r) || !this.offTrack(x,y,r) || this.isBlocked(x,y,r)
       || this.powerUnits.some(u=>Math.hypot(u.x-x,u.y-y)<u.r+r) || this.towers.some(t=>!t.mergedInto && Math.hypot(t.x-x,t.y-y)<TOWERS[t.type].footprint+r)
       || h && Math.hypot(h.x-x,h.y-y)<HEROES[h.kind].footprint+r)return false;
-    if(id==='pontoon')return this.water.some(w=>x-r>=w.x && x+r<=w.x+w.width && y-r>=w.y && y+r<=w.y+w.height);
-    return !this.water.some(w=>Math.hypot(x-Math.max(w.x,Math.min(x,w.x+w.width)),y-Math.max(w.y,Math.min(y,w.y+w.height)))<r);
+    const water=this.waterAt(x,y,r);
+    return id==='pontoon'?water.contained:!water.overlaps;
   }
   /** Apply a power's sim effect. The caller (UI) owns the inventory and decrements it only when this returns true. */
   usePower(id:string,point?:Pt,upgraded=false) {
@@ -1539,8 +1594,8 @@ export class Sim {
         }
       }
       if(d.bounce && d.damageType==='frigid') {
-        if(d.x+d.vx*DT<0 || d.x+d.vx*DT>960)d.vx*=-1;
-        if(d.y+d.vy*DT<0 || d.y+d.vy*DT>540)d.vy*=-1;
+        if(d.x+d.vx*DT<0 || d.x+d.vx*DT>this.width)d.vx*=-1;
+        if(d.y+d.vy*DT<0 || d.y+d.vy*DT>this.height)d.vy*=-1;
       }
       if(d.owner?.type==='mermonkey' && d.owner.tiers[1]>=3) {
         const rate=d.owner.tiers[1]===5?1.125:d.owner.tiers[1]===4?0.75:0.5;

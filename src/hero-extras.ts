@@ -45,7 +45,7 @@ export function buyItem(s: Sim, id: string, point?: Pt, towerIndex?: number) {
   // Farms and Paragons are not part of this repository's tower catalog. Fertilizer requires an income producer.
   if (id === 'fertilizer' && !target.income) return false;
   const p = point ?? s.nearestTrack(h);
-  if (!Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.x > 960 || p.y < 0 || p.y > 540) return false;
+  if (!Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.x > s.width || p.y < 0 || p.y > s.height) return false;
   if (id === 'rabbit' && h.assets.filter(a => a.id === 'rabbit').length >= 4) return false;
   const stock = itemStock(s, id);
   h.purchases[id] = { count: def.stock - stock + 1, round: s.round }; s.cash -= s.price(def.cost);

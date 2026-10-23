@@ -56,7 +56,7 @@ export function activateHero(s: Sim, id: string, point?: Pt, towerIndex?: number
   const l = h.level;
   const a = heroAbilities(h.kind, h.level).find(a => a.id === id);
   if (!a || s.tick < (h.ready[id] ?? 0) || id === 'shop') return false;
-  if (point && (!Number.isFinite(point.x) || !Number.isFinite(point.y) || point.x < 0 || point.y < 0 || point.x > 960 || point.y > 540)) return false;
+  if (point && (!Number.isFinite(point.x) || !Number.isFinite(point.y) || point.x < 0 || point.y < 0 || point.x > s.width || point.y > s.height)) return false;
   const targets = heroTargets(s, h, a.radius === 2000 || id === 'kinetic' ? 2000 : Math.max(h.stats.range, a.radius));
   const p = point ?? (targets[0] ? s.posOf(targets[0]) : s.nearestTrack(h));
   if (id === 'totem' && s.lives <= (h.level >= 16 ? 1 : 10)) return false;
@@ -111,7 +111,7 @@ export function activateHero(s: Sim, id: string, point?: Pt, towerIndex?: number
     else h.zones.push({ id, point: p, until: s.tick + 3600, round: s.round, next: s.tick, remaining: 1, ability: a });
   }
   if (id === 'cascade' || id === 'burial') {
-    const places = id === 'burial' ? [{ x: 480, y: 270 }] : [h, ...s.towers.filter(t => t.type === 'ice').sort((a, b) => Math.hypot(a.x - h.x, a.y - h.y) - Math.hypot(b.x - h.x, b.y - h.y)).slice(0, 9)];
+    const places = id === 'burial' ? [{ x: s.width / 2, y: s.height / 2 }] : [h, ...s.towers.filter(t => t.type === 'ice').sort((a, b) => Math.hypot(a.x - h.x, a.y - h.y) - Math.hypot(b.x - h.x, b.y - h.y)).slice(0, 9)];
     for (const p of places) {
       const near = s.bloons.filter(b => Math.hypot(s.posOf(b).x - p.x, s.posOf(b).y - p.y) <= (id === 'burial' ? 2000 : 47)).slice(0, a.pierce);
       for (const b of near) hit(s, h, b, { ...normal(a), damage: a.damage + ((b.frozenUntil ?? 0) > s.tick ? id === 'burial' ? l >= 15 ? 200 : 60 : l >= 15 ? 30 : 15 : 0),

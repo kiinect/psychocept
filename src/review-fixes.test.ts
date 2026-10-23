@@ -4,6 +4,7 @@ import { Sim, STANDARD_RULES, type Bloon } from './sim';
 import { createGame } from './modes/modes';
 import { heroTowerWeapon } from './hero-runtime';
 import { TOWERS } from './towers';
+import { spots } from './test-spots';
 const path = [{ x: 0, y: 150 }, { x: 960, y: 150 }];
 const water = [{ x: 60, y: 160, width: 160, height: 120 }];
 const deflation = () => { const s = new Sim(path, 'medium', water); s.rules = { ...STANDARD_RULES, cashMult: 0, incomeMult: 0 }; s.cash = 1e6; return s; };
@@ -38,7 +39,7 @@ test('heroDestroy, hooks and Trojan bonuses pay nothing in Deflation', () => {
 });
 
 test('road items only hit bloons on their own lane', () => {
-  const s = createGame('town_center', 'medium'); s.cash = 1e6; s.addTower(480, 270, 'spike'); const owner = s.towers[0];
+  const s = createGame('sunken_columns', 'medium'); s.cash = 1e6; s.addTower(150, 115, 'spike'); const owner = s.towers[0];
   any(s).roadItem(owner, { ...owner, damage: 1, pierce: 10 }, 200, 'spike', 100);
   const other = red(1, 200, 1), own = red(2, 200, 0); s.bloons.push(other, own);
   any(s).runRoadItems();
@@ -46,7 +47,7 @@ test('road items only hit bloons on their own lane', () => {
 });
 
 test('undead keep the lane of the bloon they were aimed at', () => {
-  const s = createGame('town_center', 'medium'); s.cash = 1e6; s.addTower(480, 270, 'wizard');
+  const s = createGame('sunken_columns', 'medium'); s.cash = 1e6; s.addTower(150, 115, 'wizard');
   for (let i = 0; i < 4; i++) s.upgrade(0, 2);
   const w = s.towers[0]; w.range = 2000; w.graveyard = 10;
   s.bloons.push({ ...red(1, 100, 1), hp: 1e6, type: 'ceramic' } as Bloon);
@@ -74,10 +75,10 @@ test('round bonus repays an IMF loan like any other income', () => {
 });
 
 test('engineer foam falls back to a reachable lane', () => {
-  const s = createGame('town_center', 'medium'); s.cash = 1e7; const sim = any(s);
-  // Place where lane 1 is far: aim the target point at lane 1 but give the engineer a short range near lane 0 only.
-  const p0 = s.posAt(200, 0); s.addTower(p0.x, p0.y + 25, 'engineer');
-  if (!s.towers.length) s.addTower(p0.x, p0.y - 25, 'engineer');
+  const s = createGame('sunken_columns', 'medium'); s.cash = 1e7; const sim = any(s);
+  // Engineer near lane 0 only; aim its target point at lane 1.
+  const [p] = spots(s, 'engineer', 1, s.posAt(200, 0), q => sim.nearTrack(q, 70, 1).length === 0 && sim.nearTrack(q, 25, 0).length > 0);
+  s.addTower(p.x, p.y, 'engineer');
   for (let i = 0; i < 3; i++) s.upgrade(0, 1);
   const e = s.towers[0]; e.targetPoint = s.posAt(200, 1);
   expect(sim.nearestLane(e.targetPoint)).toBe(1);
