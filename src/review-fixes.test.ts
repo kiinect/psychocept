@@ -60,6 +60,32 @@ test('Apopalypse keeps going when bloons were cleared before the last spawn', ()
   expect(s.round).toBe(r + 1); expect(s.roundActive).toBe(true);
 });
 
+test('Apopalypse pays round-end income when the next round starts with bloons alive', () => {
+  const s = createGame('monkey_meadow', 'apopalypse'); s.startRound([{ type: 'red', n: 1, gap: 1 }]); const r = s.round;
+  s.spawnQ = []; s.bloons.push(red(99, 0)); const c0 = s.cash; s.step();
+  expect(s.round).toBe(r + 1); expect(s.cash).toBe(c0 + 100 + r);
+});
+
+test('round bonus repays an IMF loan like any other income', () => {
+  // uncertain: wiki says the loan is repaid from "income"; we include the round bonus.
+  const s = new Sim(path, 'medium', water); s.cash = 1e6; s.addTower(100, 120, 'farm'); s.towers[0].debt = 1000; const c0 = s.cash;
+  finishRound(s);
+  expect(s.towers[0].debt).toBeLessThan(1000); expect(s.cash).toBeLessThan(c0 + 100 + s.round + s.roundIncome(s.towers[0]));
+});
+
+test('engineer foam falls back to a reachable lane', () => {
+  const s = createGame('town_center', 'medium'); s.cash = 1e7; const sim = any(s);
+  // Place where lane 1 is far: aim the target point at lane 1 but give the engineer a short range near lane 0 only.
+  const p0 = s.posAt(200, 0); s.addTower(p0.x, p0.y + 25, 'engineer');
+  if (!s.towers.length) s.addTower(p0.x, p0.y - 25, 'engineer');
+  for (let i = 0; i < 3; i++) s.upgrade(0, 1);
+  const e = s.towers[0]; e.targetPoint = s.posAt(200, 1);
+  expect(sim.nearestLane(e.targetPoint)).toBe(1);
+  expect(sim.nearTrack(e, s.effectiveStats(e).range, 1)).toHaveLength(0); // old code only tried lane 1
+  for (let i = 0; i < 300 && !s.roadItems.length; i++) s.step();
+  expect(s.roadItems.some(i => i.kind === 'foam')).toBe(true);
+});
+
 test('paragons ignore hero and magic buffs', () => {
   const s = new Sim(path, 'medium', water); s.cash = 1e7; s.placeHero(100, 121, 'striker'); s.grantHeroXP(1e9);
   s.addTower(110, 100, 'bomb'); const p = s.towers[0]; p.degree = 1;

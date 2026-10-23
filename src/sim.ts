@@ -1098,9 +1098,14 @@ export class Sim {
         this.sentries.push({x:t.x+Math.cos(this.tick)*12,y:t.y+Math.sin(this.tick)*12,owner:t,until:this.tick+(a>=2?30:25)*60,next:0,stats,variant});
       }
       if(b>=3 && this.magicDue(t,'foam',a>=2?1:2)) {
-        const lane=this.nearestLane(t.targetPoint);
-        const distances=this.nearTrack(t.targetPoint,weapon.range,lane).sort((a,b)=>{const p=this.posAt(a,lane),q=this.posAt(b,lane);return Math.hypot(p.x-t.targetPoint.x,p.y-t.targetPoint.y)-Math.hypot(q.x-t.targetPoint.x,q.y-t.targetPoint.y);});
-        const near=this.nearTrack(t,weapon.range,lane);const dist=distances.find(d=>near.includes(d))??near[0];
+        // Nearest-to-target lane first, then any other lane the engineer can reach.
+        const first=this.nearestLane(t.targetPoint),lanes=[first,...this.lanes.keys()].filter((l,i,a)=>a.indexOf(l)===i);
+        let lane=first,dist:number|undefined;
+        for(const l of lanes){
+          const distances=this.nearTrack(t.targetPoint,weapon.range,l).sort((a,b)=>{const p=this.posAt(a,l),q=this.posAt(b,l);return Math.hypot(p.x-t.targetPoint.x,p.y-t.targetPoint.y)-Math.hypot(q.x-t.targetPoint.x,q.y-t.targetPoint.y);});
+          const near=this.nearTrack(t,weapon.range,l);dist=distances.find(d=>near.includes(d))??near[0];
+          if(dist!==undefined){lane=l;break;}
+        }
         if(dist!==undefined)this.roadItem(t,{...weapon,damage:0,pierce:b===5?24:b===4?14:10,camo:true,stripCamo:true,stripRegrow:true,damageType:'normal'},dist,'foam',10,0,lane);
       }
       if(c>=4 && !this.roadItems.some(i=>i.owner===t && i.kind==='trap') && this.magicDue(t,'trap',c===5?4.6:a>=2?4.3:5)) {
@@ -1375,18 +1380,21 @@ export class Sim {
       if (detonated || d.pierce <= 0 || d.life <= 0) this.darts.splice(j, 1);
     }
     this.runRoadItems();this.runCollectibles();
-    if (this.roundActive && !this.spawnQ.length && !this.bloons.length) {
-      roundHero(this);
-      this.earnIncome(100 + this.round); this.supportRoundEnd();
-      this.roundActive = false; this.darts = [];
-      for(const t of this.towers) {
-        t.blackHoleUses=0;t.wrathDamage=0;
-        if(t.type==='druid' && t.tiers[1]>=4)this.lives+=t.tiers[1]===5?25:1;
-      }
-      if (this.round >= this.rules.winRound) this.won = true;
+    const cleared = !this.bloons.length;
+    // Apopalypse: the next round starts as soon as the last bloon is sent, so a round can end with bloons still alive.
+    if (this.roundActive && !this.spawnQ.length && (cleared || this.rules.auto && this.round < this.rules.winRound)) {
+      this.endRound(cleared);
+      if (this.round >= this.rules.winRound) this.won = true; // only reachable once cleared
       else if (this.rules.auto) this.startRound();
-    } else if (this.rules.auto && this.roundActive && !this.spawnQ.length && this.round < this.rules.winRound) {
-      this.roundActive = false; this.startRound(); // Apopalypse: next round starts as soon as the last bloon is sent
+    }
+  }
+  private endRound(cleared: boolean) {
+    roundHero(this);
+    this.earnIncome(100 + this.round); this.supportRoundEnd();
+    this.roundActive = false; if (cleared) this.darts = [];
+    for(const t of this.towers) {
+      t.blackHoleUses=0;t.wrathDamage=0;
+      if(t.type==='druid' && t.tiers[1]>=4)this.lives+=t.tiers[1]===5?25:1;
     }
   }
 }
