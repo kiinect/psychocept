@@ -3,7 +3,7 @@ import { Application, Container, Graphics } from 'pixi.js';
 import { buildTextures } from './art';
 import { createSpriteScene } from './render/pixi-scene';
 import { DT, roundGroups } from './sim';
-import { TOWERS, type TowerKind } from './towers';
+import { TOWERS, canUpgrade, type TowerKind } from './towers';
 import { fitWorld, worldPoint } from './viewport';
 import './style.css';
 import { initAudio } from './audio';
@@ -15,7 +15,7 @@ import { initialFlow, transition, type FlowEvent } from './ui/flow';
 import { controlVisibility } from './ui/controls';
 import { priceBadge, upgradeState } from './ui/state';
 import { portrait } from './ui/icons';
-import { upgradeDescription } from './ui/upgrade';
+import { upgradeDescription, upgradeRowState } from './ui/upgrade';
 import { CATEGORY } from './modes/modes';
 import { activeKnowledge, unlockKnowledge, respecKnowledge, settingsSlot, profileSlot, runSlot, snapshotSim, restoreSim, purchasePower, usePower, POWERS, POWER_BY_ID, slot, type Settings } from './meta';
 import { gameRewards, powerButtonState, supportedPowers, type Rewards } from './ui/meta';
@@ -34,7 +34,7 @@ let rewardedRound = modeById(modeId).startRound - 1, recorded = false;
 let rewards: Rewards | undefined;
 let placingPower: string | null = null;
 let showRange = savedSettings.showRange, reducedMotion = savedSettings.reducedMotion;
-let autoplay = savedSettings.autoplay, category = 'Primary', heroTools = false;
+let autoplay = savedSettings.autoplay, category: 'Monkeys' | 'Powers' = 'Monkeys', heroTools = false;
 let pointer: { x: number; y: number } | null = null;
 let sim = createGame(mapId, modeId, activeKnowledge(profile));
 let selected = -1, placing: TowerKind | null = null, speed = 1, aiming = false;
@@ -42,33 +42,57 @@ let placingHero: HeroKind | null = null;
 if (savedSettings.fastForward) speed = 3;
 const root = document.getElementById('app')!;
 root.innerHTML = `
-  <header><div class="resources"><output id="lives" aria-label="Lives"></output><output id="cash" aria-label="Cash"></output></div><output id="active-powers" aria-label="Active powers"></output><output id="hud" aria-label="Round"></output><button id="settings" aria-label="Settings">⚙</button><button id="menu" aria-label="Pause game">Ⅱ</button></header>
-  <main><section id="field" aria-label="Tower defense map"></section>
-  <aside aria-label="Tower shop"><button id="collapse" aria-expanded="true">Shop ▾</button><div id="shop-content"><nav id="categories" aria-label="Tower categories"></nav>
-    <div id="shop" aria-label="Tower shop"></div><div id="powers" class="power-list" hidden></div><p id="powers-empty" hidden>No powers owned. Buy powers from the main menu.</p>
-    <p id="hint" role="status">Buy a monkey, then choose a spot on the map.</p>
-    <label for="tower-select">Select a tower</label><select id="tower-select"><option value="-1">No towers placed</option></select>
-    </div></aside><section id="inspector" aria-label="Upgrade and hero panel" hidden><button id="close-inspector" aria-label="Close upgrade panel">× Close</button><section id="details" hidden><div class="tower-summary"><div id="tower-portrait"></div><div><h2 id="tower-title">Dart Monkey</h2><output id="pops"></output></div></div>
-      <button id="aim" hidden>Set target on map</button><div id="target-point" hidden><label for="aim-x">Target X</label><input id="aim-x" type="number" min="0" max="300"><label for="aim-y">Target Y</label><input id="aim-y" type="number" min="0" max="230"><button id="apply-aim">Apply target coordinates</button></div><div class="targeting"><button id="target-prev" aria-label="Previous targeting mode">&lt;</button><button id="target">First</button><button id="target-next" aria-label="Next targeting mode">&gt;</button></div><button id="ability" hidden>Activate ability</button><div id="upgrades"></div><button id="collect" hidden>Collect bank</button>
-      <div id="support-controls" hidden><label for="support-ally">Support target / beast to merge</label><select id="support-ally"></select><button id="support-target" hidden>Choose buff target</button><label for="merge-path" id="merge-label" hidden>Beast path</label><select id="merge-path" hidden><option value="0">Water beast</option><option value="1">Land beast</option><option value="2">Bird</option></select><button id="merge" hidden>Merge chosen beast into this handler</button></div>
-      <p id="paragon-info" hidden></p><div id="paragon-controls" hidden><label for="paragon-investment">Extra paragon investment</label><input id="paragon-investment" type="number" min="0" step="1000" value="0"><button id="paragon">Create paragon</button></div><button id="sell">Sell</button>
+  <main>
+  <section id="field" aria-label="Tower defense map"></section>
+  <header><div class="resources"><output id="lives" aria-label="Lives"></output><output id="cash" aria-label="Cash"></output></div><output id="active-powers" aria-label="Active powers"></output>
+    <div class="round-box"><output id="hud" aria-label="Round"></output><button id="settings" aria-label="Pause and settings">⚙</button></div><button id="menu" class="sr-only" aria-label="Pause game">Ⅱ</button></header>
+  <p id="hint" role="status">Buy a monkey, then choose a spot on the map.</p>
+  <aside aria-label="Tower shop">
+    <div class="side-title" id="side-title">Monkeys</div><div class="name-plate" id="side-name" aria-live="polite">Monkeys</div>
+    <div id="shop-content" class="side-scroll" tabindex="0" aria-label="Scroll for more monkeys"><div id="shop" aria-label="Tower shop"></div><div id="powers" class="power-list" hidden></div><p id="powers-empty" hidden>No powers owned. Buy powers from the main menu.</p></div>
+    <label for="tower-select" class="sr-only">Select a tower</label><select id="tower-select" class="sr-only"><option value="-1">No towers placed</option></select>
+    <div class="side-mini"><button id="speed">×1</button><button id="autoplay" aria-pressed="false">Auto: Off</button></div>
+    <div class="round-controls"><button id="powers-toggle" aria-pressed="false" aria-label="Powers">⚡</button><button id="start" aria-label="Start round 1">▶</button></div>
+  </aside>
+  <section id="inspector" aria-label="Upgrade and hero panel" hidden>
+    <div class="insp-head"><h2 id="tower-title">Dart Monkey</h2><output id="pops"></output><button id="close-inspector" aria-label="Close upgrade panel">✕</button></div>
+    <section id="details" hidden>
+      <div class="insp-portrait"><div id="tower-portrait"></div><button id="ability" class="ability" hidden>Activate ability</button>
+        <div class="targeting"><button id="target-prev" aria-label="Previous targeting mode">◀</button><button id="target">First</button><button id="target-next" aria-label="Next targeting mode">▶</button></div></div>
+      <div class="insp-extra"><button id="aim" hidden>Set target on map</button><div id="target-point" hidden><label for="aim-x">Target X</label><input id="aim-x" type="number" min="0" max="300"><label for="aim-y">Target Y</label><input id="aim-y" type="number" min="0" max="230"><button id="apply-aim">Apply target coordinates</button></div><button id="collect" hidden>Collect bank</button>
+        <div id="support-controls" hidden><label for="support-ally">Support target / beast to merge</label><select id="support-ally"></select><button id="support-target" hidden>Choose buff target</button><label for="merge-path" id="merge-label" hidden>Beast path</label><select id="merge-path" hidden><option value="0">Water beast</option><option value="1">Land beast</option><option value="2">Bird</option></select><button id="merge" hidden>Merge chosen beast into this handler</button></div>
+        <p id="paragon-info" hidden></p><div id="paragon-controls" hidden><button id="paragon-open" class="paragon">Upgrade to Paragon</button></div></div>
+      <div id="upgrades"></div>
+      <div class="sell-row"><output id="sell-value"></output><button id="sell">Sell</button></div>
     </section>
-    <div id="hero-host"></div></section><div class="round-controls"><button id="start" aria-label="Start round 1">▶</button><button id="speed">×1</button><button id="autoplay" aria-pressed="false">Auto: Off</button></div></main>`;
+    <div id="hero-host"></div></section>
+  <dialog id="paragon-dialog" aria-labelledby="paragon-title"><h2 id="paragon-title">Upgrade to Paragon</h2><p id="paragon-text"></p>
+    <label for="paragon-investment">Boost your Paragon with more in-game cash</label><input id="paragon-investment" type="range" min="0" step="500" value="0"><output id="paragon-total"></output>
+    <div class="dialog-actions"><button id="paragon-cancel">Cancel</button><button id="paragon" class="go">Do it</button></div></dialog>
+  </main>`;
 const element = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const hud = element<HTMLOutputElement>('hud');
 const field = element<HTMLElement>('field');
 const hint = element<HTMLParagraphElement>('hint');
 const shop = element<HTMLElement>('shop');
-const shopButtons = (Object.keys(TOWERS) as TowerKind[]).map(type => {
+// Shop order like the game: Primary, Military, Magic, Support (hero tile goes first).
+const SHOP_ORDER = ['primary', 'military', 'magic', 'support'];
+const shopButtons = (Object.keys(TOWERS) as TowerKind[]).sort((a, b) => SHOP_ORDER.indexOf(CATEGORY[a] ?? 'support') - SHOP_ORDER.indexOf(CATEGORY[b] ?? 'support')).map(type => {
   const button = document.createElement('button');
   button.addEventListener('click', () => {
     placingPower = null; placingHero = null; heroUI.cancel(); aiming = false; heroTools = false; selected = -1; placing = placing === type ? null : type;
     hint.textContent = placing ? `Click on ${TOWERS[type].waterOnly ? 'water' : 'grass'} to place your ${TOWERS[type].name}. Escape cancels.` : 'Placement cancelled.';
     refresh();
   });
-  button.className = 'tower-card';
+  button.className = 'tower-card'; button.dataset.cat = CATEGORY[type] ?? 'support';
+  button.addEventListener('pointerenter', () => { element('side-name').textContent = TOWERS[type].name; });
+  button.addEventListener('pointerleave', () => { element('side-name').textContent = sideName(); });
   shop.appendChild(button); return { type, button, key: '' };
 });
+const heroTile = document.createElement('button'); heroTile.id = 'hero-tile'; heroTile.className = 'tower-card'; heroTile.dataset.cat = 'hero';
+heroTile.addEventListener('click', () => { placingPower = null; placing = null; aiming = false; selected = -1; heroTools = !heroTools; refresh(); });
+shop.prepend(heroTile);
+function sideName() { const t = sim.towers[selected]; return t ? (t.degree ? PARAGONS[t.type]!.name : TOWERS[t.type].name) : heroTools ? HEROES[sim.hero?.kind ?? flow.hero].name : category === 'Powers' ? 'Powers' : 'Monkeys'; }
 const heroUI = heroControls(element<HTMLElement>('hero-host'), () => sim, () => selected, kind => {
   placingPower = null; placingHero = kind; placing = null; aiming = false; if (kind) { heroTools = false; selected = -1; } refresh();
 }, message => { hint.textContent = message; });
@@ -92,18 +116,24 @@ element<HTMLButtonElement>('apply-aim').addEventListener('click', () => {
 });
 const sell = element<HTMLButtonElement>('sell');
 const upgrades = element<HTMLElement>('upgrades');
-const upgradeButtons = [0, 1, 2].map(path => {
-  const button = document.createElement('button');
+const upgradeRows = [0, 1, 2].map(path => {
+  const row = document.createElement('div'); row.className = 'up-row';
+  row.innerHTML = '<span class="pips v" aria-hidden="true"></span><div class="up-cur"><b></b><small></small></div><button class="up-next"></button><div class="up-closed" hidden>🔒 Path closed</div>';
+  const button = row.querySelector<HTMLButtonElement>('.up-next')!;
   button.addEventListener('click', () => { const tower = sim.towers[selected]; sim.upgrade(selected, path); selected = sim.towers.indexOf(tower); refresh(); });
-  upgrades.appendChild(button); return button;
+  upgrades.appendChild(row); return { row, button };
 });
+const upgradeButtons = upgradeRows.map(r => r.button);
 const allySelect=element<HTMLSelectElement>('support-ally');
 element('merge-path').onchange = () => refresh();
 element('paragon-investment').oninput = () => refresh();
+const paragonDialog = element<HTMLDialogElement>('paragon-dialog');
+element('paragon-open').onclick = () => { (element<HTMLInputElement>('paragon-investment')).value = '0'; refresh(); paragonDialog.showModal(); };
+element('paragon-cancel').onclick = () => paragonDialog.close();
 element<HTMLButtonElement>('collect').addEventListener('click',()=>{sim.collect(selected);refresh();});
 element<HTMLButtonElement>('support-target').addEventListener('click',()=>{if(sim.setSupportTarget(selected,Number(allySelect.value)))hint.textContent='Buff target selected.';refresh();});
 element<HTMLButtonElement>('merge').addEventListener('click',()=>{hint.textContent=sim.mergeBeast(Number(allySelect.value),selected,Number(element<HTMLSelectElement>('merge-path').value))?'Beast power merged.':'Choose an unmerged handler with a beast on the same path.';refresh();});
-element<HTMLButtonElement>('paragon').addEventListener('click',()=>{const tower=sim.towers[selected];if(sim.makeParagon(selected,Number(element<HTMLInputElement>('paragon-investment').value))){selected=sim.towers.indexOf(tower);hint.textContent='Paragon created.';}refresh();});
+element<HTMLButtonElement>('paragon').addEventListener('click',()=>{const tower=sim.towers[selected];if(sim.makeParagon(selected,Number(element<HTMLInputElement>('paragon-investment').value))){selected=sim.towers.indexOf(tower);hint.textContent='Paragon created.';}paragonDialog.close();refresh();});
 const app = new Application();
 await app.init({ width: 960, height: 540, background: '#182b21', antialias: true });
 field.appendChild(app.canvas);
@@ -124,12 +154,7 @@ start.addEventListener('click', beginRound);
 function cycleSpeed() { speed = speed % 3 + 1; element<HTMLButtonElement>('speed').textContent = `×${speed}`; }
 element<HTMLButtonElement>('speed').addEventListener('click', cycleSpeed);
 element<HTMLButtonElement>('autoplay').addEventListener('click', () => { autoplay = !autoplay; refresh(); });
-for (const name of ['Primary', 'Military', 'Magic', 'Support', 'Hero', 'Powers']) {
-  const b = document.createElement('button'); b.textContent = name;
-  b.onclick = () => { placingPower = null; category = name; heroTools = name === 'Hero'; refresh(); };
-  element('categories').appendChild(b);
-}
-element('collapse').onclick = () => { const content = element('shop-content'); content.hidden = !content.hidden; root.classList.toggle('shop-collapsed', content.hidden); element('collapse').setAttribute('aria-expanded', String(!content.hidden)); element('collapse').textContent = content.hidden ? 'Shop ▸' : 'Shop ▾'; };
+element('powers-toggle').onclick = () => { placingPower = null; category = category === 'Powers' ? 'Monkeys' : 'Powers'; refresh(); };
 element('close-inspector').onclick = () => { selected = -1; heroTools = false; refresh(); };
 target.addEventListener('click', () => { sim.cycleTargeting(selected); refresh(); });
 element('target-next').onclick = () => target.click();
@@ -268,10 +293,10 @@ addEventListener('keydown', e => {
   if (path >= 0 && selected >= 0) { e.preventDefault(); upgradeButtons[path].click(); }
   if (e.key === 'Backspace' && selected >= 0) { e.preventDefault(); sell.click(); }
   if (e.key === 'Tab' && selected >= 0 && !e.shiftKey && (e.target === app.canvas || e.target === document.body || e.target === target)) { e.preventDefault(); target.click(); }
-  if (e.key.toLowerCase() === 'u') { category = 'Hero'; heroTools = true; refresh(); element<HTMLButtonElement>('hero-place').click(); }
+  if (e.key.toLowerCase() === 'u') { category = 'Monkeys'; heroTools = true; refresh(); element<HTMLButtonElement>('hero-place').click(); }
   const kind = shopKeys[e.key.toLowerCase()];
   const card = shopButtons.find(b => b.type === kind);
-  if (card && !card.button.disabled && (!sim.rules.allowed || sim.rules.allowed(card.type))) { category = (CATEGORY[kind] ?? 'support').replace(/^./, c => c.toUpperCase()); refresh(); card.button.click(); }
+  if (card && !card.button.disabled && (!sim.rules.allowed || sim.rules.allowed(card.type))) { category = 'Monkeys'; refresh(); card.button.scrollIntoView({ block: 'nearest' }); card.button.click(); }
 });
 function mapPointer(e: PointerEvent) {
   const rect = app.canvas.getBoundingClientRect();
@@ -319,26 +344,35 @@ function refresh() {
     const state = powerButtonState(count, supported.has(p.id), sim.gameOver || !!sim.rules.noPowers);
     button.hidden = count < 1;
     button.disabled = state.disabled;
-    button.textContent = `${p.name} ×${count}${state.reason ? ' · ' + state.reason : ''}`;
+    const html = `<span>${p.name}</span><b>${count}</b>`; if (button.innerHTML !== html) button.innerHTML = html;
+    button.title = state.reason || p.text; button.className = 'hex';
     button.setAttribute('aria-pressed', String(placingPower === p.id));
   });
   element('active-powers').textContent = sim.activePowers.map(p => `${POWER_BY_ID[p.id]?.name ?? p.id}${Number.isFinite(p.until) ? ` ${Math.ceil((p.until - sim.tick) / 60)}s` : ''}`).join(' · ');
   hud.textContent = `Round ${sim.round}/${Number.isFinite(sim.rules.winRound) ? sim.rules.winRound : '∞'}`;
-  element('lives').textContent = `♥ ${sim.lives.toLocaleString()}`;
-  element('cash').textContent = `$ ${Math.floor(sim.cash).toLocaleString()}`;
+  element('lives').textContent = sim.lives.toLocaleString();
+  element('cash').textContent = `$${Math.floor(sim.cash).toLocaleString()}`;
   element('autoplay').textContent = `Auto: ${autoplay ? 'On' : 'Off'}`;
   element('autoplay').setAttribute('aria-pressed', String(autoplay));
   element('speed').setAttribute('aria-label', `Speed ×${speed}`);
   element('speed').textContent = `×${speed}`;
-  element('categories').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.textContent === category)));
+  element('side-title').textContent = category === 'Powers' ? 'Powers' : 'Monkeys';
+  element('powers-toggle').setAttribute('aria-pressed', String(category === 'Powers'));
+  if (!element('side-name').matches(':hover') && !shop.matches(':hover')) element('side-name').textContent = sideName();
+  const heroKind = sim.hero?.kind ?? flow.hero, heroCost = sim.hero ? 'Placed' : '$' + HEROES[heroKind].cost[sim.difficulty].toLocaleString();
+  const heroKey = heroKind + heroCost;
+  if (heroTile.dataset.key !== heroKey) { heroTile.innerHTML = `${portrait('hero', HEROES[heroKind].name, HEROES[heroKind].color)}<b>${HEROES[heroKind].name}</b><span class="price">${heroCost}</span>`; heroTile.dataset.key = heroKey; }
+  heroTile.setAttribute('aria-pressed', String(heroTools)); heroTile.classList.toggle('placed', !!sim.hero);
   element('hero-host').hidden = !heroTools;
   element('inspector').hidden = selected < 0 && !heroTools;
+  root.classList.toggle('insp-left', !element('inspector').hidden && !element('inspector').classList.contains('dock-right'));
+  root.classList.toggle('powers-open', category === 'Powers');
   element('inspector').classList.toggle('dock-right', (sim.towers[selected]?.x ?? sim.width) < sim.width / 2);
   shopButtons.forEach(card => {
     const { type, button } = card, state = priceBadge(sim.shopPrice(type), sim.cash, sim.gameOver);
     const key = `${state.label}:${placing === type}`;
     if (key !== card.key) { button.innerHTML = `${portrait('tower', type, TOWERS[type].color)}<b>${TOWERS[type].name}</b><span class="price">${state.label}</span>`; card.key = key; }
-    button.hidden = (CATEGORY[type] ?? 'support') !== category.toLowerCase() || !!sim.rules.allowed && !sim.rules.allowed(type);
+    button.hidden = !!sim.rules.allowed && !sim.rules.allowed(type);
     button.disabled = state.disabled;
     button.classList.toggle('unaffordable', state.unaffordable);
     button.setAttribute('aria-pressed', String(placing === type));
@@ -352,10 +386,10 @@ function refresh() {
   towerSelect.value = String(selected);
   const t = sim.towers[selected]; details.hidden = !t || heroTools;
   if (!t) return;
-  element<HTMLElement>('tower-title').textContent = `${t.degree?PARAGONS[t.type]!.name:TOWERS[t.type].name} · ${t.degree?'Degree '+t.degree:t.tiers.join('-')}`;
+  element<HTMLElement>('tower-title').textContent = t.degree ? `${PARAGONS[t.type]!.name} · Degree ${t.degree}` : TOWERS[t.type].name;
   const portraitKey = t.type;
   if (element('tower-portrait').dataset.kind !== portraitKey) { element('tower-portrait').innerHTML = portrait('tower', t.type, TOWERS[t.type].color); element('tower-portrait').dataset.kind = portraitKey; }
-  element('pops').textContent = `Pops: ${Math.floor(t.paragonPops ?? 0).toLocaleString()}`;
+  element('pops').textContent = `✹ ${Math.floor(t.paragonPops ?? 0).toLocaleString()} pops`;
   const controls = controlVisibility(sim, selected);
   aim.hidden = !controls.aim;
   aim.textContent = t.type === 'super' ? 'Set Darkshift destination' : t.type === 'mermonkey' ? 'Place melody totem' : 'Set target on map';
@@ -372,7 +406,7 @@ function refresh() {
   target.textContent = t.targeting; target.disabled = sim.gameOver;
   element<HTMLButtonElement>('target-prev').disabled = sim.gameOver;
   element<HTMLButtonElement>('target-next').disabled = sim.gameOver;
-  sell.textContent = `Sell · $${sim.sellValue(t)}`; sell.disabled = sim.gameOver || sim.rules.noSell;
+  element('sell-value').textContent = `$${sim.sellValue(t).toLocaleString()}`; sell.textContent = 'Sell'; sell.disabled = sim.gameOver || sim.rules.noSell;
   const collect = element<HTMLButtonElement>('collect'); collect.hidden = !controls.collect;
   collect.textContent = t.type === 'farm' && t.tiers[1] >= 3 ? `Collect bank · $${(t.bank ?? 0).toFixed(0)}` : t.type === 'engineer' ? 'Collect trap' : 'Collect bananas';
   element('support-controls').hidden = !controls.support && !controls.merge;
@@ -387,18 +421,28 @@ function refresh() {
   const paragon = PARAGONS[t.type]; element('paragon-controls').hidden = !controls.paragon;
   element('paragon-info').hidden = !controls.paragonHint;
   element('paragon-info').textContent = 'Paragon: needs 5-x-x, x-5-x, x-x-5';
-  if (paragon) { const button = element<HTMLButtonElement>('paragon'); button.textContent = `Create ${paragon.name} · $${sim.price(paragon.cost)}`; button.disabled = !controls.paragon || sim.cash < sim.price(paragon.cost) + Number(element<HTMLInputElement>('paragon-investment').value); }
-  upgradeButtons.forEach((button, path) => {
-    const next = TOWERS[t.type].paths[path][t.tiers[path]];
-    const allowed = sim.canUpgradeTower(selected,path);
-    const cost = next ? sim.upgradePrice(selected, path) : 0;
-    const state = upgradeState(!!next, allowed, cost, sim.cash, sim.gameOver);
-    const desc = next ? upgradeDescription(t.tiers[path] ? TOWERS[t.type].paths[path][t.tiers[path] - 1].stats : TOWERS[t.type].base, next.stats) : 'Path complete';
-    const html = `<span>Path ${path + 1}</span><span class="pips" aria-label="${t.tiers[path]} of 5 tiers">${Array.from({ length: 5 }, (_, i) => `<i class="${i < t.tiers[path] ? 'owned' : ''}"></i>`).join('')}</span><b>${next?.name ?? TOWERS[t.type].paths[path][4].name}</b><small>${desc}</small><span class="price">${next ? '$' + cost : ''} ${state.reason}</span>`;
+  if (paragon) {
+    const base = sim.price(paragon.cost), invest = element<HTMLInputElement>('paragon-investment');
+    invest.max = String(Math.max(0, Math.floor(sim.cash - base)));
+    element('paragon-text').textContent = `This creates ${paragon.name}. All other ${TOWERS[t.type].name}s are absorbed, feeding its power.`;
+    element('paragon-total').textContent = `$${(base + Number(invest.value)).toLocaleString()}`;
+    element<HTMLButtonElement>('paragon-open').textContent = `Upgrade to Paragon · $${base.toLocaleString()}`;
+    element<HTMLButtonElement>('paragon').disabled = !controls.paragon || sim.cash < base + Number(invest.value);
+  }
+  upgradeRows.forEach(({ row, button }, path) => {
+    const tiers = TOWERS[t.type].paths[path], owned = t.tiers[path], next = tiers[owned];
+    const open = canUpgrade(t.tiers, path), allowed = sim.canUpgradeTower(selected, path);
+    const cost = next ? sim.upgradePrice(selected, path) : 0, state = upgradeState(!!next, allowed, cost, sim.cash, sim.gameOver);
+    const rowState = upgradeRowState(owned, !!next, open), closed = rowState === 'closed' && !t.degree, capped = rowState !== 'buy';
+    row.classList.toggle('closed', closed); row.querySelector<HTMLElement>('.up-closed')!.hidden = !closed;
+    const pips = Array.from({ length: 5 }, (_, i) => `<i class="${i < owned ? 'owned' : ''}"></i>`).reverse().join('');
+    const pipEl = row.querySelector<HTMLElement>('.pips')!; if (pipEl.innerHTML !== pips) { pipEl.innerHTML = pips; pipEl.setAttribute('aria-label', `${owned} of 5 tiers`); }
+    row.querySelector('.up-cur b')!.textContent = owned ? tiers[owned - 1].name : '';
+    row.querySelector('.up-cur small')!.textContent = owned ? 'Owned' : 'Not upgraded';
+    const html = !capped && next ? `<b>${next.name}</b><span class="price">$${cost.toLocaleString()}</span>${state.reason ? `<small>${state.reason}</small>` : ''}` : '<b>Max upgrades</b>';
     if (button.innerHTML !== html) button.innerHTML = html;
-    button.disabled = state.disabled;
-    button.title = t.tiers[path] ? `Owned: ${TOWERS[t.type].paths[path].slice(0, t.tiers[path]).map(x => x.name).join(', ')}` : 'No upgrades owned';
-
+    button.disabled = state.disabled || capped; button.classList.toggle('max', capped); button.classList.toggle('broke', !capped && sim.cash < cost);
+    button.title = next ? upgradeDescription(owned ? tiers[owned - 1].stats : TOWERS[t.type].base, next.stats) : 'Path complete';
   });
 }
 let acc = 0;

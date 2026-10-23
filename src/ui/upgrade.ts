@@ -12,3 +12,9 @@ export function upgradeDescription(before: Readonly<TowerStats>, after: Readonly
   }
   return changes.slice(0, 3).join(' · ') || 'Retains the current weapon stats.';
 }
+
+/** Upgrade-row display state, matching the game: closed (nothing bought, crosspath blocks), capped (max upgrades), or buyable. */
+export function upgradeRowState(owned: number, hasNext: boolean, open: boolean): 'closed' | 'capped' | 'buy' {
+  if (hasNext && !open && owned === 0) return 'closed';
+  return !hasNext || !open ? 'capped' : 'buy';
+}
