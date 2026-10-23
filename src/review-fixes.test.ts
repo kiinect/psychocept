@@ -101,3 +101,9 @@ test('shopPrice quotes a lone village discount and Rosalia without villages', ()
   const r = new Sim(path, 'medium', water); r.cash = 1e7; r.placeHero(100, 121, 'rosalia'); r.grantHeroXP(1e9);
   expect(r.shopPrice('ace')).toBeLessThan(r.price(TOWERS.ace.cost));
 });
+
+test('Supply Drop cash respects incomeMult', () => {
+  const s = deflation(); s.addTower(400, 300, 'sniper'); for (let i = 0; i < 4; i++) s.upgrade(0, 1);
+  const t = s.towers[0]; s.tick = t.abilityReady; const c0 = s.cash;
+  expect(s.activate(0)).toBe(true); expect(s.cash).toBe(c0);
+});

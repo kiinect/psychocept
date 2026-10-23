@@ -290,7 +290,7 @@ export class Sim {
             range: 50, damageType: 'normal', camo: true, lead: true, frozen: true } });
       }
     }
-    if (a.kind === 'cash') this.cash += a.damage;
+    if (a.kind === 'cash') this.earnIncome(a.damage);
     if (a.kind === 'blast') {
       this.burst({ x: 480, y: 270 }, this.source(t, { damage: a.damage, damageType: 'normal', camo: true,
         frozen: true, pierce: a.count, moabBonus: 0, ceramicBonus: 0, fortifiedBonus: 0, leadBonus: 0, camoBonus: t.tiers[1] === 5 ? a.damage : 0, stun: a.duration, moabStun: a.duration }), 2000);
