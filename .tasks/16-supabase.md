@@ -29,5 +29,9 @@ timestamp ordering, conflicts, guest import, account isolation, clears and stale
 Playwright: guest menu/settings/run, auth states, conflict choice, keyboard and responsive UI.
 SQL role tests: anonymous denied; owner CRUD; other-user read/write denied; stale upsert denied.
 
-Live configuration remains pending the user's project URL/public anon key, migration,
-redirect allow-list, and live RLS verification. Work remains on `lane/supabase` until review.
+Live backend configured on project `eqkujaglstzcmhwezvmq`: migration
+`20261023044858_bloons_cloud_saves`, public publishable key in ignored `.env.local`,
+live RLS assertions passed with fixtures rolled back, and anonymous Data API access
+denied with SQL code `42501` (HTTP 401). The configured build and tsc pass.
+Auth redirect allow-list verification, peer review, and deployment approval remain
+pending. Work remains on `lane/supabase` until review.
