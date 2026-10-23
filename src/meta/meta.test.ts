@@ -71,19 +71,35 @@ test('run snapshot survives save and restores a Sim', () => {
   kv.setItem('mpt.run', JSON.stringify({ v: 1, data: { map: 1 } })); expect(rs.load()).toBeNull();
 });
 
-test('run snapshot keeps mode, hero level, paragons, bank and power units through JSON', async () => {
+test('run snapshot keeps the full between-rounds state through JSON, links included', async () => {
   const { createGame } = await import('../modes/modes');
   const a = createGame('monkey_meadow', 'deflation'); a.cash = 1e7;
-  expect(a.placeHero(130, 330, 'quincy'), 'hero').toBe(true); a.grantHeroXP(1e9);
+  expect(a.placeHero(130, 330, 'quincy'), 'hero').toBe(true); a.grantHeroXP(1e9); a.hero!.mana = 77;
   a.addTower(300, 320, 'dart'); a.paragonize(a.towers[0], 7); a.towers[0].cost = 500000;
-  a.addTower(500, 320, 'farm'); a.towers[1].bank = 1234;
+  a.addTower(500, 320, 'farm'); Object.assign(a.towers[1], { bank: 1234, debt: 900, opolisIncome: 5000, ultra: 3, purchaseLives: 150, abilityReady: a.tick + 600 });
+  a.addTower(560, 320, 'beast'); a.addTower(600, 320, 'beast'); a.towers[3].mergedInto = a.towers[2]; a.towers[2].merges = [a.towers[3]];
+  a.towers[1].supportTarget = a.towers[0]; a.towers[0].targetPoint = { x: 11, y: 22 };
   const spot = Array.from({ length: 900 }, (_, i) => ({ x: 20 + (i % 30) * 30, y: 20 + Math.floor(i / 30) * 17 })).find(p => a.canUsePower('energizing_totem', p))!;
   expect(a.usePower('energizing_totem', spot), 'totem').toBe(true);
+  const trackPt = a.posAt(200); a.usePower('road_spikes', trackPt); a.usePower('thrive'); a.tick = 5000;
   const rs = M.runSlot(M.memoryKV()); expect(rs.save(M.snapshotSim(a, 'monkey_meadow', 1)), 'save').toBe(true);
   const snap = rs.load()!; expect(snap.mode).toBe('deflation');
   const b = createGame(snap.map, snap.mode!); expect(M.restoreSim(b, snap), 'restore').toBe(true);
-  expect(b.rules.cashMult).toBe(0);
-  expect([b.hero?.kind, b.hero?.level, b.hero?.stats]).toEqual([a.hero!.kind, 20, a.hero!.stats]);
-  expect(b.towers[0]).toMatchObject({ degree: 7, cost: 500000, damage: a.towers[0].damage }); expect(b.towers[1].bank).toBe(1234);
-  expect(b.powerUnits).toEqual(a.powerUnits);
+  expect(b.rules.cashMult).toBe(0); expect([b.tick, b.round, b.cash]).toEqual([a.tick, a.round, a.cash]);
+  expect(b.hero).toMatchObject({ kind: 'quincy', level: 20, mana: 77, stats: a.hero!.stats });
+  expect(b.towers[0]).toMatchObject({ degree: 7, cost: 500000, damage: a.towers[0].damage, targetPoint: { x: 11, y: 22 } });
+  expect(b.towers[1]).toMatchObject({ bank: 1234, debt: 900, opolisIncome: 5000, ultra: 3, purchaseLives: 150, abilityReady: a.towers[1].abilityReady });
+  expect(b.towers[1].supportTarget).toBe(b.towers[0]); expect(b.towers[3].mergedInto).toBe(b.towers[2]); expect(b.towers[2].merges![0]).toBe(b.towers[3]);
+  expect(b.powerUnits).toEqual(a.powerUnits); expect(b.powerUnits[0].untilRound).toBe(a.powerUnits[0].untilRound);
+  expect(b.powerTraps).toHaveLength(1); expect(b.powerTraps[0].hit).toBeInstanceOf(Map); expect(b.thrive).toEqual(a.thrive);
+  expect(b.canPlaceHero(130, 330, 'quincy')).toBe(false); // heroPlaced restored
+  expect(b.startRound()).toBe(true); for (let i = 0; i < 600; i++) b.step(); expect(b.round).toBe(a.round + 1);
+});
+
+test('legacy run snapshots without state still restore, and corrupt state fails cleanly', () => {
+  const path = [{ x: 0, y: 100 }, { x: 900, y: 100 }];
+  const legacy = { map: 'm', difficulty: 'medium' as const, round: 3, cash: 50, lives: 9, savedAt: 0, towers: [{ type: 'dart' as const, x: 100, y: 200, tiers: [1, 0, 0] as [number, number, number], targeting: 'First' as const }] };
+  const s = new Sim(path); expect(M.restoreSim(s, legacy)).toBe(true); expect(s.towers[0].tiers).toEqual([1, 0, 0]);
+  const t = new Sim(path); t.cash = 7;
+  expect(M.restoreSim(t, { ...legacy, state: { towers: [{ x: { $t: 5 } }], cash: 1, lives: 1, round: 1 } })).toBe(false); expect(t.cash).toBe(7);
 });

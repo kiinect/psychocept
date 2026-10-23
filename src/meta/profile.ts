@@ -1,8 +1,7 @@
 import { slot, defaultKV, type KV, type Slot } from '../storage/store';
 import { addXp, levelUpMM, winMM } from './xp';
 import { buyPower } from './powers';
-import type { Sim, Difficulty, Targeting, PowerUnit } from '../sim';
-import { heroStats, HEROES, type HeroKind } from '../heroes';
+import type { Sim, Difficulty, Targeting } from '../sim';
 import type { TowerKind } from '../towers';
 
 // ---------- Profile ----------
@@ -70,49 +69,35 @@ export interface RunSnapshot {
   map: string; difficulty: Difficulty; round: number; cash: number; lives: number;
   /** Mode id: rebuild the Sim with createGame(map, mode) before restoreSim. */
   mode?: string;
-  towers: { type: TowerKind; x: number; y: number; tiers: [number, number, number]; targeting: Targeting; degree?: number; cost?: number; bank?: number }[];
-  hero?: { kind: HeroKind; x: number; y: number; level: number; xp: number };
-  /** untilRound null = permanent (JSON has no Infinity). */
-  powerUnits?: (Omit<PowerUnit, 'untilRound'> & { untilRound: number | null })[];
+  /** Summary list (menus, legacy saves). Full fidelity lives in `state`. */
+  towers: { type: TowerKind; x: number; y: number; tiers: [number, number, number]; targeting: Targeting }[];
+  /** Sim.saveState(): towers with links, hero, traps, power units, cooldown ticks. Absent in old saves. */
+  state?: unknown;
   savedAt: number;
 }
-/** Capture a between-rounds snapshot from a Sim (public fields only). Mid-round state (bloons, projectiles) is not saved. */
+/** Capture a between-rounds snapshot. Mid-round state (bloons, projectiles) is not saved. */
 export function snapshotSim(sim: Sim, map: string, now = 0): RunSnapshot {
-  const h = sim.hero;
-  return { map, mode: sim.modeId, difficulty: sim.difficulty, round: sim.round, cash: sim.cash, lives: sim.lives, savedAt: now,
-    towers: sim.towers.filter(t => !t.mergedInto).map(t => ({ type: t.type, x: t.x, y: t.y, tiers: [...t.tiers] as [number, number, number], targeting: t.targeting,
-      degree: t.degree, cost: t.cost, bank: t.bank })),
-    hero: h ? { kind: h.kind, x: h.x, y: h.y, level: h.level, xp: h.xp } : undefined,
-    powerUnits: sim.powerUnits.map(u => ({ ...u, untilRound: Number.isFinite(u.untilRound) ? u.untilRound : null })) };
+  return { map, mode: sim.modeId, difficulty: sim.difficulty, round: sim.round, cash: sim.cash, lives: sim.lives, savedAt: now, state: sim.saveState(),
+    towers: sim.towers.map(t => ({ type: t.type, x: t.x, y: t.y, tiers: [...t.tiers] as [number, number, number], targeting: t.targeting })) };
 }
-/** Rebuild towers/cash/lives/round into a fresh Sim (built with the same map path + difficulty). Returns false on failure. */
+/** Restore into a fresh Sim built with the same map + mode. Uses `state` when present, else replays the legacy tower list. Returns false on failure. */
 export function restoreSim(sim: Sim, snap: RunSnapshot): boolean {
   if (sim.difficulty !== snap.difficulty) return false;
+  if (snap.state) return sim.loadState(snap.state);
   sim.cash = 1e12;
   for (const t of snap.towers) {
     if (!sim.addTower(t.x, t.y, t.type)) return false;
     const tw = sim.towers[sim.towers.length - 1];
     for (let path = 0; path < 3; path++) for (let n = 0; n < t.tiers[path]; n++) if (!sim.upgrade(sim.towers.length - 1, path)) return false;
-    if (t.degree) sim.paragonize(tw, t.degree);
-    tw.targeting = t.targeting; if (t.cost !== undefined) tw.cost = t.cost; if (t.bank) tw.bank = t.bank;
+    tw.targeting = t.targeting;
   }
-  const h = snap.hero;
-  if (h) {
-    if (!sim.placeHero(h.x, h.y, h.kind)) return false;
-    Object.assign(sim.hero!, { level: h.level, xp: h.xp, stats: heroStats(h.kind, h.level) });
-  }
-  sim.powerUnits = (snap.powerUnits ?? []).map(u => ({ ...u, untilRound: u.untilRound ?? Infinity }));
   sim.cash = snap.cash; sim.lives = snap.lives; sim.round = snap.round; return true;
 }
 function validateRun(r: any): RunSnapshot | null {
   if (!r || typeof r !== 'object' || typeof r.map !== 'string' || !Array.isArray(r.towers)) return null;
   if (!['easy', 'medium', 'hard', 'impoppable'].includes(r.difficulty)) return null;
-  const h = r.hero, units = Array.isArray(r.powerUnits) ? r.powerUnits : [];
-  return { map: r.map, mode: typeof r.mode === 'string' ? r.mode : undefined, difficulty: r.difficulty,
-    hero: h && HEROES[h.kind as HeroKind] && Number.isFinite(h.x) && Number.isFinite(h.y) ? { kind: h.kind, x: h.x, y: h.y, level: Math.max(1, Math.min(20, Math.floor(num(h.level, 1)))), xp: num(h.xp) } : undefined,
-    powerUnits: units.filter((u: any) => u && typeof u.id === 'string' && Number.isFinite(u.x) && Number.isFinite(u.y))
-      .map((u: any) => ({ id: u.id, x: u.x, y: u.y, r: num(u.r, 8), range: num(u.range), untilRound: Number.isFinite(u.untilRound) ? u.untilRound : null })), round: Math.floor(num(r.round)), cash: Math.floor(num(r.cash)), lives: Math.floor(num(r.lives, 1)), savedAt: num(r.savedAt),
-    towers: r.towers.filter((t: any) => t && typeof t.type === 'string' && Number.isFinite(t.x) && Number.isFinite(t.y) && Array.isArray(t.tiers)).map((t: any) => ({ type: t.type, x: t.x, y: t.y, tiers: [0, 1, 2].map(i => Math.floor(num(t.tiers[i]))) as [number, number, number], targeting: t.targeting ?? 'First',
-      degree: Number.isFinite(t.degree) ? Math.max(1, Math.min(100, Math.floor(t.degree))) : undefined, cost: Number.isFinite(t.cost) ? t.cost : undefined, bank: Number.isFinite(t.bank) ? t.bank : undefined })) };
+  return { map: r.map, mode: typeof r.mode === 'string' ? r.mode : undefined, state: r.state && typeof r.state === 'object' ? r.state : undefined,
+    difficulty: r.difficulty, round: Math.floor(num(r.round)), cash: Math.floor(num(r.cash)), lives: Math.floor(num(r.lives, 1)), savedAt: num(r.savedAt),
+    towers: r.towers.filter((t: any) => t && typeof t.type === 'string' && Number.isFinite(t.x) && Number.isFinite(t.y) && Array.isArray(t.tiers)).map((t: any) => ({ type: t.type, x: t.x, y: t.y, tiers: [0, 1, 2].map(i => Math.floor(num(t.tiers[i]))) as [number, number, number], targeting: t.targeting ?? 'First' })) };
 }
 export const runSlot = (kv?: KV): Slot<RunSnapshot | null> => slot('mpt.run', [], () => null, validateRun, kv ?? defaultKV());

@@ -74,6 +74,29 @@ const POWER_IMPL = new Set(['super_monkey_storm', 'monkey_boost', 'thrive', 'tim
 const POWER_UNIT_R: Record<string, number> = { pontoon: 32, portable_lake: 14, banana_farmer: 8, banana_farmer_pro: 8, energizing_totem: 8 };
 export interface PowerTrap { id: string; lane: number; dist: number; left: number; upgraded: boolean; hit: Map<number, number> }
 export interface PowerUnit extends Pt { id: string; r: number; range: number; untilRound: number }
+/** Between-rounds state a run save keeps (bloons, projectiles and timed zones are mid-round only). */
+const SAVE_FIELDS = ['cash', 'lives', 'round', 'tick', 'nextId', 'won', 'laneRR', 'towers', 'hero', 'heroPlaced', 'roadItems', 'sentries',
+  'collectibles', 'powerUnits', 'powerTraps', 'activePowers', 'thrive'] as const;
+/** JSON-safe encoding: tower references become {$t:index}, Sets/Maps/Infinity get tags, so links (merges, brew sources, owners) survive. */
+function encodeState(v: unknown, towers: unknown[], top = false): unknown {
+  if (typeof v === 'number' && !Number.isFinite(v)) return { $num: String(v) };
+  if (v === null || typeof v !== 'object') return v;
+  const i = top ? -1 : towers.indexOf(v);
+  if (i >= 0) return { $t: i };
+  if (v instanceof Set) return { $set: [...v].map(x => encodeState(x, towers)) };
+  if (v instanceof Map) return { $map: [...v].map(([k, x]) => [k, encodeState(x, towers)]) };
+  if (Array.isArray(v)) return v.map(x => encodeState(x, towers));
+  return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, encodeState(x, towers)]));
+}
+function decodeState(v: any, towers: object[]): any {
+  if (v === null || typeof v !== 'object') return v;
+  if (Array.isArray(v)) return v.map(x => decodeState(x, towers));
+  if ('$num' in v) return Number(v.$num);
+  if ('$t' in v) { if (!towers[v.$t]) throw new Error('bad tower ref'); return towers[v.$t]; }
+  if ('$set' in v) return new Set(v.$set.map((x: unknown) => decodeState(x, towers)));
+  if ('$map' in v) return new Map(v.$map.map(([k, x]: [unknown, unknown]) => [k, decodeState(x, towers)]));
+  return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, decodeState(x, towers)]));
+}
 export interface Rules { cashMult: number; incomeMult: number; noSell: boolean; noPowers?: boolean; moabHpMult: number; winRound: number; auto: boolean; allowed?: (k: string) => boolean }
 export const STANDARD_RULES: Rules = { cashMult: 1, incomeMult: 1, noSell: false, moabHpMult: 1, winRound: Infinity, auto: false };
 // regrow restores along single-child chains only (blue->red etc.), reverse-derived from bloons.json.
@@ -92,12 +115,12 @@ export class Sim {
   collectibles:Collectible[]=[];
   roadItems: RoadItem[] = []; sentries: Sentry[] = []; roundStartTick=0; modeId?: string;
   activePowers: { id: string; until: number }[] = []; powerTraps: PowerTrap[] = []; powerUnits: PowerUnit[] = [];
-  private thrive = { untilRound: -1, mult: 1 };
+  thrive = { untilRound: -1, mult: 1 };
   cash: number; lives: number; round = 0; tick = 0; nextId = 1; rng = mulberry32(1);
   roundActive = false; won = false; rules: Rules = { ...STANDARD_RULES };
-  lanes: Pt[][]; private lens: number[][] = []; private laneRR = 0;
+  lanes: Pt[][]; private lens: number[][] = []; laneRR = 0;
   hero: Hero | null = null;
-  private heroPlaced = false;
+  heroPlaced = false;
   private delayed: { at: number; target: Bloon; stats: TowerStats; damage: number; splash: number; radius: number; pierce: number }[] = [];
   private zones: (Pt & { until: number; next: number; interval: number; radius: number; stats: TowerStats; hit?: Set<number> })[] = [];
   private undead: { dist: number; lane: number; life: number; stats: TowerStats; hit: Set<number> }[] = [];
@@ -1139,6 +1162,24 @@ export class Sim {
     this.paragonize(t,degree);t.cost=value+cost;
     this.roadItems=this.roadItems.filter(i=>!sacrifices.includes(i.owner));this.sentries=this.sentries.filter(i=>!sacrifices.includes(i.owner));
     return true;
+  }
+  saveState() {
+    const out: Record<string, unknown> = {};
+    for (const k of SAVE_FIELDS) out[k] = k === 'towers' ? this.towers.map(t => encodeState(t, this.towers, true)) : encodeState(this[k], this.towers);
+    return out;
+  }
+  /** Load a saveState() result between rounds; leaves the Sim untouched and returns false if it does not decode. */
+  loadState(state: any) {
+    try {
+      if (!state || !Array.isArray(state.towers)) return false;
+      const towers = state.towers.map(() => ({})) as Tower[], decoded: Record<string, unknown> = {};
+      state.towers.forEach((t: unknown, i: number) => Object.assign(towers[i], decodeState(t, towers)));
+      for (const k of SAVE_FIELDS) if (k !== 'towers' && k in state) decoded[k] = decodeState(state[k], towers);
+      if (!Number.isFinite(decoded.cash) || !Number.isFinite(decoded.lives) || !Number.isFinite(decoded.round)) return false;
+      Object.assign(this, decoded, { towers, bloons: [], darts: [], spawnQ: [], roundActive: false });
+      this.rng = mulberry32((this.tick + this.nextId) >>> 0); // uncertain: RNG position is not saved; reseed deterministically
+      return true;
+    } catch { return false; }
   }
   /** Turn t into its type's paragon at the given degree (used by makeParagon and run restore). */
   paragonize(t:Tower,degree:number) {
