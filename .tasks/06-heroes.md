@@ -1,0 +1,4 @@
+# Task 06-heroes
+Repo: this dir (read the existing src/ first: src/sim.ts, src/main.ts, src/towers/*, tests). Original code and art only; never extract/copy/trace game assets. Sim deterministic and DOM-free; data-driven. Wiki tables in data/wiki/*.json (prose; hand-code numbers, mark ambiguity `// uncertain:`), original maps in data/maps.json. `npx tsc && npx vitest run && npx vite build` must be clean. Do not touch .re/ or .tasks/. Add tests for what you build (each tier/feature fires in a headless run). Final message: 5 lines max (files changed, stubs, deviations).
+
+Heroes: all 18 heroes from data/wiki/heroes.json: base cost, 20 levels each (stats + abilities), XP-per-round leveling in-match, hero select UI, placement (one hero per game), targeting, abilities at their unlock levels. Hero XP formula from data/wiki/meta.json.

@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Dart_Monkey_(BTD6)"],"data":{"id":"dart","name":"Dart Monkey","category":"Primary","costMedium":200,"footprintRadius":6,"range":32,"waterOnly":false,
+"targeting":["First","Last","Close","Strong"],
+"base":{"cooldown":0.95,"pierce":2,"damage":1,"damageType":"Sharp","projectileSpeed":300,"lifespan":0.25,"projectileRadius":2,"camo":false,"lead":false,"frozen":false},
+"crosspathRule":"Standard BTD6: one path up to tier 5, a second path up to tier 2, third path 0 (max 5-2-0).",
+"paths":{
+"1":[
+{"name":"Sharp Shots","cost":140,"effects":{"pierce":"+1 (Crossbow/Sharp Shooter +3, Crossbow Master +8 total from this tier per wiki)"}},
+{"name":"Razor Sharp Shots","cost":200,"effects":{"pierce":"+2 (Crossbow/Sharp Shooter +5 instead; Crossbow Master +8 total)"}},
+{"name":"Spike-o-pult","cost":320,"effects":{"damage":2,"pierce":18,"cooldown":1.15,"range":"+4.8","projectileRadius":5,"lifespan":1,"projectileSpeed":"x0.5","bounces":"rebounds off obstacles, rehits","frozen":true}},
+{"name":"Juggernaut","cost":1800,"effects":{"cooldown":1.0,"pierce":60,"lead":true,"bonusDamage":{"ceramic":3,"fortified":2},"knockback":"non-MOAB 4x speed backwards (lead/ceramic 2x)","speed":"much faster, longer"}},
+{"name":"Ultra-Juggernaut","cost":15000,"effects":{"damage":5,"bonusDamage":{"ceramic":8,"fortified":5,"lead":20},"pierce":210,"split":"at wall or half pierce splits into 6 juggernauts (50 pierce, no knockback, 1 bounce), each splits into 6 more on expiry"}}],
+"2":[
+{"name":"Quick Shots","cost":100,"effects":{"cooldownMult":0.85}},
+{"name":"Very Quick Shots","cost":190,"effects":{"cooldownMult":0.67,"note":"stated as 33% faster; ~0.67 of base cooldown"},"uncertain":true},
+{"name":"Triple Shot","cost":450,"effects":{"projectiles":3,"spreadDeg":15,"cooldownMult":0.75,"note":"4+ in path 3? with 4-x-x/x-x-4 throws 4 every 4th shot at 10deg"}},
+{"name":"Super Monkey Fan Club","cost":7200,"effects":{"cooldownMult":0.5},"ability":{"cooldown":50,"duration":15,"effect":"Transforms up to 9 other Dart Monkeys + itself into Super Monkeys (fast attack)"}},
+{"name":"Plasma Monkey Fan Club","cost":45000,"effects":{},"ability":{"cooldown":50,"duration":15,"effect":"Transforms up to 19 Dart Monkeys into Plasma Monkeys: +1 damage, +3 pierce, +100% attack speed vs Super, Plasma damage type"},"uncertain":true}],
+"3":[
+{"name":"Long Range Darts","cost":90,"effects":{"range":"+8 (+25%)","lifespan":"+35%"}},
+{"name":"Enhanced Eyesight","cost":200,"effects":{"range":"+8 more (+50% total)","projectileSpeed":"+16.67%","camo":true}},
+{"name":"Crossbow","cost":575,"effects":{"range":60,"damage":3,"pierce":5,"note":"with Sharp Shots pierce 8, Razor 13"}},
+{"name":"Sharp Shooter","cost":2050,"effects":{"damage":6,"cooldown":0.475,"projectileSpeed":"+33%","crit":{"every":10,"damage":60}}},
+{"name":"Crossbow Master","cost":21500,"effects":{"pierce":8,"range":80,"damage":8,"damageType":"Normal","projectiles":"2 parallel","crit":{"every":5,"damage":80},"limit":"only 1 unless Master Double Cross MK"}}]},
+"paragon":{"name":"Apex Plasma Master","cost":150000,"effect":"Rapidly fires volleys of 3 plasma juggernaut balls; each splits into 6 smaller balls up to twice on pierce loss/expiry; balls rehit after bouncing; Normal damage, bonus vs Ceramic and Boss. Requires 3 tier-5 Dart Monkeys sacrificed (standard paragon rule).","uncertain":true}}}

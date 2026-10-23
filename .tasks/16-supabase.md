@@ -1,0 +1,42 @@
+# Accounts and cloud saves
+
+Implements Part 2 of `/home/kaden/handoff-gpt-vault-and-supabase.md`.
+Accounts are optional; guest storage keys and save formats remain compatible.
+The owner's subsequent username/password requirement is in `17-username-accounts.md`
+and supersedes the original email confirmation flow below.
+
+## Boundaries and build order
+1. Storage codecs: decode cloud envelopes through existing migrations/validators; reject invalid input.
+2. Cloud mirror: write local storage synchronously, debounce remote writes for 3 seconds,
+   retry with capped backoff, persist pending changes, and flush at round boundaries/lifecycle events.
+3. Identity adapter: Supabase Auth and an owner-only saves table. Separate account caches;
+   guest progress is offered on first sign-in. Never send one account's cache to another.
+4. Account screen: sign up/in/out, guest option, status and per-slot conflict choices.
+
+Conflicts compare timestamps and the last synchronized value. Divergent meaningful progress
+requires a device/cloud choice; an unknown legacy timestamp cannot silently beat cloud progress.
+Clears use tombstones so a completed run does not reappear. Conditional upserts reject stale
+writes atomically; rejected writes are reread and reconciled. Unknown/invalid cloud slots do
+not overwrite local data. Network failures cannot block gameplay.
+
+The untrusted boundaries are auth forms, cloud JSON, and persisted local metadata. Supabase
+handles credentials; the client holds only the public project configuration. RLS governs
+every table operation, including the conditional upsert (security invoker). Never deploy,
+run production migrations, or update the vault without the user's go-ahead.
+
+## Verification
+`npx tsc --noEmit`, `npx vitest run`, `npx vite build`.
+Fake-client tests: migrations, malformed remote rejection, debounce, retries/reload,
+timestamp ordering, conflicts, guest import, account isolation, clears and stale requests.
+Playwright: guest menu/settings/run, auth states, conflict choice, keyboard and responsive UI.
+SQL role tests: anonymous denied; owner CRUD; other-user read/write denied; stale upsert denied.
+
+Live backend configured on project `eqkujaglstzcmhwezvmq`: migration
+`20261023044858_bloons_cloud_saves`, public publishable key in ignored `.env.local`,
+live RLS assertions passed with fixtures rolled back, and anonymous Data API access
+denied with SQL code `42501` (HTTP 401). The configured build and tsc pass.
+Published with owner approval to `https://psychocept.org` as version 1.1.0 (tag
+`v1.1.0`, source `ee98a70`, Pages `b417be8`). Live version, bundle, menu and
+account form verified with no JavaScript page errors. Source is pushed as draft
+PR #1. Auth redirect allow-list / real email confirmation verification and source
+peer review remain pending. Work remains on `lane/supabase` until review.

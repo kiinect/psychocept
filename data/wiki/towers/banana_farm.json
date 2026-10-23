@@ -1,0 +1,29 @@
+{"source":["https://www.bloonswiki.com/Banana_Farm_(BTD6)","https://bloons.fandom.com/wiki/Banana_Farm_(BTD6)"],"data":{
+"id":"banana_farm","name":"Banana Farm","class":"Support",
+"base_cost_medium":1250,"footprint":"Very Large","footprint_radius":30,"footprint_uncertain":true,"range":40,"water_only":false,
+"targeting":[],"targeting_extra":["No attack; bananas spawn erratically in range, or spawn at set spot with x-x-3+ (Marketplace line spawns no collectibles)"],
+"base_stats":{"bunches_per_round":4,"value_per_bunch":20,"income_per_round":80,"banana_lifespan":15,"collect_magnet_radius":50,"camo":false},
+"income_table_per_round":{"0-0-0":80,"1-0-0":120,"1-2-0":150,"2-0-0":160,"2-2-0":200,"3-0-0":320,"3-2-0":400,"4-0-0":1500,"4-2-0":1875,"5-0-0":6000,"5-2-0":7500,"0-2-0":100,"0-3-0_bank_interest_note":"bank balance +15%/round","0-0-3":320,"1-0-3":360,"2-0-3":400,"0-0-4":1120,"1-0-4":1260,"2-0-4":1400,"x-x-5_end_of_round_bonus":4000},
+"crosspath_rule":"Standard BTD6: one path to tier 5, a second path up to tier 2, third path locked at 0.",
+"paths":{
+"1":[
+{"tier":1,"name":"Increased Production","cost_medium":500,"stats":{"bunches_per_round":6,"income_per_round":120},"text":"4->6 bunches per round."},
+{"tier":2,"name":"Greater Production","cost_medium":600,"stats":{"bunches_per_round":8,"income_per_round":160},"text":"6->8 bunches per round."},
+{"tier":3,"name":"Banana Plantation","cost_medium":3000,"stats":{"bunches_per_round":16,"income_per_round":320},"text":"8->16 bunches per round."},
+{"tier":4,"name":"Banana Research Facility","cost_medium":19000,"stats":{"crates_per_round":5,"crate_value":300,"income_per_round":1500},"text":"Generates 5 crates per round worth $300 each instead of bunches."},
+{"tier":5,"name":"Banana Central","cost_medium":115000,"stats":{"crate_value":1200,"crates_per_round":5,"income_per_round":6000,"income_buff_to_research_facilities_pct":25},"text":"Crate value $300->$1,200 ($6,000/round; wiki prose says $7,000, table says 6000); +25% income buff to all Banana Research Facilities on map.","uncertain":true}],
+"2":[
+{"tier":1,"name":"Long Life Bananas","cost_medium":300,"stats":{"banana_lifespan":30},"text":"Banana lifespan 15->30s. No crosspath benefit for Marketplace+."},
+{"tier":2,"name":"Valuable Bananas","cost_medium":800,"stats":{"banana_value_mult":1.25,"banana_value":25},"text":"All bananas +25% value ($25 each; +30% with More Valuable Bananas MK). Additive with income buffs (Monkey City +20%) but not Geraldo's Fertilizer."},
+{"tier":3,"name":"Monkey Bank","cost_medium":3650,"stats":{"interest_pct_per_round":15,"bank_capacity":7000,"bank_capacity_bigger_banks":9500,"income_per_round":225},"text":"Cash deposited in internal bank balance (withdraw anytime), +15% interest at round end; capacity $7,000 ($9,500 w/ Bigger Banks MK); stops producing when full. EZ Collect: glows when full. Banana Salvage: auto-collects when full."},
+{"tier":4,"name":"IMF Loan","cost_medium":7200,"stats":{"bank_capacity":10000,"bank_capacity_bigger_banks":12500,"ability":"IMF Loan","ability_cash":9000,"ability_cash_backroom_deals":10000,"ability_cooldown":85,"ability_full_initial_cooldown":true,"uses_per_round":2,"disabled_if_round_longer_than_s":180,"debt_equal_to_cash":true},"text":"Bank capacity $10,000. Ability grants $9,000 and equal debt repaid over time; cd 85s, full initial cooldown, max 2 uses/round, disabled if round exceeds 3 min, not usable between rounds, not while previous loan unpaid. Bank Deposits MK: deposits accrue interest after 2 rounds."},
+{"tier":5,"name":"Monkey-Nomics","cost_medium":100000,"stats":{"ability_cash":9000,"ability_cash_backroom_deals":10000,"ability_cooldown":60,"ability_full_initial_cooldown":true,"uses_per_round":2,"debt":false},"text":"Replaces IMF Loan with debt-free $9,000 ability; cd 60s, 2 uses/round, disabled if round >3 min, not usable between rounds. Boostable only by Monkey City buff."}],
+"3":[
+{"tier":1,"name":"EZ Collect","cost_medium":250,"stats":{"collect_radius":75,"expired_value_pct":50},"text":"Magnet radius 50->75; uncollected expiring bananas auto-collect for 50% value. Banks glow when full."},
+{"tier":2,"name":"Banana Salvage","cost_medium":400,"stats":{"expired_value_pct":85,"sell_back_bonus_pct":10},"text":"Spoiled bananas auto-harvested for 85%; Banks auto-collect when full (with Monkey Bank+); sell value +10%."},
+{"tier":3,"name":"Marketplace","cost_medium":2700,"stats":{"packets_per_round":16,"packet_value":20,"income_per_round":320,"packets_add_per_path1_tier":2},"text":"Auto-generates 16 packets of $20 per round, no collectibles; Path1 T1/T2 each add +2 packets; Valuable Bananas packet $25 ($26 MK). Healthy Bananas MK: 1 life/round."},
+{"tier":4,"name":"Central Market","cost_medium":15000,"stats":{"packet_value":70,"income_per_round":1120,"merchantmen_income_buff_pct":10,"merchantmen_buff_cap_pct":100},"text":"Packet value $20->$70 ($1,120/round); Path1 upgrades +2 packets each; Valuable Bananas +25%/+30%. Each Central Market gives all Merchantmen +10% income, additive, max +100%. Healthy Bananas MK: 3 lives/round."},
+{"tier":5,"name":"Monkey Wall Street","cost_medium":70000,"stats":{"eor_cash":4000,"eor_lives":15,"range":75,"range_before":40},"text":"Adds $4,000 and 15 lives at end of each round (not affected by crosspath; Monkey City and Geraldo's Fertilizer apply). Auto-collects collectibles (bananas, Bloon traps, Supply Drop crates) in range; range 40->75."}]},
+"paragon":null,"paragon_note":"No Banana Farm paragon on wiki.",
+"farm_uncertain_note":"Range/footprint from fandom infobox (Very Large 30); bloonswiki has no stats page for farm."
+}}

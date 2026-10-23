@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Sniper_Monkey_(BTD6)"],"data":{"id":"sniper","name":"Sniper Monkey","category":"Military","costMedium":350,"footprintRadius":6,"range":"infinite (display 20)","waterOnly":false,
+"targeting":["First","Last","Close","Strong","Elite (after Elite Sniper)","Camo Prioritization (Paragon)"],
+"base":{"cooldown":1.59,"pierce":1,"damage":2,"damageType":"Sharp","camo":false,"lead":false,"note":"hits only its target"},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Full Metal Jacket","cost":350,"effects":{"damage":4,"damageType":"Normal","lead":true,"frozen":true,"shrapnelDamage":2}},
+{"name":"Large Caliber","cost":1300,"effects":{"damage":7,"shrapnelDamage":3,"bounceDistance":80}},
+{"name":"Deadly Precision","cost":2200,"effects":{"damage":20,"ceramicBonus":50,"shrapnelDamage":4}},
+{"name":"Maim MOAB","cost":6300,"effects":{"damage":30,"moabStun":"short, not BAD/boss","shrapnelDamage":6}},
+{"name":"Cripple MOAB","cost":32000,"effects":{"damage":140,"explosion":{"damage":28,"pierce":10,"radius":8},"moabStun":"longer","crippled":"+5 damage taken from all sources","shrapnel":{"damage":12,"pierce":6}}}],
+"2":[
+{"name":"Night Vision Goggles","cost":250,"effects":{"camo":true,"camoBonusDamage":2}},
+{"name":"Shrapnel Shot","cost":450,"effects":{"shrapnel":{"count":5,"spreadDeg":45,"damage":1,"pierce":2},"note":"not on initial target"}},
+{"name":"Bouncing Bullet","cost":2100,"effects":{"bounces":2,"bounceRadius":40,"shrapnelEachImpact":true}},
+{"name":"Supply Drop","cost":7600,"effects":{"bounces":4,"shrapnelPierce":5},"ability":{"cooldown":90,"effect":"Crate: $1100 cash OR ammo buff (6 shots: +3 pierce, 2x damage, 2x lifespan, Normal damage)"},"uncertain":true},
+{"name":"Elite Sniper","cost":12000,"effects":{"cooldownMult":0.4,"globalSnipers":"x0.75 cooldown for other Snipers","targeting":"adds Elite option"},"ability":{"cooldown":90,"effect":"Cash crate $3000 or ammo crate buffing 2 closest non-paragon shrapnel Snipers"}}],
+"3":[
+{"name":"Fast Firing","cost":450,"effects":{"cooldown":1.113}},
+{"name":"Even Faster Firing","cost":450,"effects":{"cooldown":0.7791}},
+{"name":"Semi-Automatic","cost":2700,"effects":{"cooldown":0.2597}},
+{"name":"Full Auto Rifle","cost":4100,"effects":{"cooldown":0.1298,"moabDamage":"+2","shrapnelCeramicBonus":1}},
+{"name":"Elite Defender","cost":14900,"effects":{"cooldown":0.0649,"moabDamage":"+4","trackBonus":"up to +100% attack speed by furthest bloon track progress"},"ability":{"type":"passive","cooldown":10,"duration":7,"effect":"4x attack speed on losing lives (cooldown 2.5s with Master Defender)"}}]},
+"paragon":{"name":"S.P.I.D.E.R. Monkey","cost":800000,"effect":"Elevated, ignores line-of-sight blockers; other Snipers get 'Use S.P.I.D.E.R. target' option; auto $20,000 cash drop mid-round; strong bullet bounces to 2nd target (2x damage), shrapnel seeks and explodes with stun; target debuff +5 damage; abilities Ammo Swap (12s, 90s cd, once/round) and Single Out (180s cd, max 3/round). Requires 3 tier-5 Snipers.","uncertain":true}}}

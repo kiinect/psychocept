@@ -1,0 +1,5330 @@
+{
+ "source": [
+  "https://bloons.fandom.com/wiki/Rounds_(BTD6) (wikitext rows + rendered RBE/income table)"
+ ],
+ "data": {
+  "rounds": [
+   {
+    "round": 1,
+    "raw": "20 Reds",
+    "groups": [
+     {
+      "type": "red",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 20,
+    "rbe_scaled": 20,
+    "wiki_rbe": 20
+   },
+   {
+    "round": 2,
+    "raw": "35 Reds",
+    "groups": [
+     {
+      "type": "red",
+      "count": 35,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 35,
+    "rbe_scaled": 35,
+    "wiki_rbe": 35
+   },
+   {
+    "round": 3,
+    "raw": "25 Reds, 5 Blues",
+    "groups": [
+     {
+      "type": "red",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 35,
+    "rbe_scaled": 35,
+    "wiki_rbe": 35
+   },
+   {
+    "round": 4,
+    "raw": "35 Reds, 18 Blues",
+    "groups": [
+     {
+      "type": "red",
+      "count": 35,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 71,
+    "rbe_scaled": 71,
+    "wiki_rbe": 71
+   },
+   {
+    "round": 5,
+    "raw": "5 Reds, 27 Blues",
+    "groups": [
+     {
+      "type": "red",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 27,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 59,
+    "rbe_scaled": 59,
+    "wiki_rbe": 59
+   },
+   {
+    "round": 6,
+    "raw": "15 Reds, 15 Blues, 4 Greens",
+    "groups": [
+     {
+      "type": "red",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 57,
+    "rbe_scaled": 57,
+    "wiki_rbe": 57
+   },
+   {
+    "round": 7,
+    "raw": "20 Reds, 20 Blues, 5 Greens",
+    "groups": [
+     {
+      "type": "red",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 75,
+    "rbe_scaled": 75,
+    "wiki_rbe": 75
+   },
+   {
+    "round": 8,
+    "raw": "10 Reds, 20 Blues, 14 Greens",
+    "groups": [
+     {
+      "type": "red",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 14,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 92,
+    "rbe_scaled": 92,
+    "wiki_rbe": 92
+   },
+   {
+    "round": 9,
+    "raw": "30 Greens",
+    "groups": [
+     {
+      "type": "green",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 90,
+    "rbe_scaled": 90,
+    "wiki_rbe": 90
+   },
+   {
+    "round": 10,
+    "raw": "102 Blues",
+    "groups": [
+     {
+      "type": "blue",
+      "count": 102,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 204,
+    "rbe_scaled": 204,
+    "wiki_rbe": 204
+   },
+   {
+    "round": 11,
+    "raw": "10 Reds, 10 Blues, 12 Greens, 3 Yellows",
+    "groups": [
+     {
+      "type": "red",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 78,
+    "rbe_scaled": 78,
+    "wiki_rbe": 78
+   },
+   {
+    "round": 12,
+    "raw": "15 Blues, 10 Greens, 5 Yellows",
+    "groups": [
+     {
+      "type": "blue",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 80,
+    "rbe_scaled": 80,
+    "wiki_rbe": 80
+   },
+   {
+    "round": 13,
+    "raw": "50 Blues, 23 Greens",
+    "groups": [
+     {
+      "type": "blue",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 23,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 169,
+    "rbe_scaled": 169,
+    "wiki_rbe": 169
+   },
+   {
+    "round": 14,
+    "raw": "49 Reds, 15 Blues, 10 Greens, 9 Yellows",
+    "groups": [
+     {
+      "type": "red",
+      "count": 49,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 9,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 145,
+    "rbe_scaled": 145,
+    "wiki_rbe": 145
+   },
+   {
+    "round": 15,
+    "raw": "20 Reds, 15 Blues, 12 Greens, 10 Yellows, 5 Pinks",
+    "groups": [
+     {
+      "type": "red",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "pink",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 151,
+    "rbe_scaled": 151,
+    "wiki_rbe": 151
+   },
+   {
+    "round": 16,
+    "raw": "40 Greens, 8 Yellows",
+    "groups": [
+     {
+      "type": "green",
+      "count": 40,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 152,
+    "rbe_scaled": 152,
+    "wiki_rbe": 152
+   },
+   {
+    "round": 17,
+    "raw": "12 Regrow Yellows",
+    "groups": [
+     {
+      "type": "yellow",
+      "count": 12,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 48,
+    "rbe_scaled": 48,
+    "wiki_rbe": 48
+   },
+   {
+    "round": 18,
+    "raw": "80 Greens",
+    "groups": [
+     {
+      "type": "green",
+      "count": 80,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 240,
+    "rbe_scaled": 240,
+    "wiki_rbe": 240
+   },
+   {
+    "round": 19,
+    "raw": "10 Greens, 4 Yellows, 5 Regrow Yellows, 15 Pinks",
+    "groups": [
+     {
+      "type": "green",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 5,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "pink",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 141,
+    "rbe_scaled": 141,
+    "wiki_rbe": 141
+   },
+   {
+    "round": 20,
+    "raw": "6 Blacks",
+    "groups": [
+     {
+      "type": "black",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 66,
+    "rbe_scaled": 66,
+    "wiki_rbe": 66
+   },
+   {
+    "round": 21,
+    "raw": "40 Yellows, 14 Pinks",
+    "groups": [
+     {
+      "type": "yellow",
+      "count": 40,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "pink",
+      "count": 14,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 230,
+    "rbe_scaled": 230,
+    "wiki_rbe": 230
+   },
+   {
+    "round": 22,
+    "raw": "16 Whites",
+    "groups": [
+     {
+      "type": "white",
+      "count": 16,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 176,
+    "rbe_scaled": 176,
+    "wiki_rbe": 176
+   },
+   {
+    "round": 23,
+    "raw": "7 Blacks, 7 Whites",
+    "groups": [
+     {
+      "type": "black",
+      "count": 7,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "white",
+      "count": 7,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 154,
+    "rbe_scaled": 154,
+    "wiki_rbe": 154
+   },
+   {
+    "round": 24,
+    "raw": "20 Blues, Camo Green",
+    "groups": [
+     {
+      "type": "blue",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 1,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 43,
+    "rbe_scaled": 43,
+    "wiki_rbe": 43
+   },
+   {
+    "round": 25,
+    "raw": "25 Regrow Yellows, 10 Purples",
+    "groups": [
+     {
+      "type": "yellow",
+      "count": 25,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "purple",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 210,
+    "rbe_scaled": 210,
+    "wiki_rbe": 210
+   },
+   {
+    "round": 26,
+    "raw": "23 Pinks, 4 Zebras",
+    "groups": [
+     {
+      "type": "pink",
+      "count": 23,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zebra",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 207,
+    "rbe_scaled": 207,
+    "wiki_rbe": 207
+   },
+   {
+    "round": 27,
+    "raw": "100 Reds, 60 Blues, 45 Greens, 45 Yellows",
+    "groups": [
+     {
+      "type": "red",
+      "count": 100,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "blue",
+      "count": 60,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 45,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 45,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 535,
+    "rbe_scaled": 535,
+    "wiki_rbe": 535
+   },
+   {
+    "round": 28,
+    "raw": "6 Leads",
+    "groups": [
+     {
+      "type": "lead",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 138,
+    "rbe_scaled": 138,
+    "wiki_rbe": 138
+   },
+   {
+    "round": 29,
+    "raw": "50 Yellows, 15 Regrow Yellows",
+    "groups": [
+     {
+      "type": "yellow",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 15,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 260,
+    "rbe_scaled": 260,
+    "wiki_rbe": 260
+   },
+   {
+    "round": 30,
+    "raw": "9 Leads",
+    "groups": [
+     {
+      "type": "lead",
+      "count": 9,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 207,
+    "rbe_scaled": 207,
+    "wiki_rbe": 207
+   },
+   {
+    "round": 31,
+    "raw": "8 Blacks, 8 Whites, 8 Zebras, 2 Regrow Zebras",
+    "groups": [
+     {
+      "type": "black",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "white",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zebra",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zebra",
+      "count": 2,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 406,
+    "rbe_scaled": 406,
+    "wiki_rbe": 406
+   },
+   {
+    "round": 32,
+    "raw": "15 Blacks, 20 Whites, 10 Purples",
+    "groups": [
+     {
+      "type": "black",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "white",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "purple",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 495,
+    "rbe_scaled": 495,
+    "wiki_rbe": 495
+   },
+   {
+    "round": 33,
+    "raw": "20 Camo Reds, 13 Camo Yellows",
+    "groups": [
+     {
+      "type": "red",
+      "count": 20,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "yellow",
+      "count": 13,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 72,
+    "rbe_scaled": 72,
+    "wiki_rbe": 72
+   },
+   {
+    "round": 34,
+    "raw": "160 Yellows, 6 Zebras",
+    "groups": [
+     {
+      "type": "yellow",
+      "count": 160,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zebra",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 778,
+    "rbe_scaled": 778,
+    "wiki_rbe": 778
+   },
+   {
+    "round": 35,
+    "raw": "35 Pinks, 30 Blacks, 25 Whites, 5 Rainbows",
+    "groups": [
+     {
+      "type": "pink",
+      "count": 35,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "black",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "white",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 1015,
+    "rbe_scaled": 1015,
+    "wiki_rbe": 1015
+   },
+   {
+    "round": 36,
+    "raw": "140 Pinks, 20 Camo Regrow Greens",
+    "groups": [
+     {
+      "type": "pink",
+      "count": 140,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "green",
+      "count": 20,
+      "camo": true,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 760,
+    "rbe_scaled": 760,
+    "wiki_rbe": 760
+   },
+   {
+    "round": 37,
+    "raw": "25 Blacks, 25 Whites, 7 Camo Whites, 10 Zebras, 15 Leads",
+    "groups": [
+     {
+      "type": "black",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "white",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "white",
+      "count": 7,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zebra",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 1202,
+    "rbe_scaled": 1202,
+    "wiki_rbe": 1202
+   },
+   {
+    "round": 38,
+    "raw": "42 Pinks, 17 Whites, 10 Zebras, 14 Leads, 2 Ceramics",
+    "groups": [
+     {
+      "type": "pink",
+      "count": 42,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "white",
+      "count": 17,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zebra",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 14,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 1157,
+    "rbe_scaled": 1157,
+    "wiki_rbe": 1157
+   },
+   {
+    "round": 39,
+    "raw": "10 Blacks, 10 Whites, 20 Zebras, 18 Rainbows, 2 Regrow Rainbows",
+    "groups": [
+     {
+      "type": "black",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "white",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zebra",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 2,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 1620,
+    "rbe_scaled": 1620,
+    "wiki_rbe": 1620
+   },
+   {
+    "round": 40,
+    "raw": "MOAB",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 616.0,
+    "rbe_scaled": 616.0,
+    "wiki_rbe": 616,
+    "comment": "On Easy mode the MOAB spawns with only 2/3 of its health"
+   },
+   {
+    "round": 41,
+    "raw": "60 Blacks, 60 Zebras",
+    "groups": [
+     {
+      "type": "black",
+      "count": 60,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zebra",
+      "count": 60,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 2040,
+    "rbe_scaled": 2040,
+    "wiki_rbe": 2040
+   },
+   {
+    "round": 42,
+    "raw": "6 Regrow Rainbows, 5 Camo Rainbows",
+    "groups": [
+     {
+      "type": "rainbow",
+      "count": 6,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 5,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 517,
+    "rbe_scaled": 517,
+    "wiki_rbe": 517
+   },
+   {
+    "round": 43,
+    "raw": "10 Rainbows, 7 Ceramics",
+    "groups": [
+     {
+      "type": "rainbow",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 7,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 1198,
+    "rbe_scaled": 1198,
+    "wiki_rbe": 1198
+   },
+   {
+    "round": 44,
+    "raw": "50 Zebras",
+    "groups": [
+     {
+      "type": "zebra",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 1150,
+    "rbe_scaled": 1150,
+    "wiki_rbe": 1150
+   },
+   {
+    "round": 45,
+    "raw": "180 Pinks, 10 Camo Purples, 4 Fortified Leads, 25 Rainbows",
+    "groups": [
+     {
+      "type": "pink",
+      "count": 180,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "purple",
+      "count": 10,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 2289,
+    "rbe_scaled": 2289,
+    "wiki_rbe": 2289
+   },
+   {
+    "round": 46,
+    "raw": "6 Fortified Ceramics",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 684,
+    "rbe_scaled": 684,
+    "wiki_rbe": 684
+   },
+   {
+    "round": 47,
+    "raw": "70 Camo Pinks, 12 Ceramics",
+    "groups": [
+     {
+      "type": "pink",
+      "count": 70,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 1598,
+    "rbe_scaled": 1598,
+    "wiki_rbe": 1598
+   },
+   {
+    "round": 48,
+    "raw": "40 Regrow Pinks, 30 Camo Regrow Purples, 40 Rainbows, 3 Fortified Ceramics",
+    "groups": [
+     {
+      "type": "pink",
+      "count": 40,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "purple",
+      "count": 30,
+      "camo": true,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 40,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 2752,
+    "rbe_scaled": 2752,
+    "wiki_rbe": 2752
+   },
+   {
+    "round": 49,
+    "raw": "343 Greens, 20 Zebras, 20 Rainbows, 10 Regrow Rainbows, 18 Ceramics",
+    "groups": [
+     {
+      "type": "green",
+      "count": 343,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zebra",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 10,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 4771,
+    "rbe_scaled": 4771,
+    "wiki_rbe": 4771
+   },
+   {
+    "round": 50,
+    "raw": "20 Reds, 8 Fortified Leads, 20 Ceramics, 2 MOABs",
+    "groups": [
+     {
+      "type": "red",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 3540.0,
+    "rbe_scaled": 3540.0,
+    "wiki_rbe": 3540
+   },
+   {
+    "round": 51,
+    "raw": "10 Regrow Rainbows, 15 Camo Ceramics",
+    "groups": [
+     {
+      "type": "rainbow",
+      "count": 10,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 15,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 2030,
+    "rbe_scaled": 2030,
+    "wiki_rbe": 2030
+   },
+   {
+    "round": 52,
+    "raw": "25 Rainbows, 10 Ceramics, 2 MOABs",
+    "groups": [
+     {
+      "type": "rainbow",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 3447.0,
+    "rbe_scaled": 3447.0,
+    "wiki_rbe": 3447
+   },
+   {
+    "round": 53,
+    "raw": "80 Camo Pinks, 3 MOABs",
+    "groups": [
+     {
+      "type": "pink",
+      "count": 80,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 2248.0,
+    "rbe_scaled": 2248.0,
+    "wiki_rbe": 2248
+   },
+   {
+    "round": 54,
+    "raw": "35 Ceramics, 2 MOABs",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 35,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 4872.0,
+    "rbe_scaled": 4872.0,
+    "wiki_rbe": 4872
+   },
+   {
+    "round": 55,
+    "raw": "45 Ceramics, MOAB",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 45,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 5296.0,
+    "rbe_scaled": 5296.0,
+    "wiki_rbe": 5296
+   },
+   {
+    "round": 56,
+    "raw": "40 Camo Rainbows, MOAB",
+    "groups": [
+     {
+      "type": "rainbow",
+      "count": 40,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 2496.0,
+    "rbe_scaled": 2496.0,
+    "wiki_rbe": 2496
+   },
+   {
+    "round": 57,
+    "raw": "40 Rainbows, 4 MOABs",
+    "groups": [
+     {
+      "type": "rainbow",
+      "count": 40,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 4344.0,
+    "rbe_scaled": 4344.0,
+    "wiki_rbe": 4344
+   },
+   {
+    "round": 58,
+    "raw": "15 Ceramics, 10 Fortified Ceramics, 5 MOABs",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 5780.0,
+    "rbe_scaled": 5780.0,
+    "wiki_rbe": 5780
+   },
+   {
+    "round": 59,
+    "raw": "50 Camo Leads, 20 Ceramics, 10 Regrow Ceramics",
+    "groups": [
+     {
+      "type": "lead",
+      "count": 50,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 10,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 4270,
+    "rbe_scaled": 4270,
+    "wiki_rbe": 4270
+   },
+   {
+    "round": 60,
+    "raw": "BFB",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 3164.0,
+    "rbe_scaled": 3164.0,
+    "wiki_rbe": 3164
+   },
+   {
+    "round": 61,
+    "raw": "150 Regrow Zebras, 5 MOABs",
+    "groups": [
+     {
+      "type": "zebra",
+      "count": 150,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 6530.0,
+    "rbe_scaled": 6530.0,
+    "wiki_rbe": 6530
+   },
+   {
+    "round": 62,
+    "raw": "250 Purples, 15 Camo Regrow Rainbows, 5 MOABs, 2 Fortified MOABs",
+    "groups": [
+     {
+      "type": "purple",
+      "count": 250,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 15,
+      "camo": true,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 8247.0,
+    "rbe_scaled": 8247.0,
+    "wiki_rbe": 8247
+   },
+   {
+    "round": 63,
+    "raw": "75 Leads, 122 Ceramics",
+    "groups": [
+     {
+      "type": "lead",
+      "count": 75,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 122,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 14413,
+    "rbe_scaled": 14413,
+    "wiki_rbe": 14413
+   },
+   {
+    "round": 64,
+    "raw": "6 MOABs, 3 Fortified MOABs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 6264.0,
+    "rbe_scaled": 6264.0,
+    "wiki_rbe": 6264
+   },
+   {
+    "round": 65,
+    "raw": "100 Zebras, 70 Rainbows, 50 Ceramics, 3 MOABs, 2 BFBs",
+    "groups": [
+     {
+      "type": "zebra",
+      "count": 100,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 70,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 18966.0,
+    "rbe_scaled": 18966.0,
+    "wiki_rbe": 18966
+   },
+   {
+    "round": 66,
+    "raw": "8 MOABs, 3 Fortified MOABs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 7496.0,
+    "rbe_scaled": 7496.0,
+    "wiki_rbe": 7496
+   },
+   {
+    "round": 67,
+    "raw": "13 Camo Regrow Fortified Ceramics, 8 MOABs",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 13,
+      "camo": true,
+      "regrow": true,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 6410.0,
+    "rbe_scaled": 6410.0,
+    "wiki_rbe": 6410
+   },
+   {
+    "round": 68,
+    "raw": "4 MOABs, BFB",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 5628.0,
+    "rbe_scaled": 5628.0,
+    "wiki_rbe": 5628
+   },
+   {
+    "round": 69,
+    "raw": "40 Regrow Blacks, 40 Fortified Leads, 50 Ceramics",
+    "groups": [
+     {
+      "type": "black",
+      "count": 40,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 40,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 6680,
+    "rbe_scaled": 6680,
+    "wiki_rbe": 6680
+   },
+   {
+    "round": 70,
+    "raw": "120 Camo Regrow Whites, 200 Rainbows, 4 MOABs",
+    "groups": [
+     {
+      "type": "white",
+      "count": 120,
+      "camo": true,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 200,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 13184.0,
+    "rbe_scaled": 13184.0,
+    "wiki_rbe": 13184
+   },
+   {
+    "round": 71,
+    "raw": "30 Ceramics, 10 MOABs",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 9280.0,
+    "rbe_scaled": 9280.0,
+    "wiki_rbe": 9280
+   },
+   {
+    "round": 72,
+    "raw": "38 Regrow Ceramics, 2 BFBs",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 38,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 10280.0,
+    "rbe_scaled": 10280.0,
+    "wiki_rbe": 10280
+   },
+   {
+    "round": 73,
+    "raw": "8 MOABs, 2 BFBs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 11256.0,
+    "rbe_scaled": 11256.0,
+    "wiki_rbe": 11256
+   },
+   {
+    "round": 74,
+    "raw": "50 Ceramics, 60 Fortified Ceramics, 25 Camo Regrow Fortified Ceramics, BFB",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 60,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 25,
+      "camo": true,
+      "regrow": true,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 18054.0,
+    "rbe_scaled": 18054.0,
+    "wiki_rbe": 18054
+   },
+   {
+    "round": 75,
+    "raw": "14 Leads, 14 Fortified Leads, 3 Fortified MOABs, 7 BFBs",
+    "groups": [
+     {
+      "type": "lead",
+      "count": 14,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 14,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 7,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 25402.0,
+    "rbe_scaled": 25402.0,
+    "wiki_rbe": 25402
+   },
+   {
+    "round": 76,
+    "raw": "60 Regrow Ceramics",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 60,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 6240,
+    "rbe_scaled": 6240,
+    "wiki_rbe": 6240
+   },
+   {
+    "round": 77,
+    "raw": "11 MOABs, 5 BFBs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 11,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 22596.0,
+    "rbe_scaled": 22596.0,
+    "wiki_rbe": 22596
+   },
+   {
+    "round": 78,
+    "raw": "80 Purples, 150 Rainbows, 75 Ceramics, 72 Camo Ceramics, BFB",
+    "groups": [
+     {
+      "type": "purple",
+      "count": 80,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "rainbow",
+      "count": 150,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 75,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 72,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 26382.0,
+    "rbe_scaled": 26382.0,
+    "wiki_rbe": 26382
+   },
+   {
+    "round": 79,
+    "raw": "500 Regrow Rainbows, 4 BFBs, 2 Fortified BFBs",
+    "groups": [
+     {
+      "type": "rainbow",
+      "count": 500,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 45804.0,
+    "rbe_scaled": 45804.0,
+    "wiki_rbe": 45804
+   },
+   {
+    "round": 80,
+    "raw": "ZOMG",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 16656.0,
+    "rbe_scaled": 16656.0,
+    "wiki_rbe": 16656
+   },
+   {
+    "round": 81,
+    "raw": "17 BFBs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 17,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 53788.0,
+    "rbe_scaled": 44506.0,
+    "wiki_rbe": 44506
+   },
+   {
+    "round": 82,
+    "raw": "10 BFBs, 5 Fortified BFBs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 55760.0,
+    "rbe_scaled": 52320.0,
+    "wiki_rbe": 52320
+   },
+   {
+    "round": 83,
+    "raw": "40 Ceramics, 40 Regrow Ceramics, 40 Fortified Ceramics, 30 MOABs",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 40,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 40,
+      "camo": false,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 40,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 31360.0,
+    "rbe_scaled": 25080.0,
+    "wiki_rbe": 25080
+   },
+   {
+    "round": 84,
+    "raw": "50 MOABs, 10 BFBs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 62440.0,
+    "rbe_scaled": 51480.0,
+    "wiki_rbe": 51480
+   },
+   {
+    "round": 85,
+    "raw": "2 ZOMGs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 33312.0,
+    "rbe_scaled": 30704.0,
+    "wiki_rbe": 30704
+   },
+   {
+    "round": 86,
+    "raw": "5 Fortified BFBs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 24120.0,
+    "rbe_scaled": 27040.0,
+    "wiki_rbe": 27040
+   },
+   {
+    "round": 87,
+    "raw": "4 ZOMGs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 66624.0,
+    "rbe_scaled": 63008.0,
+    "wiki_rbe": 63008
+   },
+   {
+    "round": 88,
+    "raw": "18 MOABs, 8 BFBs, 2 ZOMGs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 69712.0,
+    "rbe_scaled": 63600.0,
+    "wiki_rbe": 63600
+   },
+   {
+    "round": 89,
+    "raw": "20 Fortified MOABs, 8 Fortified BFBs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 55712.0,
+    "rbe_scaled": 64384.0,
+    "wiki_rbe": 64384
+   },
+   {
+    "round": 90,
+    "raw": "50 Camo Regrow Fortified Leads, 3 DDTs",
+    "groups": [
+     {
+      "type": "lead",
+      "count": 50,
+      "camo": true,
+      "regrow": true,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 3748.0,
+    "rbe_scaled": 2756.0,
+    "wiki_rbe": 2756
+   },
+   {
+    "round": 91,
+    "raw": "100 Fortified Ceramics, 20 BFBs",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 100,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 74680.0,
+    "rbe_scaled": 71160.0,
+    "wiki_rbe": 71160
+   },
+   {
+    "round": 92,
+    "raw": "50 Fortified MOABs, 4 ZOMGs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 109424.0,
+    "rbe_scaled": 117408.0,
+    "wiki_rbe": 117408
+   },
+   {
+    "round": 93,
+    "raw": "10 Fortified BFBs, 6 DDTs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 53136.0,
+    "rbe_scaled": 62936.0,
+    "wiki_rbe": 62936
+   },
+   {
+    "round": 94,
+    "raw": "25 BFBs, 6 ZOMGs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 179036.0,
+    "rbe_scaled": 178112.0,
+    "wiki_rbe": 178112
+   },
+   {
+    "round": 95,
+    "raw": "500 Camo Regrow Purples, 250 Camo Regrow Fortified Leads, 50 Fortified MOABs, 30 DDTs",
+    "groups": [
+     {
+      "type": "purple",
+      "count": 500,
+      "camo": true,
+      "regrow": true,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 250,
+      "camo": true,
+      "regrow": true,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 79280.0,
+    "rbe_scaled": 80860.0,
+    "wiki_rbe": 80860
+   },
+   {
+    "round": 96,
+    "raw": "40 Fortified MOABs, 30 BFBs, 6 ZOMGs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 40,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 229096.0,
+    "rbe_scaled": 238952.0,
+    "wiki_rbe": 238952
+   },
+   {
+    "round": 97,
+    "raw": "2 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 2,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 54592.0,
+    "rbe_scaled": 69984.0,
+    "wiki_rbe": 69984
+   },
+   {
+    "round": 98,
+    "raw": "30 Fortified BFBs, 8 ZOMGs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 277968.0,
+    "rbe_scaled": 327456.0,
+    "wiki_rbe": 327456
+   },
+   {
+    "round": 99,
+    "raw": "60 MOABs, 9 Fortified DDTs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 60,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 9,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 48264.0,
+    "rbe_scaled": 47424.0,
+    "wiki_rbe": 47424
+   },
+   {
+    "round": 100,
+    "raw": "BAD",
+    "groups": [
+     {
+      "type": "bad",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 55760.0,
+    "rbe_scaled": 67200.0,
+    "wiki_rbe": 67200
+   },
+   {
+    "round": 101,
+    "raw": "450 Purples, 50 Fortified Ceramics, 10 Fortified MOABs",
+    "groups": [
+     {
+      "type": "purple",
+      "count": 450,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 19210.0,
+    "rbe_scaled": 20020.0,
+    "wiki_rbe": 20020
+   },
+   {
+    "round": 102,
+    "raw": "3 BFBs, 3 Fortified BFBs, ZOMG, 3 Fortified ZOMGs, 18 DDTs, 12 Fortified DDTs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 152268.0,
+    "rbe_scaled": 199826.0,
+    "wiki_rbe": 199826
+   },
+   {
+    "round": 103,
+    "raw": "198 Purples, 100 MOABs, 50 Fortified MOABs, 10 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "purple",
+      "count": 198,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 100,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 50,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 379538.0,
+    "rbe_scaled": 507908.0,
+    "wiki_rbe": 507908
+   },
+   {
+    "round": 104,
+    "raw": "200 Purples, 200 Fortified Leads, 200 Ceramics, 25 MOABs, 150 Fortified MOABs, 25 BFBs, 14 Fortified BFBs",
+    "groups": [
+     {
+      "type": "purple",
+      "count": 200,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 200,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 200,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 150,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 14,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 318636.0,
+    "rbe_scaled": 387472.0,
+    "wiki_rbe": 387472
+   },
+   {
+    "round": 105,
+    "raw": "25 Fortified Leads, 100 Ceramics, 300 Fortified Ceramics, 30 BFBs",
+    "groups": [
+     {
+      "type": "lead",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 100,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 300,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 140170.0,
+    "rbe_scaled": 152340.0,
+    "wiki_rbe": 152340
+   },
+   {
+    "round": 106,
+    "raw": "66 DDTs, 27 Fortified DDTs",
+    "groups": [
+     {
+      "type": "ddt",
+      "count": 66,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 27,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 87768.0,
+    "rbe_scaled": 113376.0,
+    "wiki_rbe": 113376
+   },
+   {
+    "round": 107,
+    "raw": "444 Camo Purples, 100 Fortified Ceramics, 10 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "purple",
+      "count": 444,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 100,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 289244.0,
+    "rbe_scaled": 447384.0,
+    "wiki_rbe": 447384
+   },
+   {
+    "round": 108,
+    "raw": "9 ZOMGs, 10 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 9,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 10,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 422864.0,
+    "rbe_scaled": 643088.0,
+    "wiki_rbe": 643088
+   },
+   {
+    "round": 109,
+    "raw": "15 Purples, 30 Fortified MOABs, 15 BFBs, 15 Fortified BFBs, 15 ZOMGs",
+    "groups": [
+     {
+      "type": "purple",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 395505.0,
+    "rbe_scaled": 552345.0,
+    "wiki_rbe": 552345
+   },
+   {
+    "round": 110,
+    "raw": "25 BFBs, 18 DDTs, 12 Fortified DDTs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 25,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 108860.0,
+    "rbe_scaled": 141410.0,
+    "wiki_rbe": 141410
+   },
+   {
+    "round": 111,
+    "raw": "22 ZOMGs, 9 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 22,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 9,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 612096.0,
+    "rbe_scaled": 949472.0,
+    "wiki_rbe": 949472
+   },
+   {
+    "round": 112,
+    "raw": "27 Fortified BFBs, 21 Fortified DDTs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 27,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 21,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 156624.0,
+    "rbe_scaled": 261648.0,
+    "wiki_rbe": 261648
+   },
+   {
+    "round": 113,
+    "raw": "42 Camo Ceramics, 42 Fortified Ceramics, 75 Fortified MOABs, 15 Fortified BFBs",
+    "groups": [
+     {
+      "type": "ceramic",
+      "count": 42,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 42,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 75,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 15,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 145716.0,
+    "rbe_scaled": 231102.0,
+    "wiki_rbe": 231102
+   },
+   {
+    "round": 114,
+    "raw": "24 MOABs, 36 Fortified MOABs, 12 BFBs, 8 Fortified BFBs, 5 ZOMGs, 3 Fortified ZOMGs, 9 DDTs, 6 Fortified DDTs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 24,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 36,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 9,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 302208.0,
+    "rbe_scaled": 483416.0,
+    "wiki_rbe": 483416
+   },
+   {
+    "round": 115,
+    "raw": "24 MOABs, 36 Fortified MOABs, 12 BFBs, 8 Fortified BFBs, 5 ZOMGs, 3 Fortified ZOMGs, 9 DDTs, 6 Fortified DDTs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 24,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 36,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 5,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 9,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 302208.0,
+    "rbe_scaled": 492396.0,
+    "wiki_rbe": 492396
+   },
+   {
+    "round": 116,
+    "raw": "400 Purples, 18 Fortified BFBs, 8 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "purple",
+      "count": 400,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 309600.0,
+    "rbe_scaled": 575600.0,
+    "wiki_rbe": 575600
+   },
+   {
+    "round": 117,
+    "raw": "250 Leads, 27 DDTs, 18 Fortified DDTs",
+    "groups": [
+     {
+      "type": "lead",
+      "count": 250,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 27,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 50390.0,
+    "rbe_scaled": 75010.0,
+    "wiki_rbe": 75010
+   },
+   {
+    "round": 118,
+    "raw": "12 ZOMGs, 30 Fortified DDTs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 237552.0,
+    "rbe_scaled": 398784.0,
+    "wiki_rbe": 398784
+   },
+   {
+    "round": 119,
+    "raw": "3 BADs",
+    "groups": [
+     {
+      "type": "bad",
+      "count": 3,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 167280.0,
+    "rbe_scaled": 319020.0,
+    "wiki_rbe": 319020
+   },
+   {
+    "round": 120,
+    "raw": "24 Fortified MOABs, 12 BFBs, 12 ZOMGs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 24,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 258384.0,
+    "rbe_scaled": 431808.0,
+    "wiki_rbe": 431808
+   },
+   {
+    "round": 121,
+    "raw": "14 Fortified BFBs, 28 Fortified MOABs, 6 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 14,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 28,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 255280.0,
+    "rbe_scaled": 516500.0,
+    "wiki_rbe": 516500
+   },
+   {
+    "round": 122,
+    "raw": "20 Fortified BFBs, 40 BFBs, 225 Fortified Leads",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 20,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 40,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 225,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 228890.0,
+    "rbe_scaled": 386730.0,
+    "wiki_rbe": 386730
+   },
+   {
+    "round": 123,
+    "raw": "200 MOABs, 8 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 200,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 8,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 341568.0,
+    "rbe_scaled": 629936.0,
+    "wiki_rbe": 629936
+   },
+   {
+    "round": 124,
+    "raw": "75 Fortified BFBs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 75,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 361800.0,
+    "rbe_scaled": 738600.0,
+    "wiki_rbe": 738600
+   },
+   {
+    "round": 125,
+    "raw": "21 ZOMGs, 42 BFBs, 63 MOABs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 21,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 42,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 63,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 521472.0,
+    "rbe_scaled": 939624.0,
+    "wiki_rbe": 939624
+   },
+   {
+    "round": 126,
+    "raw": "Camo Regrow Fortified Lead, 99 DDTs",
+    "groups": [
+     {
+      "type": "lead",
+      "count": 1,
+      "camo": true,
+      "regrow": true,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 99,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 80810.0,
+    "rbe_scaled": 141778.0,
+    "wiki_rbe": 141778
+   },
+   {
+    "round": 127,
+    "raw": "48 MOABs, 24 BFBs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 48,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 24,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 105504.0,
+    "rbe_scaled": 178248.0,
+    "wiki_rbe": 178248
+   },
+   {
+    "round": 128,
+    "raw": "39 Fortified DDTs, 200 Camo Fortified Ceramics, 30 BFBs",
+    "groups": [
+     {
+      "type": "ddt",
+      "count": 39,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 200,
+      "camo": true,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 30,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 166704.0,
+    "rbe_scaled": 322048.0,
+    "wiki_rbe": 322048
+   },
+   {
+    "round": 129,
+    "raw": "7 Fortified ZOMGs, 77 Camo Fortified Leads, 77 Camo Purples, 77 Camo Ceramics, 7 ZOMGs, 18 DDTs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 7,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "lead",
+      "count": 77,
+      "camo": true,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "purple",
+      "count": 77,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ceramic",
+      "count": 77,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 7,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 333209.0,
+    "rbe_scaled": 826792.0,
+    "wiki_rbe": 826792
+   },
+   {
+    "round": 130,
+    "raw": "84 MOABs, 66 Fortified MOABs, 48 DDTs, 6 Fortified DDTs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 84,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 66,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 48,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 154944.0,
+    "rbe_scaled": 307968.0,
+    "wiki_rbe": 307968
+   },
+   {
+    "round": 131,
+    "raw": "18 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 491328.0,
+    "rbe_scaled": 1461456.0,
+    "wiki_rbe": 1461456
+   },
+   {
+    "round": 132,
+    "raw": "18 ZOMGs, 6 Fortified ZOMGs, 200 Camo Purples",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 6,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "purple",
+      "count": 200,
+      "camo": true,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 465784.0,
+    "rbe_scaled": 1268688.0,
+    "wiki_rbe": 1268688
+   },
+   {
+    "round": 133,
+    "raw": "12 Fortified MOABs, 12 Fortified BFBs, 4 Fortified ZOMGs, 27 MOABs, 27 BFBs, 9 ZOMGs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 4,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 27,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 27,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 9,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 429308.0,
+    "rbe_scaled": 1153341.0,
+    "wiki_rbe": 1153341
+   },
+   {
+    "round": 134,
+    "raw": "12 Fortified BFBs, 28 BFBs",
+    "groups": [
+     {
+      "type": "bfb",
+      "count": 12,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 28,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 146480.0,
+    "rbe_scaled": 374840.0,
+    "wiki_rbe": 374840
+   },
+   {
+    "round": 135,
+    "raw": "21 Fortified DDTs, 14 Fortified ZOMGs",
+    "groups": [
+     {
+      "type": "ddt",
+      "count": 21,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "zomg",
+      "count": 14,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 408520.0,
+    "rbe_scaled": 1386840.0,
+    "wiki_rbe": 1386840
+   },
+   {
+    "round": 136,
+    "raw": "96 Fortified MOABs, 24 BFBs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 96,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 24,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 158112.0,
+    "rbe_scaled": 402624.0,
+    "wiki_rbe": 402624
+   },
+   {
+    "round": 137,
+    "raw": "18 ZOMGs, 24 BFBs, 48 MOABs",
+    "groups": [
+     {
+      "type": "zomg",
+      "count": 18,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bfb",
+      "count": 24,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 48,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 405312.0,
+    "rbe_scaled": 1143984.0,
+    "wiki_rbe": 1143984
+   },
+   {
+    "round": 138,
+    "raw": "81 Fortified DDTs, 45 DDTs",
+    "groups": [
+     {
+      "type": "ddt",
+      "count": 81,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "ddt",
+      "count": 45,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 138456.0,
+    "rbe_scaled": 442872.0,
+    "wiki_rbe": 442872
+   },
+   {
+    "round": 139,
+    "raw": "181 MOABs, 72 Fortified MOABs",
+    "groups": [
+     {
+      "type": "moab",
+      "count": 181,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "moab",
+      "count": 72,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 173128.0,
+    "rbe_scaled": 401346.0,
+    "wiki_rbe": 401346
+   },
+   {
+    "round": 140,
+    "raw": "Fortified BAD, BAD",
+    "groups": [
+     {
+      "type": "bad",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": true,
+      "spacing": null,
+      "start": null
+     },
+     {
+      "type": "bad",
+      "count": 1,
+      "camo": false,
+      "regrow": false,
+      "fortified": false,
+      "spacing": null,
+      "start": null
+     }
+    ],
+    "rbe_base": 154120.0,
+    "rbe_scaled": 645440.0,
+    "wiki_rbe": 645440
+   }
+  ],
+  "default_spacing": {
+   "_label": "ESTIMATED defaults in seconds between bloons of a group; NOT from the wiki (wiki gives no per-group timing). Tune against the real game.",
+   "red": 0.4,
+   "blue": 0.4,
+   "green": 0.35,
+   "yellow": 0.3,
+   "pink": 0.25,
+   "black": 0.35,
+   "white": 0.35,
+   "purple": 0.25,
+   "lead": 0.5,
+   "zebra": 0.4,
+   "rainbow": 0.35,
+   "ceramic": 0.4,
+   "moab": 1.0,
+   "bfb": 2.5,
+   "zomg": 5.0,
+   "ddt": 0.6,
+   "bad": 8.0
+  },
+  "group_fields_note": "spacing/start are null (wiki has none); use default_spacing[type]. rbe_base = no freeplay scaling, normal ceramics; rbe_scaled = with r>=81 super ceramics / single children / MOAB-class HP ramp (matches wiki RBE column); wiki_rbe = RBE column from rendered wiki table.",
+  "wiki_income_by_round": {
+   "1": {
+    "from_bloons": "$20",
+    "total": "$771",
+    "cumulative": "$771"
+   },
+   "2": {
+    "from_bloons": "$35",
+    "total": "$137",
+    "cumulative": "$908"
+   },
+   "3": {
+    "from_bloons": "$35",
+    "total": "$138",
+    "cumulative": "$1046"
+   },
+   "4": {
+    "from_bloons": "$71",
+    "total": "$175",
+    "cumulative": "$1221"
+   },
+   "5": {
+    "from_bloons": "$59",
+    "total": "$164",
+    "cumulative": "$1385"
+   },
+   "6": {
+    "from_bloons": "$57",
+    "total": "$163",
+    "cumulative": "$1548"
+   },
+   "7": {
+    "from_bloons": "$75",
+    "total": "$182",
+    "cumulative": "$1730"
+   },
+   "8": {
+    "from_bloons": "$92",
+    "total": "$200",
+    "cumulative": "$1930"
+   },
+   "9": {
+    "from_bloons": "$90",
+    "total": "$199",
+    "cumulative": "$2129"
+   },
+   "10": {
+    "from_bloons": "$204",
+    "total": "$314",
+    "cumulative": "$2443"
+   },
+   "11": {
+    "from_bloons": "$78",
+    "total": "$189",
+    "cumulative": "$2632"
+   },
+   "12": {
+    "from_bloons": "$80",
+    "total": "$192",
+    "cumulative": "$2824"
+   },
+   "13": {
+    "from_bloons": "$169",
+    "total": "$282",
+    "cumulative": "$3106"
+   },
+   "14": {
+    "from_bloons": "$145",
+    "total": "$259",
+    "cumulative": "$3365"
+   },
+   "15": {
+    "from_bloons": "$151",
+    "total": "$266",
+    "cumulative": "$3631"
+   },
+   "16": {
+    "from_bloons": "$152",
+    "total": "$268",
+    "cumulative": "$3899"
+   },
+   "17": {
+    "from_bloons": "$48",
+    "total": "$165",
+    "cumulative": "$4064"
+   },
+   "18": {
+    "from_bloons": "$240",
+    "total": "$358",
+    "cumulative": "$4422"
+   },
+   "19": {
+    "from_bloons": "$141",
+    "total": "$260",
+    "cumulative": "$4682"
+   },
+   "20": {
+    "from_bloons": "$66",
+    "total": "$186",
+    "cumulative": "$4868"
+   },
+   "21": {
+    "from_bloons": "$230",
+    "total": "$351",
+    "cumulative": "$5219"
+   },
+   "22": {
+    "from_bloons": "$176",
+    "total": "$298",
+    "cumulative": "$5517"
+   },
+   "23": {
+    "from_bloons": "$154",
+    "total": "$277",
+    "cumulative": "$5794"
+   },
+   "24": {
+    "from_bloons": "$43",
+    "total": "$167",
+    "cumulative": "$5961"
+   },
+   "25": {
+    "from_bloons": "$210",
+    "total": "$335",
+    "cumulative": "$6296"
+   },
+   "26": {
+    "from_bloons": "$207",
+    "total": "$333",
+    "cumulative": "$6629"
+   },
+   "27": {
+    "from_bloons": "$535",
+    "total": "$662",
+    "cumulative": "$7291"
+   },
+   "28": {
+    "from_bloons": "$138",
+    "total": "$266",
+    "cumulative": "$7557"
+   },
+   "29": {
+    "from_bloons": "$260",
+    "total": "$389",
+    "cumulative": "$7946"
+   },
+   "30": {
+    "from_bloons": "$207",
+    "total": "$337",
+    "cumulative": "$8283"
+   },
+   "31": {
+    "from_bloons": "$406",
+    "total": "$537",
+    "cumulative": "$8820"
+   },
+   "32": {
+    "from_bloons": "$495",
+    "total": "$627",
+    "cumulative": "$9447"
+   },
+   "33": {
+    "from_bloons": "$72",
+    "total": "$205",
+    "cumulative": "$9652"
+   },
+   "34": {
+    "from_bloons": "$778",
+    "total": "$912",
+    "cumulative": "$10564"
+   },
+   "35": {
+    "from_bloons": "$1015",
+    "total": "$1150",
+    "cumulative": "$11714"
+   },
+   "36": {
+    "from_bloons": "$760",
+    "total": "$896",
+    "cumulative": "$12610"
+   },
+   "37": {
+    "from_bloons": "$1202",
+    "total": "$1339",
+    "cumulative": "$13949"
+   },
+   "38": {
+    "from_bloons": "$1139",
+    "total": "$1277",
+    "cumulative": "$15226"
+   },
+   "39": {
+    "from_bloons": "$1620",
+    "total": "$1759",
+    "cumulative": "$16985"
+   },
+   "40": {
+    "from_bloons": "$381",
+    "total": "$521",
+    "cumulative": "$17506"
+   },
+   "41": {
+    "from_bloons": "$2040",
+    "total": "$2181",
+    "cumulative": "$19687"
+   },
+   "42": {
+    "from_bloons": "$517",
+    "total": "$659",
+    "cumulative": "$20346"
+   },
+   "43": {
+    "from_bloons": "$1135",
+    "total": "$1278",
+    "cumulative": "$21624"
+   },
+   "44": {
+    "from_bloons": "$1150",
+    "total": "$1294",
+    "cumulative": "$22918"
+   },
+   "45": {
+    "from_bloons": "$2277",
+    "total": "$2422",
+    "cumulative": "$25340"
+   },
+   "46": {
+    "from_bloons": "$570",
+    "total": "$716",
+    "cumulative": "$26056"
+   },
+   "47": {
+    "from_bloons": "$1490",
+    "total": "$1637",
+    "cumulative": "$27693"
+   },
+   "48": {
+    "from_bloons": "$2695",
+    "total": "$2843",
+    "cumulative": "$30536"
+   },
+   "49": {
+    "from_bloons": "$4609",
+    "total": "$4758",
+    "cumulative": "$35294"
+   },
+   "50": {
+    "from_bloons": "$2866",
+    "total": "$3016",
+    "cumulative": "$38310"
+   },
+   "51": {
+    "from_bloons": "$947",
+    "total": "$1023",
+    "cumulative": "$39333"
+   },
+   "52": {
+    "from_bloons": "$1443",
+    "total": "$1519",
+    "cumulative": "$40852"
+   },
+   "53": {
+    "from_bloons": "$771",
+    "total": "$848",
+    "cumulative": "$41700"
+   },
+   "54": {
+    "from_bloons": "$2043",
+    "total": "$2120",
+    "cumulative": "$43821"
+   },
+   "55": {
+    "from_bloons": "$2328",
+    "total": "$2405",
+    "cumulative": "$46226"
+   },
+   "56": {
+    "from_bloons": "$1130",
+    "total": "$1208",
+    "cumulative": "$47435"
+   },
+   "57": {
+    "from_bloons": "$1702",
+    "total": "$1780",
+    "cumulative": "$49215"
+   },
+   "58": {
+    "from_bloons": "$2140",
+    "total": "$2219",
+    "cumulative": "$51434"
+   },
+   "59": {
+    "from_bloons": "$2000",
+    "total": "$2079",
+    "cumulative": "$53514"
+   },
+   "60": {
+    "from_bloons": "$762",
+    "total": "$842",
+    "cumulative": "$54356"
+   },
+   "61": {
+    "from_bloons": "$1071",
+    "total": "$1103",
+    "cumulative": "$55459"
+   },
+   "62": {
+    "from_bloons": "$1224",
+    "total": "$1256",
+    "cumulative": "$56716"
+   },
+   "63": {
+    "from_bloons": "$2663",
+    "total": "$2695",
+    "cumulative": "$59412"
+   },
+   "64": {
+    "from_bloons": "$685",
+    "total": "$718",
+    "cumulative": "$60130"
+   },
+   "65": {
+    "from_bloons": "$2906",
+    "total": "$2939",
+    "cumulative": "$63070"
+   },
+   "66": {
+    "from_bloons": "$838",
+    "total": "$871",
+    "cumulative": "$63941"
+   },
+   "67": {
+    "from_bloons": "$856",
+    "total": "$890",
+    "cumulative": "$64831"
+   },
+   "68": {
+    "from_bloons": "$609",
+    "total": "$643",
+    "cumulative": "$65475"
+   },
+   "69": {
+    "from_bloons": "$1222",
+    "total": "$1255",
+    "cumulative": "$66730"
+   },
+   "70": {
+    "from_bloons": "$2448",
+    "total": "$2482",
+    "cumulative": "$69213"
+   },
+   "71": {
+    "from_bloons": "$1332",
+    "total": "$1366",
+    "cumulative": "$70579"
+   },
+   "72": {
+    "from_bloons": "$1332",
+    "total": "$1366",
+    "cumulative": "$71946"
+   },
+   "73": {
+    "from_bloons": "$1219",
+    "total": "$1254",
+    "cumulative": "$73200"
+   },
+   "74": {
+    "from_bloons": "$2870",
+    "total": "$2904",
+    "cumulative": "$76105"
+   },
+   "75": {
+    "from_bloons": "$2492",
+    "total": "$2527",
+    "cumulative": "$78632"
+   },
+   "76": {
+    "from_bloons": "$1140",
+    "total": "$1175",
+    "cumulative": "$79807"
+   },
+   "77": {
+    "from_bloons": "$2363",
+    "total": "$2398",
+    "cumulative": "$82206"
+   },
+   "78": {
+    "from_bloons": "$4684",
+    "total": "$4719",
+    "cumulative": "$86926"
+   },
+   "79": {
+    "from_bloons": "$6530",
+    "total": "$6565",
+    "cumulative": "$93491"
+   },
+   "80": {
+    "from_bloons": "$1220",
+    "total": "$1256",
+    "cumulative": "$94748"
+   },
+   "81": {
+    "from_bloons": "$5185",
+    "total": "$5221",
+    "cumulative": "$99969"
+   },
+   "82": {
+    "from_bloons": "$4575",
+    "total": "$4611",
+    "cumulative": "$104580"
+   },
+   "83": {
+    "from_bloons": "$4566",
+    "total": "$4602",
+    "cumulative": "$109183"
+   },
+   "84": {
+    "from_bloons": "$6860",
+    "total": "$6896",
+    "cumulative": "$116080"
+   },
+   "85": {
+    "from_bloons": "$2440",
+    "total": "$2477",
+    "cumulative": "$118557"
+   },
+   "86": {
+    "from_bloons": "$762",
+    "total": "$781",
+    "cumulative": "$119338"
+   },
+   "87": {
+    "from_bloons": "$2440",
+    "total": "$2459",
+    "cumulative": "$121797"
+   },
+   "88": {
+    "from_bloons": "$3126",
+    "total": "$3144",
+    "cumulative": "$124942"
+   },
+   "89": {
+    "from_bloons": "$1982",
+    "total": "$2000",
+    "cumulative": "$126943"
+   },
+   "90": {
+    "from_bloons": "$149",
+    "total": "$168",
+    "cumulative": "$127111"
+   },
+   "91": {
+    "from_bloons": "$4000",
+    "total": "$4019",
+    "cumulative": "$131130"
+   },
+   "92": {
+    "from_bloons": "$4345",
+    "total": "$4364",
+    "cumulative": "$135495"
+   },
+   "93": {
+    "from_bloons": "$1753",
+    "total": "$1772",
+    "cumulative": "$137268"
+   },
+   "94": {
+    "from_bloons": "$7473",
+    "total": "$7492",
+    "cumulative": "$144760"
+   },
+   "95": {
+    "from_bloons": "$3523",
+    "total": "$3542",
+    "cumulative": "$148303"
+   },
+   "96": {
+    "from_bloons": "$9759",
+    "total": "$9779",
+    "cumulative": "$158082"
+   },
+   "97": {
+    "from_bloons": "$1220",
+    "total": "$1239",
+    "cumulative": "$159322"
+   },
+   "98": {
+    "from_bloons": "$9455",
+    "total": "$9475",
+    "cumulative": "$168798"
+   },
+   "99": {
+    "from_bloons": "$2628",
+    "total": "$2648",
+    "cumulative": "$171446"
+   },
+   "100": {
+    "from_bloons": "$1334",
+    "total": "$1354",
+    "cumulative": "$172801"
+   },
+   "101": {
+    "from_bloons": "$563",
+    "total": "$573",
+    "cumulative": "$173374"
+   },
+   "102": {
+    "from_bloons": "$2249",
+    "total": "$2259",
+    "cumulative": "$175633"
+   },
+   "103": {
+    "from_bloons": "$5967",
+    "total": "$5977",
+    "cumulative": "$181611"
+   },
+   "104": {
+    "from_bloons": "$7387",
+    "total": "$7397",
+    "cumulative": "$189009"
+   },
+   "105": {
+    "from_bloons": "$4196",
+    "total": "$4206",
+    "cumulative": "$193215"
+   },
+   "106": {
+    "from_bloons": "$1771",
+    "total": "$1781",
+    "cumulative": "$194997"
+   },
+   "107": {
+    "from_bloons": "$3658",
+    "total": "$3669",
+    "cumulative": "$198666"
+   },
+   "108": {
+    "from_bloons": "$5795",
+    "total": "$5806",
+    "cumulative": "$204472"
+   },
+   "109": {
+    "from_bloons": "$7439",
+    "total": "$7449",
+    "cumulative": "$211922"
+   },
+   "110": {
+    "from_bloons": "$2477",
+    "total": "$2488",
+    "cumulative": "$214410"
+   },
+   "111": {
+    "from_bloons": "$9456",
+    "total": "$9467",
+    "cumulative": "$223877"
+   },
+   "112": {
+    "from_bloons": "$2458",
+    "total": "$2469",
+    "cumulative": "$226347"
+   },
+   "113": {
+    "from_bloons": "$2971",
+    "total": "$2982",
+    "cumulative": "$229329"
+   },
+   "114": {
+    "from_bloons": "$5394",
+    "total": "$5404",
+    "cumulative": "$234734"
+   },
+   "115": {
+    "from_bloons": "$5394",
+    "total": "$5404",
+    "cumulative": "$240139"
+   },
+   "116": {
+    "from_bloons": "$3932",
+    "total": "$3943",
+    "cumulative": "$244082"
+   },
+   "117": {
+    "from_bloons": "$944",
+    "total": "$955",
+    "cumulative": "$245038"
+   },
+   "118": {
+    "from_bloons": "$4232",
+    "total": "$4243",
+    "cumulative": "$249281"
+   },
+   "119": {
+    "from_bloons": "$2001",
+    "total": "$2012",
+    "cumulative": "$251294"
+   },
+   "120": {
+    "from_bloons": "$5032",
+    "total": "$5043",
+    "cumulative": "$256338"
+   },
+   "121": {
+    "from_bloons": "$1372",
+    "total": "$1376",
+    "cumulative": "$257715"
+   },
+   "122": {
+    "from_bloons": "$1861",
+    "total": "$1865",
+    "cumulative": "$259580"
+   },
+   "123": {
+    "from_bloons": "$2500",
+    "total": "$2504",
+    "cumulative": "$262085"
+   },
+   "124": {
+    "from_bloons": "$2287",
+    "total": "$2291",
+    "cumulative": "$264377"
+   },
+   "125": {
+    "from_bloons": "$4323",
+    "total": "$4327",
+    "cumulative": "$268705"
+   },
+   "126": {
+    "from_bloons": "$754",
+    "total": "$759",
+    "cumulative": "$269464"
+   },
+   "127": {
+    "from_bloons": "$1097",
+    "total": "$1102",
+    "cumulative": "$270566"
+   },
+   "128": {
+    "from_bloons": "$1592",
+    "total": "$1596",
+    "cumulative": "$272163"
+   },
+   "129": {
+    "from_bloons": "$2011",
+    "total": "$2016",
+    "cumulative": "$274179"
+   },
+   "130": {
+    "from_bloons": "$1554",
+    "total": "$1559",
+    "cumulative": "$275739"
+   },
+   "131": {
+    "from_bloons": "$2196",
+    "total": "$2200",
+    "cumulative": "$277940"
+   },
+   "132": {
+    "from_bloons": "$2952",
+    "total": "$2957",
+    "cumulative": "$280897"
+   },
+   "133": {
+    "from_bloons": "$3072",
+    "total": "$3077",
+    "cumulative": "$283974"
+   },
+   "134": {
+    "from_bloons": "$1220",
+    "total": "$1224",
+    "cumulative": "$285199"
+   },
+   "135": {
+    "from_bloons": "$1868",
+    "total": "$1873",
+    "cumulative": "$287072"
+   },
+   "136": {
+    "from_bloons": "$1463",
+    "total": "$1468",
+    "cumulative": "$288540"
+   },
+   "137": {
+    "from_bloons": "$3294",
+    "total": "$3298",
+    "cumulative": "$291839"
+   },
+   "138": {
+    "from_bloons": "$960",
+    "total": "$964",
+    "cumulative": "$292804"
+   },
+   "139": {
+    "from_bloons": "$1927",
+    "total": "$1932",
+    "cumulative": "$294737"
+   },
+   "140": {
+    "from_bloons": "$533",
+    "total": "$538",
+    "cumulative": "$295275"
+   }
+  },
+  "start_rounds": {
+   "hard_modes": 3,
+   "impoppable_chimps": 6,
+   "deflation": 31
+  },
+  "after_81": "MOAB-class slightly tougher/faster each round; Ceramic -> Super Ceramic (60 HP, 120 fortified), one offspring each",
+  "after_140": "randomized content/order except rounds 163, 200, 263; 141-9999 mostly random; 10000+ fixed list; 1073799+ cycles previous two entries",
+  "cash_per_pop_tax_percent_from_round": {
+   "51": 50,
+   "61": 20,
+   "86": 10,
+   "101": 5,
+   "121": 4,
+   "141": 2
+  },
+  "round_cash_bonus_formula": "each pop worth $1 before tax; reward $(100+R) after finishing round R"
+ }
+}

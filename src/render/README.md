@@ -1,0 +1,9 @@
+# Atlas scene adapter
+
+`main.ts` builds the art atlas once, then `createSpriteScene` places shared-source sprites in batchable layer containers. `SceneAdapter.update` accepts the simulation read-only; its display factory and texture lookup can be replaced for headless checks.
+
+Bloon slots (one sprite plus three atlas overlays), towers, projectiles and map props grow only to their concurrent high-water mark. Hidden slots are reused between rounds and restarts; nothing is destroyed during play. FX and bitmap numbers additionally have hard caps of 256 and 64, replacing the oldest slots under bursts. Path lengths and eight-step FX texture sequences are cached. The entity loops create no temporary points, arrays, texture keys or closures after warmup. New entities may grow pools; cash labels and effect tracking update on events.
+
+Dartlings use the simulation's maintained aim angle, mortars use their target point. Other towers and heroes have no maintained current target/angle, so the marked `// uncertain:` fallback uses the nearest detectable, attackable bloon. Tower sprites follow tier triples and punch on changes to the simulation's shot counter. The atlas has four pop images; repeating each twice gives an eight-step flipbook. Blimps use path tangents and HP-based damage tints because damaged atlas variants do not exist.
+
+Run `npx vitest run src/render/scene.test.ts --reporter=verbose`. The stress gate runs 600 frames with 1,000 camo/regrow/fortified blimps, checks the 16.67 ms headless update budget, and asserts exactly zero display creations after warmup. Separate mass-pop cycles bound and exercise FX/number reuse. This measures adapter CPU time with mock textures, not GPU rendering or total application FPS. Browser/GPU verification still requires an available browser; none was connected in the implementation environment.

@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Boomerang_Monkey_(BTD6)"],"data":{"id":"boomerang","name":"Boomerang Monkey","category":"Primary","costMedium":315,"footprintRadius":7,"range":43,"waterOnly":false,
+"targeting":["First","Last","Close","Strong"],
+"base":{"cooldown":1.2,"pierce":4,"damage":1,"damageType":"Sharp","projectileSpeed":175,"lifespan":5,"projectileRadius":5,"camo":false,"lead":false},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Improved Rangs","cost":200,"effects":{"pierce":"+4 (8 total)","note":"MOAB Press heavy kylie pierce +100"}},
+{"name":"Glaives","cost":280,"effects":{"pierce":13,"projectile":"bigger glaives"}},
+{"name":"Glaive Ricochet","cost":600,"effects":{"pierce":15,"path":"straight line, bounces bloon to bloon","bounceRange":80,"projectileSpeed":220,"seesThroughBlockers":"glaive passes line-of-sight blockers"}},
+{"name":"M.O.A.R. Glaives","cost":2000,"effects":{"cooldown":0.4,"pierce":60,"bounceRange":180,"projectileSpeed":300}},
+{"name":"Glaive Lord","cost":32500,"effects":{"orbitAoE":{"radius":30,"damagePerTick":4,"tick":0.05,"ceramicBonus":4,"maxHit":200,"camo":true},"baseAttack":"+5 damage, +10 vs ceramic, bounces from any distance, rehit after 0.6s","moabDoT":"100 dmg/s for 10s on first MOAB-class hit, non-stacking"}}],
+"2":[
+{"name":"Faster Throwing","cost":175,"effects":{"cooldownMult":0.75}},
+{"name":"Faster Rangs","cost":250,"effects":{"cooldownMult":0.5,"note":"-33.3% cooldown from prev (total 50% attack speed over T1)","projectileSpeed":"+30%"},"uncertain":true},
+{"name":"Bionic Boomerang","cost":1250,"effects":{"cooldown":"-75% (8x base attack speed)","moabDamage":"+1"}},
+{"name":"Turbo Charge","cost":4200,"effects":{},"ability":{"cooldown":45,"initialCooldown":15,"duration":10,"effect":"5x attack speed, +1 damage"}},
+{"name":"Perma Charge","cost":35000,"effects":{"attackSpeed":"5x (0.03s cooldown)","damage":"+3 (4 total)"},"ability":{"cooldown":45,"initialCooldown":15,"duration":15,"effect":"+10 damage"}}],
+"3":[
+{"name":"Long Range Rangs","cost":100,"effects":{"range":"+33% (+14.19)"}},
+{"name":"Red Hot Rangs","cost":300,"effects":{"damage":"+1","damageType":"Normal","lead":true,"frozen":true}},
+{"name":"Kylie Boomerang","cost":1300,"effects":{"pierce":18,"path":"straight","rehitInterval":0.3}},
+{"name":"MOAB Press","cost":2700,"effects":{"heavyKylie":{"cooldown":10,"pierce":200,"hitInterval":0.1,"effect":"repeat hits and knockback on MOAB-class (not BAD), can hit bosses"}}},
+{"name":"MOAB Domination","cost":50000,"effects":{"kylie":{"damage":12,"pierce":54,"attackSpeed":"+100%"},"heavyKylie":{"cooldown":4,"pierce":300,"moabDamage":"+24","stun":0.25,"targets":"all MOAB-class incl BAD/boss, through blockers","explosion":{"damage":100,"radius":50,"pierce":40,"burn":"50/s for 4s"}}}}]},
+"paragon":{"name":"Glaive Dominus","cost":375000,"effect":"Seeking ricochet main glaives (map-wide) applying DoT; 3 orbital giant glaives; special MOAB-seeking glaive that stops, pushes back and explodes with DoT; Overcharge ability (attack speed boost decaying); buffs all Primary towers on screen +~11.11% attack speed. Requires 3 tier-5 Boomerangs.","uncertain":true}}}

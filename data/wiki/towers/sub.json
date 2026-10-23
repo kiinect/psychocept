@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Monkey_Sub_(BTD6)"],"data":{"id":"sub","name":"Monkey Sub","category":"Military","costMedium":325,"footprintRadius":7,"range":42,"waterOnly":true,
+"targeting":["First","Last","Close","Strong","Submerge (from 1-x-3... tier 3 path 1)"],
+"base":{"cooldown":0.75,"pierce":2,"damage":1,"damageType":"Sharp","projectileSpeed":170,"lifespan":1.5,"homing":true,"camo":false,"lead":false},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Longer Range","cost":130,"effects":{"range":"+10"}},
+{"name":"Advanced Intel","cost":500,"effects":{"targetsInRangeOfOtherTowers":true,"camoViaOtherTowerDetection":true}},
+{"name":"Submerge and Support","cost":700,"effects":{"submergeTargetOption":true,"toggleCooldown":0.5,"pulse":{"interval":1.35,"pierce":100,"effect":"removes camo, no damage"},"noAttackWhileSubmerged":true}},
+{"name":"Bloontonium Reactor","cost":2400,"effects":{"pulse":{"cooldown":0.28,"damage":1,"pierce":50,"lead":false},"dartDamageSurfaced":2,"waterAllyAbilityCooldown":"-15%"}},
+{"name":"Energizer","cost":28000,"effects":{"dartDamageSurfaced":5,"pulsePierce":1000,"pulseDamage":5,"pulseCeramicBonus":5,"abilityCooldownAll":"-20% on screen, -40% water towers","heroXp":"+50%"}}],
+"2":[
+{"name":"Barbed Darts","cost":450,"effects":{"pierce":"+3 (5)"}},
+{"name":"Heat-tipped Darts","cost":300,"effects":{"damageType":"Normal","lead":true,"frozen":true}},
+{"name":"Ballistic Missile","cost":1350,"effects":{"range":"+8","missile":{"damage":3,"ceramicBonus":3,"moabBonus":3,"damageType":"Explosion","pierce":40,"cooldown":1,"ignoresBlockers":true,"seeking":true,"flightTime":0.6}}},
+{"name":"First Strike Capability","cost":13000,"effects":{},"ability":{"cooldown":60,"initialCooldown":20,"effect":"Missile at strongest bloon: 10000 damage + explosion 350 dmg, pierce 80, radius 65; sees camo","uncertain":true}},
+{"name":"Pre-emptive Strike","cost":29000,"effects":{"autoMissile":"750 damage to every MOAB-class entering map","ballisticMissile":{"cooldown":0.5,"damage":10,"ceramicBonus":20,"moabBonus":15}},"ability":{"cooldown":30,"effect":"First Strike improved: 20000 direct + 1000 AoE","uncertain":true}}],
+"3":[
+{"name":"Twin Guns","cost":450,"effects":{"cooldown":0.375}},
+{"name":"Airburst Darts","cost":1000,"effects":{"pierce":1,"burst":{"count":3,"damage":1,"pierce":2}}},
+{"name":"Triple Guns","cost":1100,"effects":{"cooldown":0.2512}},
+{"name":"Armor Piercing Darts","cost":2500,"effects":{"damage":2,"moabBonus":2,"fortifiedBonus":1,"burstPierce":5,"burstMoabBonus":1,"burstFortifiedBonus":1}},
+{"name":"Sub Commander","cost":25000,"effects":{"auraBuff":"doubles damage incl bonus, +4 pierce to all Subs in range","cooldownMult":0.5,"burstCount":5}}]},
+"paragon":{"name":"Nautic Siege Core","cost":400000,"effect":"Switches surfaced/submerged. Surfaced: rapid homing rockets (range of other towers too) bursting on impact, auto powerful missile at each bloon entering map. Submerged: radioactive pulses + buffs to Heroes and Subs. Ability: 15s countdown then 3 heavy missiles with aftershock stun and radioactive fallout. Requires 3 tier-5 Subs.","uncertain":true}}}

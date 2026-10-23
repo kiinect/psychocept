@@ -1,0 +1,2922 @@
+{
+ "source": [
+  "https://bloons.fandom.com/wiki/Quincy_(BTD6)",
+  "https://bloons.fandom.com/wiki/Gwendolin_(BTD6)",
+  "https://bloons.fandom.com/wiki/Striker_Jones_(BTD6)",
+  "https://bloons.fandom.com/wiki/Obyn_Greenfoot_(BTD6)",
+  "https://bloons.fandom.com/wiki/Captain_Churchill_(BTD6)",
+  "https://bloons.fandom.com/wiki/Benjamin_(BTD6)",
+  "https://bloons.fandom.com/wiki/Ezili_(BTD6)",
+  "https://bloons.fandom.com/wiki/Pat_Fusty_(BTD6)",
+  "https://bloons.fandom.com/wiki/Adora_(BTD6)",
+  "https://bloons.fandom.com/wiki/Admiral_Brickell_(BTD6)",
+  "https://bloons.fandom.com/wiki/Etienne_(BTD6)",
+  "https://bloons.fandom.com/wiki/Sauda_(BTD6)",
+  "https://bloons.fandom.com/wiki/Psi_(BTD6)",
+  "https://bloons.fandom.com/wiki/Geraldo_(BTD6)",
+  "https://bloons.fandom.com/wiki/Corvus_(BTD6)",
+  "https://bloons.fandom.com/wiki/Rosalia_(BTD6)",
+  "https://bloons.fandom.com/wiki/Silas_(BTD6)",
+  "https://bloons.fandom.com/wiki/Dan_D'Monke_(BTD6)"
+ ],
+ "data": [
+  {
+   "name": "Quincy",
+   "page": "Quincy (BTD6)",
+   "base_cost": {
+    "easy": 460,
+    "medium": 540,
+    "hard": 585,
+    "impoppable": 650
+   },
+   "hero_favor_cost": {
+    "easy": 415,
+    "medium": 485,
+    "hard": 525,
+    "impoppable": 585
+   },
+   "abilities": "Rapid Shot (Level 3) Storm of Arrows (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Quincy's arrows bounce up to 3 different targets.",
+     "effect": "Shoots arrows every 0.95s that deal 1 damage and bounce onto nearby targets. Pops up to 3 bloons per arrow, and jumps up to 50 units apart from each target. Quincy starts with 50 range.",
+     "cost": "540",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Base attack bounces up to 4 targets.",
+     "effect": "Pierce increases from 3 to 4.",
+     "cost": "180",
+     "unlock": "180"
+    },
+    {
+     "level": 3,
+     "description": "Rapid Shot: Triple attack speed for a short time.",
+     "effect": "Unlocks Rapid Shot ability. When activated, attacks 3x faster temporarily. Cooldown is 60s and initial cooldown is 16.7s. The duration is 8s.",
+     "cost": "460",
+     "unlock": "460"
+    },
+    {
+     "level": 4,
+     "description": "Slightly longer range.",
+     "effect": "Base range increased from 50 to 52.",
+     "cost": "1,000",
+     "unlock": "1,000"
+    },
+    {
+     "level": 5,
+     "description": "Uses his sharp eyesight to shoot Camo Bloons.",
+     "effect": "Gains camo detection. Does not receive Camo Prioritization target option from this.",
+     "cost": "1,860",
+     "unlock": "1,860"
+    },
+    {
+     "level": 6,
+     "description": "Shoots 2 arrows at a time.",
+     "effect": "Gains a second arrow per shot in an angular spray.",
+     "cost": "3,280",
+     "unlock": "3,280"
+    },
+    {
+     "level": 7,
+     "description": "Fires exploding arrows every 3rd shot.",
+     "effect": "All arrows on every 3rd shot cause an explosion on hitting a bloon. The explosion has 1 damage and 10 pierce with a blast radius of 25.7. The arrows then keep travelling like normal arrows. This explosion increases MOAB damage with the main arrow attack. An arrow explosion counts as a burst, which means explosions are capable of damaging the same target as the originating arrow.",
+     "cost": "5,180",
+     "unlock": "5,180"
+    },
+    {
+     "level": 8,
+     "description": "Arrows do triple damage to MOAB-Class Bloons.",
+     "effect": "Arrows and explosions deal +2 MOAB-class damage.",
+     "cost": "8,320",
+     "unlock": "8,320"
+    },
+    {
+     "level": 9,
+     "description": "Base attack bounces to up to 6 targets.",
+     "effect": "Pierce of arrows increased from 4 to 6.",
+     "cost": "9,380",
+     "unlock": "9,380"
+    },
+    {
+     "level": 10,
+     "description": "Storm of Arrows: Covers a large area in a deadly rain of arrows.",
+     "effect": "Unlocks Storm of Arrows ability. When activated, the ability creates a damage area which lasts for 3 seconds. Each bloon repetitively takes 6 damage (plus +6 damage versus MOAB-class) during this at a 5% chance per frame (60 FPS), and can be rehit after every 0.05s. Infinite Bloons can be hit within a 100 radius from where the center is set.",
+     "cost": "13,620",
+     "unlock": "13,620"
+    },
+    {
+     "level": 11,
+     "description": "Increased attack speed.",
+     "effect": "~+58.33% attack speed (~0.6316x attack cooldown) (0.6 seconds per attack)",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 12,
+     "description": "Each arrow gets more popping power.",
+     "effect": "Pierce of arrows increased from 6 to 7.",
+     "cost": "14,400",
+     "unlock": "14,400"
+    },
+    {
+     "level": 13,
+     "description": "Small range increase and Rapid Shot lasts longer.",
+     "effect": "Base range increased from 52 to 54. Rapid Shot now lasts for 12 seconds instead of 8.",
+     "cost": "16,650",
+     "unlock": "16,650"
+    },
+    {
+     "level": 14,
+     "description": "Arrows do quad damage to MOAB-Class Bloons.",
+     "effect": "Arrow and explosion damage to MOAB-class increased from +2 to +3.",
+     "cost": "14,940",
+     "unlock": "14,940"
+    },
+    {
+     "level": 15,
+     "description": "Rapid Shot becomes x4 attack speed and cooldown is reduced.",
+     "effect": "Rapid Shot increases attack speed multiplier from 3x to 4x, and cooldown reduced from 60s to 45s.",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 16,
+     "description": "More increased attack speed.",
+     "effect": "+50% attack speed (0.67x attack cooldown) (0.4 seconds per attack)",
+     "cost": "17,820",
+     "unlock": "17,820"
+    },
+    {
+     "level": 17,
+     "description": "Arrows last 25% longer. Fires exploding arrows every 2nd shot.",
+     "effect": "Main arrows last +25% longer. Does not affect Storm of Arrows. Now fires exploding arrows every 2nd shot.",
+     "cost": "19,260",
+     "unlock": "19,260"
+    },
+    {
+     "level": 18,
+     "description": "Quincy attacks faster and Storm of Arrows is greatly enhanced.",
+     "effect": "Storm of Arrows damage chance increased from 5% to 7.5%, deals 18 extra damage to ceramics, cooldown reduced to 55s. Quincy's main attack gains +60% attack speed (0.625x attack cooldown) (0.25 seconds per attack).",
+     "cost": "20,700",
+     "unlock": "20,700"
+    },
+    {
+     "level": 19,
+     "description": "Shoots 3 arrows at a time, and each arrow gets even more popping power.",
+     "effect": "Pierce of arrows increased from 7 to 9. Gains a third arrow per shot in an angular spray.",
+     "cost": "16,470",
+     "unlock": "16,470"
+    },
+    {
+     "level": 20,
+     "description": "Quincy attacks even faster. Storm of Arrows deals more damage per arrow and fires even more arrows.",
+     "effect": "Improves Quincy's main attack speed, and greatly enhances Storm of Arrows damage per hit and rate of damage.",
+     "cost": "17,280",
+     "unlock": "17,280"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Gwendolin",
+   "page": "Gwendolin (BTD6)",
+   "base_cost": {
+    "easy": 615,
+    "medium": 725,
+    "hard": 785,
+    "impoppable": 870
+   },
+   "hero_favor_cost": {
+    "easy": 555,
+    "medium": 655,
+    "hard": 710,
+    "impoppable": 785
+   },
+   "abilities": "Cocktail of Fire (Level 3) Firestorm (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Blasts Bloons with fire from her pyro gun.",
+     "effect": "Shoots fire every 0.5s that deal 1 damage and pops up to 2 bloons. Gwendolin starts with 38 range.",
+     "cost": "725",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Slightly increased popping power per shot.",
+     "effect": "Flame pierce increases from 2 to 3.",
+     "cost": "180",
+     "unlock": "180"
+    },
+    {
+     "level": 3,
+     "description": "Cocktail of Fire: Hurls a flask of flammable liquid, burning Bloons that pass through the fire.",
+     "effect": "Unlocks Cocktail of Fire ability. When activated, lobs a burning cocktail that produces a blaze resembling Wall of Fire that deals 1 damage per tick at a rate of 20 bloons per damage tick, refreshing every 0.2s. 30s cooldown, lasts for 12s, produces cocktail onto nearby track based on a selected point. Selected point defaults on Close.",
+     "cost": "460",
+     "unlock": "460"
+    },
+    {
+     "level": 4,
+     "description": "Heat it up - Every 40 attacks Gwendolin creates a powerful blast wave of fire that pops Bloons and adds fire to nearby Monkeys' attacks.",
+     "effect": "Periodically creates a powerful blast of fire around Gwendolin that pops Bloons, and adds fire to nearby Monkeys' attacks. This occurs every 40 shots she makes (assuming she consistently attacks, occurs every 20 seconds), hitting up to 100 bloons and dealing 3 damage to them. This buff allows nearby affected towers to pop Frozen Bloons and Lead Bloons, and also gives them +1 pierce. Lasts 8 seconds. Has an internal cooldown of 1.5s.",
+     "cost": "1,000",
+     "unlock": "1,000"
+    },
+    {
+     "level": 5,
+     "description": "Increased popping power. 10% improved attack speed and radius for Ring of Fire, Signal Flare and Dragon's Breath.",
+     "effect": "Flame pierce increased from 3 to 4. Ring of Fire, Signal Flare and Dragon Breath now gain 0.90x attack cooldown (+11% attack speed) and +10% blast radius.",
+     "cost": "1,860",
+     "unlock": "1,860"
+    },
+    {
+     "level": 6,
+     "description": "Attacks cause a burn effect on target Bloon.",
+     "effect": "Cause a burn damage-over-time effect onto bloons hit, dealing 1 damage every 1.5s for 3.0s.",
+     "cost": "3,280",
+     "unlock": "3,280"
+    },
+    {
+     "level": 7,
+     "description": "Heat it up has increased radius, Cocktail of Fire is more effective.",
+     "effect": "Heat-it-up gains +5 range from base range of 38, totalling 43 range for that attack and buff. Also gains faster tick rate for cocktails, from 0.2s to 0.1s, and pierce from 20 to 40.",
+     "cost": "5,180",
+     "unlock": "5,180"
+    },
+    {
+     "level": 8,
+     "description": "Shoots 2 blasts of fire per shot.",
+     "effect": "Shoots two flames per shot in a straight spray.",
+     "cost": "8,320",
+     "unlock": "8,320"
+    },
+    {
+     "level": 9,
+     "description": "Initial hit per blast pops 1 extra layer. Gains increased burn damage and duration for every level.",
+     "effect": "Deals 2 damage per flame instead of 1, and her napalm deals 2 damage per tick instead of 1. Note that this does not mean that the flame has Extra Damage to First Target, \"initial hit\" instead means that the entire flame projectile deals 2 damage, and is simply an instance of Extra Damage.",
+     "cost": "9,380",
+     "unlock": "9,380"
+    },
+    {
+     "level": 10,
+     "description": "Firestorm: Sets the whole screen alight, burning all Bloons and granting the Heat It Up buff to all Monkeys.",
+     "effect": "Unlocks the Firestorm ability. Upon activation, it deals 5 damage to all bloons on screen, or 20 to MOAB-Class bloons, and additionally applies a stronger burn status: 1 damage per 0.5 seconds for bloons, 15 damage per second for blimps, lasts for 8s. Ability cooldown of 60 seconds. Gwendolin's base attack napalm now deals 3 damage per tick instead of 2.",
+     "cost": "13,620",
+     "unlock": "13,620"
+    },
+    {
+     "level": 11,
+     "description": "Increased attack range, and Cocktail of Fire is more effective.",
+     "effect": "Both base range and Heat-It-Up gain +3 range, 38 to 41 for base range and 43 to 46 for Heat-It-Up. Cocktail pierce increased from 40 to 60. Gwendolin's base attack napalm now deals 4 damage per tick instead of 3.",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 12,
+     "description": "Increased attack speed and increases damage of Heat it Up.",
+     "effect": "+25% attack speed (0.8x attack cooldown), decreasing attack cooldown of her main attack to 0.4s. Heat-It-Up now deals 10 damage instead of 3. Gwendolin's base attack napalm now deals 5 damage per tick instead of 4.",
+     "cost": "14,400",
+     "unlock": "14,400"
+    },
+    {
+     "level": 13,
+     "description": "Greatly increased popping power, plus projectiles move faster and last longer.",
+     "effect": "Flame pierce increased from 4 to 8, and increases projectile speed and projectile lifespan of flame. Gwendolin's base attack napalm now deals 6 damage per tick instead of 5.",
+     "cost": "16,650",
+     "unlock": "16,650"
+    },
+    {
+     "level": 14,
+     "description": "Cocktail of Fire does extra damage and sets MOAB class Bloons alight.",
+     "effect": "Cocktail of Fire increased damage from 1 to 2 and applies a stronger burn status on MOABs: 5 damage per second, lasts for 10 seconds. Gwendolin's base attack napalm now deals 7 damage per tick instead of 6.",
+     "cost": "14,940",
+     "unlock": "14,940"
+    },
+    {
+     "level": 15,
+     "description": "Increased attack speed and increases damage of Heat it Up.",
+     "effect": "+33% attack speed (0.75x attack cooldown), decreasing attack cooldown of her main attack to 0.3s. Heat-It-Up now deals 20 damage. Gwendolin's base attack napalm now deals 8 damage per tick instead of 7.",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 16,
+     "description": "Firestorm has increased duration and does more damage. Purple Bloons are no longer immune to Gwendolin's attacks.",
+     "effect": "Firestorm burn status duration increased from 8s to 10.4s, and all of her attacks now affect Purple Bloons. Newly dropped cocktails now pop Purples. Also increases Firestorm fire per tic to 5 damage, deals MOAB-Class Bloons to 20 damage. Gwendolin's base attack napalm now deals 9 damage per tick instead of 8.",
+     "cost": "17,820",
+     "unlock": "17,820"
+    },
+    {
+     "level": 17,
+     "description": "Heat it up empowers affected Monkeys to pop 1 extra layer, and do +2 damage to Lead Bloons.",
+     "effect": "Heat-It-Up buff now also allows all affected towers to deal +1 damage and another +2 to bloons with Lead properties. Also applies to Firestorm's Heat-It-Up. Gwendolin's base attack napalm now deals 10 damage per tick instead of 9.",
+     "cost": "19,260",
+     "unlock": "19,260"
+    },
+    {
+     "level": 18,
+     "description": "Increased attack speed and increases damage of Heat it Up. 20% improved attack speed and radius for Ring of Fire, Signal Flare and Dragon's Breath.",
+     "effect": "+100% attack speed (0.5x attack cooldown), decreasing attack cooldown of her main attack to 0.15s. Ring of Fire, Signal Flare, and Dragon Breath buffs now give 20% instead of 10%, now decreasing attack cooldown by 0.80x and blast radius by +20%. Heat-It-Up deals 30 damage. Gwendolin's base attack napalm now deals 11 damage per tick instead of 10.",
+     "cost": "20,700",
+     "unlock": "20,700"
+    },
+    {
+     "level": 19,
+     "description": "Shoots 3 blasts of fire per shot.",
+     "effect": "Shoots three flames per shot in a straight spray. Gwendolin's base attack napalm now deals 12 damage per tick instead of 11.",
+     "cost": "16,470",
+     "unlock": "16,470"
+    },
+    {
+     "level": 20,
+     "description": "Firestorm does hugely increased damage.",
+     "effect": "Initial damage from Firestorm increased from 5 to 10 to standard bloons, initial damage to MOAB-class Bloons increased from 20 to 50. Burn status from Firestorm further improved from 5 damage per 0.5 seconds / 15 MOAB damage per second to 15 damage per 0.5 seconds / 30 MOAB damage per second. Gwendolin's base attack napalm now deals 13 damage per tick instead of 12. Cocktail of Fire damage to bloons increased from 2 to 5, and MOAB-class damage from 5 to 8.",
+     "cost": "17,280",
+     "unlock": "17,280"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Striker Jones",
+   "page": "Striker Jones (BTD6)",
+   "base_cost": {
+    "easy": 595,
+    "medium": 700,
+    "hard": 755,
+    "impoppable": 840
+   },
+   "hero_favor_cost": {
+    "easy": 545,
+    "medium": 640,
+    "hard": 690,
+    "impoppable": 770
+   },
+   "abilities": "Concussive Shell (Level 3) Target Focus (Level 7) Artillery Command (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Striker Jones shoots a powerful bazooka to explode the Bloons and push them back on hit.",
+     "effect": "Shoots missiles every 1.2s that create a splash radius of 15, deal 2 damage, and pop up to 10 bloons. Attack also pushes back non-blimp bloons by 5 units. Striker starts with 55 range.",
+     "cost": "700",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Increased blast radius.",
+     "effect": "Blast radius of missiles increased from 15 to 19.",
+     "cost": "180",
+     "unlock": "180"
+    },
+    {
+     "level": 3,
+     "description": "Concussive Shell: Shoots a guided shell following target priority, stunning whatever Bloon it hits.",
+     "effect": "Unlocks Concussive Shell ability. When activated, shoots a homing concussive missile toward the targeted Bloon(s) based on targeting priority, besides BADs and Boss Bloons. Deals 2 damage onto up to 36 bloons within 27 blast radius, can damage any bloon type, and stuns affected bloons for 1 second, with reduced duration for MOABs and above. Cooldown is 16 seconds.",
+     "cost": "460",
+     "unlock": "460"
+    },
+    {
+     "level": 4,
+     "description": "All Bomb Shooters and Mortar Monkeys on screen shoot 10% faster.",
+     "effect": "Increases attack speed for all Bomb Shooters and Mortar Monkeys by +11%, equivalent to 0.90x attack cooldown reduction.",
+     "cost": "1,000",
+     "unlock": "1,000"
+    },
+    {
+     "level": 5,
+     "description": "Makes all Black Bloons less resistant to explosive damage from all Monkeys.",
+     "effect": "All Black Bloons have a 50% chance of being damaged by any explosive attack.",
+     "cost": "1,860",
+     "unlock": "1,860"
+    },
+    {
+     "level": 6,
+     "description": "Blast radius and popping power for Jones's normal attacks increase greatly.",
+     "effect": "Main missile attack pops up to 20 bloons instead of 10, and blast radius increased from 19 to 28.5, for a +50% blast radius increase.",
+     "cost": "3,280",
+     "unlock": "3,280"
+    },
+    {
+     "level": 7,
+     "description": "Pops 4 layers per shot and Mortar Monkeys blast radius increased by 10%. Target Focus: For 15 seconds Mortar Monkeys target touch/cursor with increased accuracy.",
+     "effect": "Main missile deals 4 damage, and blast radius for all Mortar Monkeys increased by +10%. Gains the Target Focus ability: when activated within 15 seconds causes all Mortar Monkeys to instead targeting Follow Touch and increases accuracy by 30%. Cooldown of 45 seconds.",
+     "cost": "5,180",
+     "unlock": "5,180"
+    },
+    {
+     "level": 8,
+     "description": "Towers near the hero get +5% range and +25% pierce.",
+     "effect": "Towers within range of Striker Jones gain +5% range and +25% pierce.",
+     "cost": "8,320",
+     "unlock": "8,320"
+    },
+    {
+     "level": 9,
+     "description": "Increased attack speed and increased Concussive Shell pierce, damage, and stun.",
+     "effect": "Attack cooldown of the bazooka attack reduced to 1s (~0.8333x attack cooldown). Concussive Shell pierce increased from 36 to 48, damage increased from 2 to 12, and stun duration increased by 4x on MOAB-class bloons and 3 seconds on all other Bloons.",
+     "cost": "9,380",
+     "unlock": "9,380"
+    },
+    {
+     "level": 10,
+     "description": "Artillery Command: Resets cooldown on all Bomb Shooters and Mortar Monkeys.",
+     "effect": "Unlocks Artillery Command ability. When activated, resets ability cooldown for all Bomb Shooters and Mortar Monkeys. Cooldown of 80 seconds.",
+     "cost": "13,620",
+     "unlock": "13,620"
+    },
+    {
+     "level": 11,
+     "description": "Increased attack speed.",
+     "effect": "Bazooka now attacks every 0.8s (0.8x attack cooldown).",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 12,
+     "description": "Slightly increased attack range and pops 2 extra layers per shot.",
+     "effect": "Base range increased from 55 to 58, and deals 6 damage per main missile.",
+     "cost": "14,400",
+     "unlock": "14,400"
+    },
+    {
+     "level": 13,
+     "description": "Increased attack speed.",
+     "effect": "Now, Striker Jones attacks every 0.6s (0.75x attack cooldown).",
+     "cost": "16,650",
+     "unlock": "16,650"
+    },
+    {
+     "level": 14,
+     "description": "Concussive Shell affects a larger area and for a longer duration.",
+     "effect": "Concussive Shell stuns for 50% longer, and blast radius by +50% for 40.5 blast radius. Stun now lasts by an additional +50% longer for MOAB-class and for 6s for other bloons.",
+     "cost": "14,940",
+     "unlock": "14,940"
+    },
+    {
+     "level": 15,
+     "description": "Concussive Shell cooldown reduced to 11 seconds.",
+     "effect": "Self-explanatory",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 16,
+     "description": "Increased attack speed.",
+     "effect": "He now attacks every 0.45s (0.75x attack cooldown).",
+     "cost": "17,820",
+     "unlock": "17,820"
+    },
+    {
+     "level": 17,
+     "description": "Increased range and pops 8 layers per shot.",
+     "effect": "Range increased from 58 to 60, and main missile deals 8 damage.",
+     "cost": "19,260",
+     "unlock": "19,260"
+    },
+    {
+     "level": 18,
+     "description": "All Bomb Shooters and Mortar Monkeys attack an additional 10% faster.",
+     "effect": "Increases attack speed for all Bomb Shooters and Mortar Monkeys by another +11%, equivalent to 0.90x attack cooldown reduction. Total attack speed bonus is +23.4%, or 0.81x attack cooldown reduction.",
+     "cost": "20,700",
+     "unlock": "20,700"
+    },
+    {
+     "level": 19,
+     "description": "Increased attack speed and makes all Black Bloons vulnerable to explosive damage.",
+     "effect": "Striker Jones attacks every 0.3 seconds (~0.6667x attack cooldown), and Black Bloon immunities are completely nullified.",
+     "cost": "16,470",
+     "unlock": "16,470"
+    },
+    {
+     "level": 20,
+     "description": "Artillery Command also gives double damage and pops per shot to all Bomb Shooters and Mortar Monkeys for 10 seconds.",
+     "effect": "Artillery Command also causes all Bomb Shooters and Mortar Monkeys on screen to deal double damage and double pierce for 10 seconds.",
+     "cost": "17,280",
+     "unlock": "17,280"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Obyn Greenfoot",
+   "page": "Obyn Greenfoot (BTD6)",
+   "base_cost": {
+    "easy": 550,
+    "medium": 650,
+    "hard": 700,
+    "impoppable": 780
+   },
+   "hero_favor_cost": {
+    "easy": 495,
+    "medium": 585,
+    "hard": 630,
+    "impoppable": 730
+   },
+   "abilities": "Brambles (Level 3) Wall of Trees (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Sends wolf spirits to attack the Bloons.",
+     "effect": "Shoots wolf spirits every 1.35s that do moderate seeking. Deals 2 damage and has 4 pierce. Obyn starts with 43 range.",
+     "cost": "650",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Nature's Wrath - all Druids in range get +1 pierce.",
+     "effect": "Gains the Nature's Wrath buff; all Druids within range gain +1 pierce.",
+     "cost": "180",
+     "unlock": "180"
+    },
+    {
+     "level": 3,
+     "description": "Brambles: Creates a spiked bush on the track that can pop 50 bloons. Lasts multiple rounds if not destroyed.",
+     "effect": "Unlocks Brambles ability. When activated, creates a bramble bush on nearby track randomly, or directly based on target priority if bloons are within range. Can pop Camo but not Lead unless given support. Lasts up to 120 seconds or 6 rounds (carries over up to 5 rounds), whichever goes first. Cooldown is 30 seconds.",
+     "cost": "460",
+     "unlock": "460"
+    },
+    {
+     "level": 4,
+     "description": "Every 18 seconds creates a totem that slows all bloons near the totem by 30%. Less effective vs MOAB-class Bloons.",
+     "effect": "Places a Nature's Ward Totem onto nearby track randomly, every 18 seconds. This totem slows all bloons within 32 range by 30%, or 15% against MOAB-class. Lasts up to 15 seconds. Always places on active lanes. Can place up to 5 active totems per Obyn. Can't place another totem if that limit is reached.",
+     "cost": "1,000",
+     "unlock": "1,000"
+    },
+    {
+     "level": 5,
+     "description": "Increased attack speed. Druids of the Jungle and Wind Weaver Skywardens have increased range. Grants bonus cash generation to Druids.",
+     "effect": "Attack cooldown for main attack reduced from 1.35s to 1.1s, for +22.7% attack speed, or 0.814x attack cooldown. All x-3-x and above Druids on screen have +40% longer attack range and +50% income bonus. All x-3-x and above Skywardens have increased 35% range.",
+     "cost": "1,860",
+     "unlock": "1,860"
+    },
+    {
+     "level": 6,
+     "description": "Increased popping power and projectiles move faster.",
+     "effect": "Pierce of wolf spirit attack increased from 4 to 9, plus extra projectile speed.",
+     "cost": "3,280",
+     "unlock": "3,280"
+    },
+    {
+     "level": 7,
+     "description": "Brambles can pop 100 Bloons.",
+     "effect": "Pierce of newly placed Brambles increased from 50 to 100.",
+     "cost": "5,180",
+     "unlock": "5,180"
+    },
+    {
+     "level": 8,
+     "description": "Nature's ward totems slow Bloons 40%. All Druids and Skywardens in range get camo detection.",
+     "effect": "Nature's Ward Totems slow down bloons by 40%, 20% against MOAB-class. Obyn also gives all Druids and Skywarden in range a Radar Scanner buff.",
+     "cost": "8,320",
+     "unlock": "8,320"
+    },
+    {
+     "level": 9,
+     "description": "Obyn deals more damage. Druids of the Storm create larger storms more frequently, and Galvanic Conduit Skywardens have larger blast radius.",
+     "effect": "Spirit wolves deal 4 damage instead of 2. All 3-x-x and above Druids on screen shoot +20% larger projectiles, including tornadoes, and the tornado attack gains +33.33% attack speed (0.75x attack cooldown). Galvanic Conduit Skywardens for increased 20% blast radius.",
+     "cost": "9,380",
+     "unlock": "9,380"
+    },
+    {
+     "level": 10,
+     "description": "Wall of Trees: Summons a wall of trees across the track that destroy all Bloons that enter. When full, the trees burst into money.",
+     "effect": "Unlocks Wall of Trees ability. When activated, places a forest of trees onto nearby track based on a selected point. Absorbs up to 2500 RBE, including Camo Bloons, and blimps if RBE limit is not reached, and rewards +100% income via bursted bananas once forest depletes. Can absorb Rock Bloons. Cooldown of 90 seconds.",
+     "cost": "13,620",
+     "unlock": "13,620"
+    },
+    {
+     "level": 11,
+     "description": "Nature's Clarity - all Magic Monkeys in range get +5 range and +2 pierce, and Druids and Skywardens get an additional +1 pierce.",
+     "effect": "Gains Nature's Clarity buff; all Magic Monkeys within range of Obyn receive +5 range and +2 pierce. Stacks on top of Nature's Wrath buff, which totals Druid and Skywardens pierce bonus to +3. Range buffs apply after all other range multipliers.",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 12,
+     "description": "Increased attack speed and Magic Monkeys cooldowns reduced by 5%.",
+     "effect": "Attack cooldown for main attack reduced from 1.1s to 0.8s, for +37.5% attack speed, or 0.727x attack cooldown. Activated abilities for all Magic Monkeys on screen reload 5% faster.",
+     "cost": "14,400",
+     "unlock": "14,400"
+    },
+    {
+     "level": 13,
+     "description": "Further increased popping power and projectile speed.",
+     "effect": "Pierce of wolf spirit attack increased from 9 to 14, plus even more projectile speed.",
+     "cost": "16,650",
+     "unlock": "16,650"
+    },
+    {
+     "level": 14,
+     "description": "Attack pops extra layers.",
+     "effect": "Spirit wolves deal 6 damage instead of 4.",
+     "cost": "14,940",
+     "unlock": "14,940"
+    },
+    {
+     "level": 15,
+     "description": "Nature's Ward slows Bloons by 60%, and has reduced cooldown.",
+     "effect": "Cooldown for Nature's Ward Totem reduced from 18s to 12s, and slows down bloons by 60%, or 30% against MOAB-class.",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 16,
+     "description": "Brambles pop 500 bloons each and can damage all Bloon types.",
+     "effect": "Pierce of newly placed Brambles increased from 100 to 500, and damages all bloon types.",
+     "cost": "17,820",
+     "unlock": "17,820"
+    },
+    {
+     "level": 17,
+     "description": "Increased attack speed.",
+     "effect": "Attack cooldown for main attack reduced from 0.8s to 0.5s, for +60% attack speed, or 0.625x attack cooldown.",
+     "cost": "19,260",
+     "unlock": "19,260"
+    },
+    {
+     "level": 18,
+     "description": "Improved Wrath - all Druid of Wrath pops start each round at 200. Coldchain Skywardens can shatter even stronger frozen Bloons.",
+     "effect": "At the start of each round, all x-x-3 and above Druids receive maximum wrath buffs. These Druids will retain this bonus until they stop attacking after making an attack. All x-x-3 and above Skywardens allow instant popped frozen bloons applies up to Zebra tiers instead of pinks.",
+     "cost": "20,700",
+     "unlock": "20,700"
+    },
+    {
+     "level": 19,
+     "description": "Attack pops extra layers.",
+     "effect": "Spirit wolves deal 8 damage instead of 6.",
+     "cost": "16,470",
+     "unlock": "16,470"
+    },
+    {
+     "level": 20,
+     "description": "Wall of Trees can hold a lot more Bloons, and has shorter cooldown.",
+     "effect": "Wall of Trees can now absorb up to 7500 RBE instead of 2500. Cooldown of Wall of Trees reduced from 90s to 75s.",
+     "cost": "17,280",
+     "unlock": "17,280"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Captain Churchill",
+   "page": "Captain Churchill (BTD6)",
+   "base_cost": {
+    "easy": 1700,
+    "medium": 2000,
+    "hard": 2160,
+    "impoppable": 2400
+   },
+   "hero_favor_cost": {
+    "easy": 1530,
+    "medium": 1800,
+    "hard": 1945,
+    "impoppable": 2160
+   },
+   "abilities": "Armor Piercing Shells (Level 3) MOAB Barrage (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Piercing bombs shot from the tank can explode up to 3 times.",
+     "effect": "Main Gun fires shell every 1.5 seconds with a range of 65 and creates explosion on impact up to 3 times. There is a cooldown between every time the explosions can be created. Explosions deal 3 damage, have 12 pierce, are of the explosion type and have 18 blast radius. Churchill starts with 65 range.",
+     "cost": "2000",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Increased popping power per shot.",
+     "effect": "Pierce for explosions increased from 12 to 15.",
+     "cost": "308",
+     "unlock": "308"
+    },
+    {
+     "level": 3,
+     "description": "Armor Piercing Shells: Shots can pop Black Bloons and do extra damage to Ceramic Bloons. Duration increases as Churchill levels.",
+     "effect": "Unlocks Armor Piercing Shells ability. When activated, shells explode up to two more times, pop Black properties, and deal extra damage to Ceramic and above. Lasts longer with upgrades.",
+     "cost": "787",
+     "unlock": "787"
+    },
+    {
+     "level": 4,
+     "description": "Increased attack range.",
+     "effect": "Range increased from 65 to 75.",
+     "cost": "1710",
+     "unlock": "1710"
+    },
+    {
+     "level": 5,
+     "description": "Adds a fast firing machine gun attack to the tank.",
+     "effect": "Adds a Machine Gun to Churchill's tank that snipes bloons for 2 damage and has the Sharp damage type. Machine Gun attack has 1 unbuffable pierce and attacks every 0.1 seconds. The machine gun's targeting operates independently of the main gun, and is always set to First.",
+     "cost": "3181",
+     "unlock": "3181"
+    },
+    {
+     "level": 6,
+     "description": "Binoculars allow Churchill to pop Camo Bloons.",
+     "effect": "Churchill gains camo detection.",
+     "cost": "5609",
+     "unlock": "5609"
+    },
+    {
+     "level": 7,
+     "description": "Weapons deal more damage and shells can explode more times.",
+     "effect": "Shell damage increased from 3 to 6 and shell can create 4 explosions, Machine Gun damage increased from 2 to 4.",
+     "cost": "8858",
+     "unlock": "8858"
+    },
+    {
+     "level": 8,
+     "description": "Increased attack speed.",
+     "effect": "Main Gun attack cooldown decreased from 1.5s to 1.2s.",
+     "cost": "14227",
+     "unlock": "14227"
+    },
+    {
+     "level": 9,
+     "description": "Shells explode 5 times.",
+     "effect": "Shell can create 5 explosions.",
+     "cost": "16040",
+     "unlock": "16040"
+    },
+    {
+     "level": 10,
+     "description": "MOAB Barrage: Launches a barrage of shells at up to 10 MOAB-class Bloons on screen, dealing massive damage each time.",
+     "effect": "Gains the MOAB Barrage ability. When activated, Churchill launches barrages of missiles onto up to 10 of the strongest blimps on screen. Each barrage missile deals 200 damage, and is repeatedly shot every 0.5s, and will continue firing at each target until the target pops or been shot 16 times. 60 seconds cooldown.",
+     "cost": "23290",
+     "unlock": "23290"
+    },
+    {
+     "level": 11,
+     "description": "Increased popping power per shell.",
+     "effect": "Explosion pierce increased from 15 to 20.",
+     "cost": "28010",
+     "unlock": "28010"
+    },
+    {
+     "level": 12,
+     "description": "Weapons get additional increased damage and shells can explode 6 times.",
+     "effect": "Explosion damage increased from 6 to 9 and shell can create 6 explosions, Machine Gun damage increased from 4 to 6.",
+     "cost": "24624",
+     "unlock": "24624"
+    },
+    {
+     "level": 13,
+     "description": "Armor Piercing Shells pop 3 layers of Bloon and do extra damage to Ceramic and higher. MOAB Barrage damage increased.",
+     "effect": "Armor Piercing Shells now grants +3 damage, +21 ceramic damage and +21 MOAB damage. MOAB Barrage missiles do 250 damage instead of 200.",
+     "cost": "28472",
+     "unlock": "28472"
+    },
+    {
+     "level": 14,
+     "description": "Main Gun can pop 3 additional layers and Machine Gun can pop 1 additional layer per shot.",
+     "effect": "Explosion damage increased from 9 to 12, Machine Gun damage increased from 6 to 8.",
+     "cost": "25547",
+     "unlock": "25547"
+    },
+    {
+     "level": 15,
+     "description": "All attacks do extra damage vs Camo, Lead and Fortified Bloons.",
+     "effect": "Explosion damage now deals +4 fortified, Camo and Leads damage, and Machine Gun now deal +2 to them damage. Damage bonuses can be stack for each property on the target.",
+     "cost": "28010",
+     "unlock": "28010"
+    },
+    {
+     "level": 16,
+     "description": "Increased attack speed.",
+     "effect": "Main Gun attack speed increased from 1.2 to 0.9 seconds.",
+     "cost": "30472",
+     "unlock": "30472"
+    },
+    {
+     "level": 17,
+     "description": "Armor Piercing Shells do even more damage. MOAB Barrage damage increased.",
+     "effect": "Armor Piercing Shells now gives +6 damage, +33 ceramic damage, and +33 MOAB damage to Churchill when activated. MOAB Barrage missile damage increased from 250 to 500.",
+     "cost": "32935",
+     "unlock": "32935"
+    },
+    {
+     "level": 18,
+     "description": "All shells pop 3 extra layers of Bloon and Machine Gun can pop 1 additional layer.",
+     "effect": "Main gun explosion damage increased from 12 to 15, Machine Gun damage increased from 8 to 10 and bonus Fortified damage increased from +2 to +4.",
+     "cost": "35397",
+     "unlock": "35397"
+    },
+    {
+     "level": 19,
+     "description": "Shells can explode 7 times.",
+     "effect": "Shell can create 7 explosions.",
+     "cost": "28164",
+     "unlock": "28164"
+    },
+    {
+     "level": 20,
+     "description": "MOAB Barrage shells and Main Gun do massively increased damage per hit.",
+     "effect": "Main gun explosion damage increased from 15 to 20, and greatly improves MOAB Barrage. Each barrage missile from MOAB Barrage deals 1000 damage, and ability cooldown of MOAB Barrage reduced from 60s to 30s. When MOAB Barrage activated, shells deal extra 3 damage. Lasts 8 seconds.",
+     "cost": "29549",
+     "unlock": "29549"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Benjamin",
+   "page": "Benjamin (BTD6)",
+   "base_cost": {
+    "easy": 1020,
+    "medium": 1200,
+    "hard": 1295,
+    "impoppable": 1440
+   },
+   "hero_favor_cost": {
+    "easy": 920,
+    "medium": 1080,
+    "hard": 1165,
+    "impoppable": 1295
+   },
+   "abilities": "Biohack (Level 3) Syphon Funding (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Hacks in $90 every round.",
+     "effect": "Generates $90 per round. Benjamin starts with a \"dummy\" range of 20.",
+     "cost": "1200",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Generates $140 per round instead of $90.",
+     "effect": "Instead of generating $90 every round, Benjamin makes $140 every round.",
+     "cost": "270",
+     "unlock": "270"
+    },
+    {
+     "level": 3,
+     "description": "Biohack: 4 closest Monkeys pop an extra layer per attack for 6 seconds. Affected Monkeys can't attack for 2 seconds after effect ends.",
+     "effect": "Gains the Biohack ability. When activated, grants +1 damage to the nearest 4 Monkeys for 6 seconds. Affected Monkeys are disabled from attacking for 2 seconds after the buff expires. Cooldown is 30 seconds.",
+     "cost": "690",
+     "unlock": "690"
+    },
+    {
+     "level": 4,
+     "description": "Cyber Security - Restores 5 lives at the end of each round.",
+     "effect": "Heals 5 lives at the end of each round. Will not heal if past full lives.",
+     "cost": "1500",
+     "unlock": "1500"
+    },
+    {
+     "level": 5,
+     "description": "Bank Hack - all banks earn +5% income.",
+     "effect": "All Banks on screen generate +5% more cash via packets (i.e. \"bananas\").",
+     "cost": "2790",
+     "unlock": "2790"
+    },
+    {
+     "level": 6,
+     "description": "Skimming - earns +$1 for every new Bloon spawned.",
+     "effect": "Every bloon spawned from the entrance earns $1.",
+     "cost": "4920",
+     "unlock": "4920"
+    },
+    {
+     "level": 7,
+     "description": "Bloon Trojan - Every few seconds sends a Trojan software virus to random Bloon. Affected Bloons spawns no children when destroyed and produces 1 extra cash for every layer.",
+     "effect": "Benjamin regularly attacks bloons with Bloon Trojan every 5s-7s. Bloon Trojan homes towards the closest target, and cannot go through Line of Sight obstacles. Affected bloons up to MOABs spawn no children when popped, and generates $2 + $1 for each layer skipped. (So, a Zebra Bloon would be worth $8 when popped, because it has 6 different layers.)",
+     "cost": "7770",
+     "unlock": "7770"
+    },
+    {
+     "level": 8,
+     "description": "Income increased to $250 per round.",
+     "effect": "Generates $250 per round instead of $140.",
+     "cost": "12480",
+     "unlock": "12480"
+    },
+    {
+     "level": 9,
+     "description": "Bank hack increased to 12%",
+     "effect": "Improves Bank Hack benefit from 5% to 12%.",
+     "cost": "14070",
+     "unlock": "14070"
+    },
+    {
+     "level": 10,
+     "description": "Syphon Funding: Downgrades most newly spawned Bloons by 1 rank. Cash per pop from affected Bloons is double. Lasts 10 seconds.",
+     "effect": "Gains the Syphon Funding ability. Syphon Funding downgrades all incoming Bloons by one layer except DDTs, BADs, and Bosses. Downgraded Bloons give double cash when popped. This ability lasts for 10 seconds with a cooldown of 65 seconds.",
+     "cost": "20430",
+     "unlock": "20430"
+    },
+    {
+     "level": 11,
+     "description": "Income increased to $1000 per round.",
+     "effect": "Generates $1000 per round instead of $250.",
+     "cost": "24570",
+     "unlock": "24570"
+    },
+    {
+     "level": 12,
+     "description": "Skimming increased to $2 per Bloon.",
+     "effect": "Skimming earns $2 per bloon instead of $1.",
+     "cost": "21600",
+     "unlock": "21600"
+    },
+    {
+     "level": 13,
+     "description": "Biohack increases bonus damage and affects 6 Monkeys for 8 seconds.",
+     "effect": "Biohack bonus damage increased from +1 to +2, increases max number of biohacked towers from 4 to 6, and buffs them for 8 seconds.",
+     "cost": "24975",
+     "unlock": "24975"
+    },
+    {
+     "level": 14,
+     "description": "Cyber Security adds 10 lives per round and can go up to 100 over starting lives.",
+     "effect": "Heals up to 10 lives per round, and can generate up to 100 lives over the starting lives.",
+     "cost": "22410",
+     "unlock": "22410"
+    },
+    {
+     "level": 15,
+     "description": "Income increased to $2500 per round.",
+     "effect": "Generates $2500 per round instead of $1000.",
+     "cost": "24570",
+     "unlock": "24570"
+    },
+    {
+     "level": 16,
+     "description": "Bloon Trojan is sent more often and earns more cash.",
+     "effect": "Bloon Trojan is sent every 3s-4s instead of 5s-7s. Popped bloons affected by Trojan now give $3 + 2 * number of layers skipped instead of $2 + number of layers skipped.",
+     "cost": "26730",
+     "unlock": "26730"
+    },
+    {
+     "level": 17,
+     "description": "Income increased to $5000 per round.",
+     "effect": "Generates $5000 per round instead of $2500.",
+     "cost": "28890",
+     "unlock": "28890"
+    },
+    {
+     "level": 18,
+     "description": "Bloon Trojan can affect BFB and DDT Bloons.",
+     "effect": "Bloon Trojan can now target BFBs and DDTs, and Benjamin gains camo detection. Benjamin's Syphon Funding also now affects DDTs.",
+     "cost": "31050",
+     "unlock": "31050"
+    },
+    {
+     "level": 19,
+     "description": "Biohack lasts 9 seconds and affected Monkeys pop 3 extra layers instead of 2.",
+     "effect": "Biohack increases damage by +3 instead of +2, and lasts for 9 seconds.",
+     "cost": "24705",
+     "unlock": "24705"
+    },
+    {
+     "level": 20,
+     "description": "Syphon Funding lasts 20 seconds and cash per pop is triple normal for affected Bloons.",
+     "effect": "Syphon Funding lasts for 20s instead of 10s, and affected bloons give 3x cash.",
+     "cost": "25920",
+     "unlock": "25920"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Ezili",
+   "page": "Ezili (BTD6)",
+   "base_cost": {
+    "easy": 510,
+    "medium": 600,
+    "hard": 650,
+    "impoppable": 720
+   },
+   "hero_favor_cost": {
+    "easy": 460,
+    "medium": 540,
+    "hard": 585,
+    "impoppable": 650
+   },
+   "abilities": "Heartstopper (Level 3) Sacrificial Totem (Level 7) MOAB Hex (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Ezili curses Bloons with dark voodoo power.",
+     "effect": "Curses one bloon every 1.2s, and causes an area-of-effect with 8 blast radius that deals 1 damage onto up to 5 other bloons. Cursed bloons take 2 damage every 2.5s, and lasts for 2.6s for 2 damage tick. She starts with 40 range.",
+     "cost": "600",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Increased attack range.",
+     "effect": "Range increased from 40 to 43.",
+     "cost": "257",
+     "unlock": "257"
+    },
+    {
+     "level": 3,
+     "description": "Heartstopper: slow Bloons, allow Purple popping and prevents any regrow from happening for 10 seconds.",
+     "effect": "Unlocks Heartstopper ability. While active, all Regrow Bloons are grow-blocked and Purples temporarily lose their Purple immunity. Lasts for 10 seconds, cooldown of 45 seconds.",
+     "cost": "656",
+     "unlock": "656"
+    },
+    {
+     "level": 4,
+     "description": "Ezili's main attack now curses multiple bloons.",
+     "effect": "Area-of-effect now applies curse status effect.",
+     "cost": "1,425",
+     "unlock": "1,425"
+    },
+    {
+     "level": 5,
+     "description": "Increased attack speed.",
+     "effect": "Attack cooldown reduced from 1.2s to 1.0s",
+     "cost": "2,651",
+     "unlock": "2,651"
+    },
+    {
+     "level": 6,
+     "description": "Ezili's attack does far more damage to MOAB-Class Bloons.",
+     "effect": "Damage-over-time for MOAB-Class is now 30, and main attack now deals 20 damage to MOAB-Class.",
+     "cost": "4,674",
+     "unlock": "4,674"
+    },
+    {
+     "level": 7,
+     "description": "Sacrificial Totem: A totem that gives Camo detection, extra pierce, attack range, attack speed, and projectile speed to nearby Monkeys, especially Wizard Monkeys. Drains 10 lives.",
+     "effect": "Gains the Sacrificial Totem ability. When activated, Ezili produces a Sacrificial Totem on a targeted region anywhere within her range, at the cost of 10 lives. Towers within the totem's range gain camo detection, +1 pierce, +20% range, +17.6% attack speed, and +25% projectile speed. Totem lasts for 30 seconds.",
+     "cost": "7,382",
+     "unlock": "7,382"
+    },
+    {
+     "level": 8,
+     "description": "Damage over time lasts longer and damages faster.",
+     "effect": "Damage-over-time damages every 1.8s instead of 2.5s and lasts for 5.5s. Damage-over-time deals up to 3 damage ticks instead of 1.",
+     "cost": "11,856",
+     "unlock": "11,856"
+    },
+    {
+     "level": 9,
+     "description": "Ezili's attack strips off Camo, Regrow and Fortified properties from non-MOAB class Bloons.",
+     "effect": "Main curse and area-of-effect both strip off Camo, Regrow, and Fortified properties from non-MOAB-class",
+     "cost": "13,367",
+     "unlock": "13,367"
+    },
+    {
+     "level": 10,
+     "description": "MOAB Hex: places a curse on a MOAB-Class Bloon, it takes damage every second until annihilated.",
+     "effect": "Unlocks MOAB Hex ability. When activated, MOAB Hex targets a MOAB-class bloon anywhere on the screen that is weaker than BAD based on target priority. Causes MOAB-Class to take 4% health + 1 damage every 1 second, for 25 seconds, and spawns no children when destroyed. If there are additional MOAB-class bloons on screen after the Hex instakills the current blimp, it will jump to another blimp according to target priority. Cooldown of 60 seconds.",
+     "cost": "19,409",
+     "unlock": "19,409"
+    },
+    {
+     "level": 11,
+     "description": "Increased attack range. Increases pierce of all reanimated Bloons by 50%.",
+     "effect": "Range increased from 43 to 45. All Necromancer Undead Bloons gain +50% pierce, which also applies to Prince of Darkness's Undead MOABs and Undead BFBs.",
+     "cost": "23,242",
+     "unlock": "23,242"
+    },
+    {
+     "level": 12,
+     "description": "Heartstopper reduced cooldown and increased duration. Deals increased damage to MOABs.",
+     "effect": "Main attack damage for MOABs increased to 30. Heartstopper cooldown decreased from 45s to 40s, effect applies for 20s instead of 10s.",
+     "cost": "20,520",
+     "unlock": "20,520"
+    },
+    {
+     "level": 13,
+     "description": "Base attack larger splash radius and increased pierce.",
+     "effect": "Curse blast radius increased from 8 to 11, and pierce of curse area-of-effect increased from 5 to 15.",
+     "cost": "23,726",
+     "unlock": "23,726"
+    },
+    {
+     "level": 14,
+     "description": "Faster damage over time.",
+     "effect": "Curse damage tick cooldown reduced from 1.8s to 1.0s, but duration of curse status effect reduced from 5.5s to 4.05s. MOAB-class tick damage remains 30, and 2 for other bloons. Damage-over-time deals up to 4 damage ticks instead of 3.",
+     "cost": "21,290",
+     "unlock": "21,290"
+    },
+    {
+     "level": 15,
+     "description": "Increased range. Damage over time lasts longer.",
+     "effect": "Range increased from 45 to 47. Curse duration increased from 4.05s to 6.05s. Damage-over-time deals up to 6 damage ticks instead of 4.",
+     "cost": "23,342",
+     "unlock": "23,342"
+    },
+    {
+     "level": 16,
+     "description": "Sacrificial Totem lasts longer and only costs 1 life to use. Main attack removes Camo from DDTs.",
+     "effect": "Sacrificial Totem lasts for 60s instead of 30s and only costs 1 life instead of 10 lives. Her main attack now decamos DDTs.",
+     "cost": "25,394",
+     "unlock": "25,394"
+    },
+    {
+     "level": 17,
+     "description": "Base attack larger splash radius and increased pierce.",
+     "effect": "Curse blast radius increased from 11 to 13, and pierce of cursing area-of-effect increased from 15 to 25.",
+     "cost": "27,446",
+     "unlock": "27,446"
+    },
+    {
+     "level": 18,
+     "description": "Increased attack speed.",
+     "effect": "Attack cooldown reduced from 1.0s to 0.8s.",
+     "cost": "29,498",
+     "unlock": "29,498"
+    },
+    {
+     "level": 19,
+     "description": "Dark voodoo curse pops more layers with each damage tick.",
+     "effect": "Damage-over-time for MOAB-Class increases from 30 to 31, and 2 to 6 for all other bloon types.",
+     "cost": "23,470",
+     "unlock": "23,470"
+    },
+    {
+     "level": 20,
+     "description": "MOAB Hex works faster and can destroy BAD Bloons.",
+     "effect": "Cooldown of MOAB Hex reduced from 60s to 40s, and can target BADs. MOAB Hex now causes MOAB-Class to take 5% health + 1 damage every 1 second, for 25 seconds. Main attack now deals 50 damage to MOAB-Class on hit.",
+     "cost": "24,624",
+     "unlock": "24,624"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Pat Fusty",
+   "page": "Pat Fusty (BTD6)",
+   "base_cost": {
+    "easy": 680,
+    "medium": 800,
+    "hard": 865,
+    "impoppable": 960
+   },
+   "hero_favor_cost": {
+    "easy": 610,
+    "medium": 720,
+    "hard": 780,
+    "impoppable": 865
+   },
+   "abilities": "Rallying Roar (Level 3) Big Squeeze (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Pat slams Bloons into the ground.",
+     "effect": "Slams one bloon within 24 radius every 1.1s and creates a splash. The initial hit does 3 damage (5 for Ceramics), while the splash has 10 pierce, 2 damage (4 for Ceramics) and 8 blast radius. Can damage all bloon types except Camo.",
+     "cost": "800",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Increase radius of slam attack.",
+     "effect": "Splash radius increased from 8 to 13.",
+     "cost": "257",
+     "unlock": "257"
+    },
+    {
+     "level": 3,
+     "description": "Rallying Roar: All nearby Monkeys can pop +1 layer for a short time.",
+     "effect": "Unlocks Rallying Roar ability. When activated, all towers within 30 radius including himself gain +1 damage. Has 8s duration and 45s cooldown.",
+     "cost": "656",
+     "unlock": "656"
+    },
+    {
+     "level": 4,
+     "description": "Increased attack speed.",
+     "effect": "Attacks every 0.9s (+22.2% attack speed).",
+     "cost": "1,425",
+     "unlock": "1,425"
+    },
+    {
+     "level": 5,
+     "description": "Sometimes does a powerful slap that pushes Bloons away from the exit.",
+     "effect": "Slam is replaced with slap every 5th attack. Slap has 8 pierce and also creates splash (same as slam splash). Bloons and M.O.A.B.s hit by slap move backwards at triple speed for 1s.",
+     "cost": "2,651",
+     "unlock": "2,651"
+    },
+    {
+     "level": 6,
+     "description": "Bloons struck by Pat are stunned for a short time.",
+     "effect": "Every attack can stun normal bloons for 0.2s. Note that this results in less knockback for the slap attack as bloons spend some of the knockback time being stunned. Splash radius is also increased from 13 to 20.",
+     "cost": "4,674",
+     "unlock": "4,674"
+    },
+    {
+     "level": 7,
+     "description": "Increased popping power and damage.",
+     "effect": "Slam damage increased to 4 (6 for Ceramics). Splash damage increased to 3 (5 for Ceramics) and pierce increased to 20.",
+     "cost": "7,382",
+     "unlock": "7,382"
+    },
+    {
+     "level": 8,
+     "description": "Increased attack speed.",
+     "effect": "Attacks every 0.75s (+20% attack speed).",
+     "cost": "11,856",
+     "unlock": "11,856"
+    },
+    {
+     "level": 9,
+     "description": "Increased attack range.",
+     "effect": "Attack range increased from 24 to 27.",
+     "cost": "13,367",
+     "unlock": "13,367"
+    },
+    {
+     "level": 10,
+     "description": "Big Squeeze: Grabs a MOAB, BFB, DDT (if visible), or ZOMG and crushes it to bits over 5 seconds.",
+     "effect": "Unlocks Big Squeeze ability. When activated, squeezes one strongest non-BAD/Boss blimp (including the Rock Bloon, excluding Lych-Soul) within 35 radius for 4 seconds, and completely destroys the upper layer. The children bloons become stunned for 2 seconds. But cannot attack for 5 seconds. Cooldown is 20 seconds.",
+     "cost": "19,409",
+     "unlock": "19,409"
+    },
+    {
+     "level": 11,
+     "description": "Attack pops more layers.",
+     "effect": "Slam damage increased to 5 (7 for Ceramics) and splash increased to 4 (6 for Ceramics).",
+     "cost": "23,242",
+     "unlock": "23,242"
+    },
+    {
+     "level": 12,
+     "description": "Increased attack speed.",
+     "effect": "Attacks every 0.65s (+15.4% attack speed).",
+     "cost": "20,520",
+     "unlock": "20,520"
+    },
+    {
+     "level": 13,
+     "description": "Attack stuns Bloons for longer and can stun MOAB-Class Bloons very briefly.",
+     "effect": "Stun duration increased to 0.5s and also applies to blimps for 0.2s.",
+     "cost": "23,726",
+     "unlock": "23,726"
+    },
+    {
+     "level": 14,
+     "description": "Rallying Roar increased radius and duration and increased damage of rallied monkeys.",
+     "effect": "Rallying Roar ability now gives +3 damage within 40 radius and has 10s duration.",
+     "cost": "21,290",
+     "unlock": "21,290"
+    },
+    {
+     "level": 15,
+     "description": "Slap attack can affect more Bloons.",
+     "effect": "Slap pierce increased from 8 to 16.",
+     "cost": "23,342",
+     "unlock": "23,342"
+    },
+    {
+     "level": 16,
+     "description": "Increased attack range and bonus damage to ceramics.",
+     "effect": "Attack range increased from 27 to 29. Slam deals +5 damage to Ceramics and splash deals +6 to Ceramics (both are 12 in total).",
+     "cost": "25,394",
+     "unlock": "25,394"
+    },
+    {
+     "level": 17,
+     "description": "Increased attack speed.",
+     "effect": "Attacks every 0.55s (+18.2% attack speed).",
+     "cost": "27,446",
+     "unlock": "27,446"
+    },
+    {
+     "level": 18,
+     "description": "Increased popping power.",
+     "effect": "Increases splash pierce from 20 to 30.",
+     "cost": "29,498",
+     "unlock": "29,498"
+    },
+    {
+     "level": 19,
+     "description": "Attack pops more layers.",
+     "effect": "Slam damage increased to 10 and splash increased to 9 (both are 17 for Ceramics).",
+     "cost": "23,470",
+     "unlock": "23,470"
+    },
+    {
+     "level": 20,
+     "description": "Big Squeeze can grab several big Bloons at once.",
+     "effect": "Big Squeeze now affects 4 blimps at once. Rallying Roar ability cooldown reduced from 45s to 30s.",
+     "cost": "24,624",
+     "unlock": "24,624"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Adora",
+   "page": "Adora (BTD6)",
+   "base_cost": {
+    "easy": 850,
+    "medium": 1000,
+    "hard": 1080,
+    "impoppable": 1200
+   },
+   "hero_favor_cost": {
+    "easy": 765,
+    "medium": 900,
+    "hard": 970,
+    "impoppable": 1080
+   },
+   "abilities": "The Long Arm of Light (Level 3) Blood Sacrifice (Level 7) Ball of Light (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Divine Bolt seeks out and destroys.",
+     "effect": "Summons bolts of the sun every 1.0s. Each bolt deals 1 damage, can pop up to 5 bloons, can pop Frozen Bloons and Lead Bloons, and aggressively seeks bloons. Adora starts with 45 range.",
+     "cost": "1000",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Increased attack range.",
+     "effect": "Range increases from 45 to 49.",
+     "cost": "308",
+     "unlock": "308"
+    },
+    {
+     "level": 3,
+     "description": "The Long Arm of Light: Greatly increases attack range and power for a short time & damages all Bloon Types.",
+     "effect": "Gains The Long Arm of Light Ability. When activated, Adora receives double attack range, double pierce, and Normal type (NOTE: all of these improvements apply before any buffs) for 10s. Has a 45s cooldown.",
+     "cost": "787",
+     "unlock": "787"
+    },
+    {
+     "level": 4,
+     "description": "Shoots double Divine Bolts.",
+     "effect": "Shoots two Divine Bolts at a time in an angular spray.",
+     "cost": "1,710",
+     "unlock": "1,710"
+    },
+    {
+     "level": 5,
+     "description": "Divine bolts pierce through more Bloons.",
+     "effect": "Increases pierce per Divine Bolt from 5 to 8.",
+     "cost": "3,181",
+     "unlock": "3,181"
+    },
+    {
+     "level": 6,
+     "description": "Shoots 3 Divine Bolts at a time.",
+     "effect": "Gains a 3rd Divine Bolt per shot.",
+     "cost": "5,609",
+     "unlock": "5,609"
+    },
+    {
+     "level": 7,
+     "description": "Blood Sacrifice: Sacrifice a targeted Tower to grant Adora large amounts of XP and boost her attack range and rate of fire for a short time.",
+     "effect": "Gains the Blood Sacrifice ability. When activated, the player selects a tower to sacrifice, removing it from the map and giving Adora XP and temporary range and attack speed buffs as follows:",
+     "cost": "8,858",
+     "unlock": "8,858"
+    },
+    {
+     "level": 8,
+     "description": "Shoots 4 Divine Bolts at a time.",
+     "effect": "Gains a 4th Divine Bolt per shot.",
+     "cost": "14,227",
+     "unlock": "14,227"
+    },
+    {
+     "level": 9,
+     "description": "Increased attack range and increased damage to fortified bloons.",
+     "effect": "Range increases from 49 to 54. Main attack grant +1 damage to Fortified bloons.",
+     "cost": "16,040",
+     "unlock": "16,040"
+    },
+    {
+     "level": 10,
+     "description": "Ball of Light: Brings forth a powerful ball of energy to strike down the Bloons.",
+     "effect": "Gains the Ball of Light ability. When activated, a ball orbits Adora that damages bloons based on her target priority. The ball deals 3 damage, +3 damage to fortified Bloons, every 0.05 seconds on up to 8 bloons, and has infinite range. Lasts for 12s and has a 60s cooldown.",
+     "cost": "23,290",
+     "unlock": "23,290"
+    },
+    {
+     "level": 11,
+     "description": "Adora increases attack speed.",
+     "effect": "Increases attack speed by 17.6% (0.85x attack cooldown). Now attacks every 0.85s.",
+     "cost": "28,010",
+     "unlock": "28,010"
+    },
+    {
+     "level": 12,
+     "description": "Shoots 5 Divine Bolts at a time.",
+     "effect": "Gains a 5th Divine Bolt per shot.",
+     "cost": "24,624",
+     "unlock": "24,624"
+    },
+    {
+     "level": 13,
+     "description": "Divine Bolts pierce through even more Bloons. Increased damage to fortified bloons.",
+     "effect": "Pierce of Divine Bolts and Ball of Light improves from 8 to 11. Main attack deal extra damage +2 to fortified instead of +1.",
+     "cost": "28,472",
+     "unlock": "28,472"
+    },
+    {
+     "level": 14,
+     "description": "Shoots 6 Divine Bolts at a time.",
+     "effect": "Gains a 6th Divine Bolt per shot.",
+     "cost": "25,547",
+     "unlock": "25,547"
+    },
+    {
+     "level": 15,
+     "description": "Divine Bolts burn through an extra Bloon layer, plus Ball of Light deals more damage.",
+     "effect": "Divine Bolt damage increases from 1 to 2, and Ball of Light damage increases from 3 to 5, and Ball of Light does extra +5 damage to fortified Bloons instead of +3.",
+     "cost": "28,010",
+     "unlock": "28,010"
+    },
+    {
+     "level": 16,
+     "description": "Long Arm of Light becomes even more deadly.",
+     "effect": "Long Arm of Light lasts 5 seconds longer and doubles the damage of Divine Bolts for the duration.",
+     "cost": "30,472",
+     "unlock": "30,472"
+    },
+    {
+     "level": 17,
+     "description": "Adora increases attack speed even more.",
+     "effect": "+21.42% attack speed (0.8235x attack cooldown). Now attacks every 0.7s.",
+     "cost": "32,935",
+     "unlock": "32,935"
+    },
+    {
+     "level": 18,
+     "description": "Shoots 8 Divine Bolts at a time.",
+     "effect": "Shoots 2 more Divine Bolts per shot, for a total of 8 Divine Bolts per shot.",
+     "cost": "35,397",
+     "unlock": "35,397"
+    },
+    {
+     "level": 19,
+     "description": "Increased attack range. Increased damage to fortified Bloons.",
+     "effect": "Range increases from 54 to 59. Main attack now deal extra +3 damage to fortified bloons instead of +2.",
+     "cost": "28,164",
+     "unlock": "28,164"
+    },
+    {
+     "level": 20,
+     "description": "Ball of Light is greatly improved, plus increased rate of fire, range, and duration buffs from Sacrifices.",
+     "effect": "Ball of Light deals 20 damage instead of 5, deal extra +20 damage to fortified Bloons instead of +5 and gains normal damage type, letting it damage purple bloons. Sacrifices still cost the same rate ($100 per 1%), the cap is doubled (+50% range and 0.5x attack cooldown), and last for 60s instead of 10s. Can receive enormous damage and pierce buffs if nearby a True Sun God (or VTSG): Divine Bolts gain +8 Damage and +30 Pierce, and Ball of Light gains +80 Damage and +35 Pierce.",
+     "cost": "29,549",
+     "unlock": "29,549"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Admiral Brickell",
+   "page": "Admiral Brickell (BTD6)",
+   "base_cost": {
+    "easy": 765,
+    "medium": 900,
+    "hard": 970,
+    "impoppable": 1080
+   },
+   "hero_favor_cost": {
+    "easy": 690,
+    "medium": 810,
+    "hard": 875,
+    "impoppable": 970
+   },
+   "abilities": "Naval Tactics (Level 3) Blast Chain (Level 7) Mega Mine (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Drops powerful sea mines that seek and destroy Bloons.",
+     "effect": "Starts with two attacks: sea mines, and a pistol. Pistol is a snipe attack that instantly hits the bloon with sharp damage type. Sea mines are regularly deployed into nearby water, and each mine quickly seeks onto bloons if within range of the mine. Sea mines last for a limited time.",
+     "cost": "900",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Increased attack speed.",
+     "effect": "Pistol attack gets ~+23.08% attack speed (0.8125x attack cooldown), now attacking every 0.65s. Mines get ~+7.143% attack speed (0.933x attack cooldown), now deployed every 2.8s.",
+     "cost": "257",
+     "unlock": "257"
+    },
+    {
+     "level": 3,
+     "description": "Naval Tactics: greatly increases attack speed of Brickell and nearby water-based Monkeys for a short time.",
+     "effect": "Brickell unlocks Naval Tactics ability. When activated, all nearby water towers including herself gain 66% cooldown (equivalent to 151.5%% attack speed) for the duration of the ability, 9 seconds. Cooldown of 50 seconds.",
+     "cost": "656",
+     "unlock": "656"
+    },
+    {
+     "level": 4,
+     "description": "Water towers in radius gain extra pierce.",
+     "effect": "Water towers near Brickell also receive +1 pierce at all times, which stacks with the pierce buff given by Naval Tactics.",
+     "cost": "1,425",
+     "unlock": "1,425"
+    },
+    {
+     "level": 5,
+     "description": "Naval Tactics increases popping power and allows affected Monkeys to hit all Bloon types except Camo.",
+     "effect": "Naval Tactics also gives +1 pierce and normal damage type to nearby towers.",
+     "cost": "2,651",
+     "unlock": "2,651"
+    },
+    {
+     "level": 6,
+     "description": "Increases the damage of Sea Mines and Pistol attacks.",
+     "effect": "Pistol damage increased from 3 to 6. Sea Mines damage increased from 1 to 2 for both initial hit and explosion damage.",
+     "cost": "4,674",
+     "unlock": "4,674"
+    },
+    {
+     "level": 7,
+     "description": "Blast Chain: Sea mines fire off quicker for a short time. Brickell gains increased attack range and Camo Bloon detection.",
+     "effect": "Admiral Brickell gains camo detection. Does not gain Camo Prioritization. Also gains a new ability: Blast Chain. When activated, all sea mines have half attack cooldown and doubled projectile speed for 10 seconds. Cooldown of 45 seconds.",
+     "cost": "7,382",
+     "unlock": "7,382"
+    },
+    {
+     "level": 8,
+     "description": "Naval Tactics can apply to all water towers, and allows affected Monkeys to hit Camo Bloons.",
+     "effect": "Naval Tactics now applies to amphibious monkeys placed in water and gives affected Monkeys camo detection.",
+     "cost": "11,856",
+     "unlock": "11,856"
+    },
+    {
+     "level": 9,
+     "description": "Sea Mines do extra damage.",
+     "effect": "Sea mines damage increased from 2 to 8.",
+     "cost": "13,367",
+     "unlock": "13,367"
+    },
+    {
+     "level": 10,
+     "description": "Mega Mine: deploys to any water area a devastating Mine that triggers on MOABs and stuns nearby Bloons. Mega Mines last 3 rounds.",
+     "effect": "Unlocks Mega Mine ability. When activated, deploys a Mega Mine onto any water location. Mega Mines have 4000 damage, 100 pierce, blast radius of 100, and a 5 second stun if the Bloon survives. Mega Mines have a 120 second or 4 round lifespan, whichever comes first. Mega Mine can only be triggered by MOAB Class Bloons in its range. Cooldown of 60 seconds.",
+     "cost": "19,409",
+     "unlock": "19,409"
+    },
+    {
+     "level": 11,
+     "description": "Faster deploy speed and deploy rate for Sea Mines.",
+     "effect": "Mines get ~+11.99% attack speed (0.8929x attack cooldown) (every 2.5s)",
+     "cost": "23,242",
+     "unlock": "23,242"
+    },
+    {
+     "level": 12,
+     "description": "Pistol attack increased speed and damage, Sea Mines increased damage.",
+     "effect": "Pistol damage increased from 6 to 12, and pistol gains ~+85.71% attack speed (0.5385x attack cooldown), shooting every 0.35s. Sea Mines damage increased from 8 to 12.",
+     "cost": "20,520",
+     "unlock": "20,520"
+    },
+    {
+     "level": 13,
+     "description": "Mega Mine cooldown reduced.",
+     "effect": "Mega Mine cooldown decreased from 60s to 50s.",
+     "cost": "23,726",
+     "unlock": "23,726"
+    },
+    {
+     "level": 14,
+     "description": "Naval Tactics duration increased and gives affected monkeys bonus damage.",
+     "effect": "Naval Tactics duration increased from 9s to 12s and gives affected towers +1 damage.",
+     "cost": "21,290",
+     "unlock": "21,290"
+    },
+    {
+     "level": 15,
+     "description": "Enhanced Sea Mines have larger explosion, can damage Black Bloons and remove Camo property.",
+     "effect": "Sea mine blast radius increased from 20 to 30, damages all bloon types and strips camo. Pistol damage increased from 12 to 18.",
+     "cost": "23,342",
+     "unlock": "23,342"
+    },
+    {
+     "level": 16,
+     "description": "Naval Tactics give affected monkeys even more attack speed.",
+     "effect": "Naval Tactics attack cooldown reduced from 66% to 50% (equivalent to 200% attack speed)",
+     "cost": "25,394",
+     "unlock": "25,394"
+    },
+    {
+     "level": 17,
+     "description": "Sea Mines do greatly increased damage. Pistol does more damage.",
+     "effect": "Sea Mines damage increased from 12 to 22, and pistol damage increased from 18 to 40.",
+     "cost": "27,446",
+     "unlock": "27,446"
+    },
+    {
+     "level": 18,
+     "description": "Mega Mine cooldown reduced even further.",
+     "effect": "Mega Mine cooldown decreased from 50s to 40s and Mega Mine now lasts 150 seconds.",
+     "cost": "29,498",
+     "unlock": "29,498"
+    },
+    {
+     "level": 19,
+     "description": "Naval Tactics affects all water based towers everywhere.",
+     "effect": "Naval Tactics ability affects all water-based towers on screen.",
+     "cost": "23,470",
+     "unlock": "23,470"
+    },
+    {
+     "level": 20,
+     "description": "Mega Mine does massively increased damage and longer stun.",
+     "effect": "Mega Mine damage increased from 4,000 to 11,000, increase pierce from 100 to 150, blast radius from 100 to 120 and stuns survivors for 10s instead of 5s.",
+     "cost": "24,624",
+     "unlock": "24,624"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Etienne",
+   "page": "Etienne (BTD6)",
+   "base_cost": {
+    "easy": 550,
+    "medium": 650,
+    "hard": 700,
+    "impoppable": 780
+   },
+   "hero_favor_cost": {
+    "easy": 495,
+    "medium": 585,
+    "hard": 630,
+    "impoppable": 730
+   },
+   "abilities": "Drone Swarm (Level 3) UCAV (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Flies a deadly little drone around to shoot at the Bloons.",
+     "effect": "Starts with 55 range and operates a dart-firing drone that targets bloons within his range. Etienne himself doesn't directly attack.",
+     "cost": "850",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Etienne's range increased.",
+     "effect": "Etienne's range increased from 55 to 60.",
+     "cost": "180",
+     "unlock": "180"
+    },
+    {
+     "level": 3,
+     "description": "Drone Swarm Ability: Etienne launches 4 more temporary drones to wreak some Bloon popping havoc.",
+     "effect": "Unlocks Drone Swarm ability. When activated, summons 4 temporary drones with fixed targeting and identical stats to his other drone(s). Duration increases with levels. Cooldown of 70 seconds.",
+     "cost": "460",
+     "unlock": "460"
+    },
+    {
+     "level": 4,
+     "description": "Drones increase in popping power.",
+     "effect": "Drone dart pierce increased from 2 to 3.",
+     "cost": "1,000",
+     "unlock": "1,000"
+    },
+    {
+     "level": 5,
+     "description": "Drone increased attack speed and infrared camera allows shooting of Camo Bloons.",
+     "effect": "Gains camo detection, and his drones gain ~+27.28% attack speed (0.7857x attack cooldown), with the attack cooldown reduced to 0.55s. Does not receive Camo Prioritization target option.",
+     "cost": "1,860",
+     "unlock": "1,860"
+    },
+    {
+     "level": 6,
+     "description": "Drone Swarm ability cooldown reduced.",
+     "effect": "Cooldown for Drone Swarm reduced from 70 seconds to 55 seconds.",
+     "cost": "3,280",
+     "unlock": "3,280"
+    },
+    {
+     "level": 7,
+     "description": "Etienne now controls 2 drones at once.",
+     "effect": "Etienne gains a second independent drone. The second drone has a separate target priority compared to his first drone. He also gains the \"First\" and \"Divide and Conquer\" target priorities, and defaults to \"Divide and Conquer\".",
+     "cost": "5,180",
+     "unlock": "5,180"
+    },
+    {
+     "level": 8,
+     "description": "UAV: all Monkeys gain Camo Bloon detection.",
+     "effect": "All non-Paragon towers on screen will now receive external camo detection.",
+     "cost": "8,320",
+     "unlock": "8,320"
+    },
+    {
+     "level": 9,
+     "description": "Drones pop an extra Bloon layer.",
+     "effect": "All drone darts deal 2 damage instead of 1.",
+     "cost": "9,380",
+     "unlock": "9,380"
+    },
+    {
+     "level": 10,
+     "description": "UCAV ability: high altitude surveillance drone becomes devastating combat drone for a short time.",
+     "effect": "Unlocks UCAV ability. When activated, the ability summons a UCAV from above that rapidly shoots multiple high-damage homing missiles. Naturally detects camo. Cooldown of 90 seconds, and lasts for up to 18 seconds.",
+     "cost": "13,620",
+     "unlock": "13,620"
+    },
+    {
+     "level": 11,
+     "description": "Etienne gains a third drone to control.",
+     "effect": "Etienne gains a third independent drone. Also gains \"Zone Defense\" targeting option, plus adjusted \"Divide and Conquer\" to account for the third drone.",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 12,
+     "description": "Drone upgrades! Increased popping power and flight speed.",
+     "effect": "Pierce of drone darts increased from 3 to 6, and drones gain extra flight speed (45 to 90).",
+     "cost": "14,400",
+     "unlock": "14,400"
+    },
+    {
+     "level": 13,
+     "description": "UCAV ability cooldown reduced.",
+     "effect": "UCAV ability cooldown decreased from 90 seconds to 75 seconds.",
+     "cost": "16,650",
+     "unlock": "16,650"
+    },
+    {
+     "level": 14,
+     "description": "Drone damage increased greatly.",
+     "effect": "All drone darts deal 3 damage instead of 2.",
+     "cost": "14,940",
+     "unlock": "14,940"
+    },
+    {
+     "level": 15,
+     "description": "UCAV damage output and duration greatly increased.",
+     "effect": "Duration of UCAV increased from 18 seconds to 20 seconds, and UCAV missile damage increased from 2 to 4 and pierce increased from 25 to 30.",
+     "cost": "16,380",
+     "unlock": "16,380"
+    },
+    {
+     "level": 16,
+     "description": "Etienne's range, drone popping power, and Drone Swarm ability cooldown all improved.",
+     "effect": "Drone dart pierce increased from 6 to 9, Etienne's range increases from 60 to 80, and cooldown for Drone Swarm ability reduced from 70s to 50s.",
+     "cost": "17,820",
+     "unlock": "17,820"
+    },
+    {
+     "level": 17,
+     "description": "UCAV damage output greatly increased again!",
+     "effect": "UCAV missile damage increased from 4 to 7.",
+     "cost": "19,260",
+     "unlock": "19,260"
+    },
+    {
+     "level": 18,
+     "description": "Drone damage increased.",
+     "effect": "All drone darts deal 4 damage instead of 3.",
+     "cost": "20,700",
+     "unlock": "20,700"
+    },
+    {
+     "level": 19,
+     "description": "Etienne now controls four drones all the time!",
+     "effect": "Etienne gains a fourth independently flying drone. Target priorities for his drones are now modified to account for this fourth drone.",
+     "cost": "16,470",
+     "unlock": "16,470"
+    },
+    {
+     "level": 20,
+     "description": "Perma-UCAV: Surveillance drone becomes permanent UCAV. When activated becomes more powerful for a short time and can pop all Bloon types.",
+     "effect": "Gains a permanent Level 10 UCAV. UCAV ability now increases UCAV missile damage from 2 to 10, pierce from 25 to 30, and temporarily damages any bloon type, and cooldown remains at 20 seconds. Without the ability, UCAV missile damage is reduced to 2, and pierce to 25.",
+     "cost": "17,280",
+     "unlock": "17,280"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Sauda",
+   "page": "Sauda (BTD6)",
+   "base_cost": {
+    "easy": 510,
+    "medium": 600,
+    "hard": 650,
+    "impoppable": 720
+   },
+   "hero_favor_cost": {
+    "easy": 460,
+    "medium": 540,
+    "hard": 585,
+    "impoppable": 650
+   },
+   "abilities": "Leaping Sword (Level 3) Sword Charge (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Slashes with both swords at nearby Bloons. Can pop Camo.",
+     "effect": "Slashes at bloons, producing a partial AoE in front of her in a 90°-180° formation. Attacks every 0.4s, deals 1 damage, +1 Ceramic and MOAB-class damage, 3 pierce, and range of 23.",
+     "cost": "600",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Pops more Bloons per attack.",
+     "effect": "Pierce increased from 3 to 4.",
+     "cost": "257",
+     "unlock": "257"
+    },
+    {
+     "level": 3,
+     "description": "Leaping Sword Attack: Sauda's dramatic Lead popping leap attack slams down on her targeted Bloons.",
+     "effect": "Unlocks Leaping Sword ability. When activated, aims at a target based on her target priority, hitting multiple bloons in a tiny area and leaving behind an \"aftersword\" that deals contact damage to passing bloons. Cooldown of 30 seconds.",
+     "cost": "656",
+     "unlock": "656"
+    },
+    {
+     "level": 4,
+     "description": "Sauda's swords slice through 2 layers of Bloons.",
+     "effect": "2 damage, and Ceramic and MOAB-class damage improves from +1 to +2.",
+     "cost": "1,425",
+     "unlock": "1,425"
+    },
+    {
+     "level": 5,
+     "description": "Sauda attacks faster.",
+     "effect": "+25% attack speed (0.8x attack cooldown). Now attacks every 0.32s.",
+     "cost": "2,651",
+     "unlock": "2,651"
+    },
+    {
+     "level": 6,
+     "description": "Increased attack range and popping power.",
+     "effect": "Pierce increases from 4 to 6, range from 23 to 26.",
+     "cost": "4,674",
+     "unlock": "4,674"
+    },
+    {
+     "level": 7,
+     "description": "Sauda preys on the Bloons' weakness, doing extra damage if they are stunned, and she can now pop frozen Bloons.",
+     "effect": "Deals +2 damage to stunned Bloons, +20 damage to stunned MOABs, and also pops Frozen Bloons. Leaping Sword deals even more damage to any stunned target, including the initial impact (+10 stunned damage, or +20 stunned MOAB-class damage) and on-track item's contact damage (+2 stunned damage, or +20 stunned MOAB-class damage).",
+     "cost": "7,382",
+     "unlock": "7,382"
+    },
+    {
+     "level": 8,
+     "description": "Sauda attacks even faster.",
+     "effect": "~+28.99% attack speed (~0.7813x attack speed). Now attacks every 0.25s.",
+     "cost": "11,856",
+     "unlock": "11,856"
+    },
+    {
+     "level": 9,
+     "description": "Bloon Bleed: Sauda pops through 3 layers of Bloon with each strike, and causes a slow damage over time effect.",
+     "effect": "Adds a Bloon Bleed effect onto damaged bloons. Bloon Bleed deals 1 damage per 2.0s or 20 MOAB-class damage per 2.0s, for up to 4 seconds, dealing up to 2 ticks of damage. Sword attack deals 3 damage, or +3 to Ceramic and MOAB-class (instead of +2).",
+     "cost": "13,367",
+     "unlock": "13,367"
+    },
+    {
+     "level": 10,
+     "description": "Sword Charge: Sauda slides along the whole track, devastating Bloons as she goes.",
+     "effect": "Unlocks Sword Charge ability. When activated, she charges from the back of the track path towards the front, damaging any bloon type including Leads. Creates more copies of herself on maps with multiple entries or multiple exits. Deals 30 damage to up to 400 bloons on screen with each copy of herself, plus even more damage to stunned bloons (+15 stunned damage, or +30 stunned MOAB-class damage). Sword Charge has a radius of 19.5. Cooldown of 45s.",
+     "cost": "19,409",
+     "unlock": "19,409"
+    },
+    {
+     "level": 11,
+     "description": "Sauda inflicts extra damage to any Bloon slowed, immobilized, or taking damage over time from other monkeys.",
+     "effect": "Gains extra damage versus \"harmed\" bloons, inflicting +2 damage to Bloons or +10 damage to MOABs with her main swords. Bloons affected by any valid lingering status effect (e.g. slowdown and/or a damage-over-time), excluding stuns and Bloon Bleed, triggers the aforementioned damage bonus. Can stack with the bonus stunned bloon damage.",
+     "cost": "23,242",
+     "unlock": "23,242"
+    },
+    {
+     "level": 12,
+     "description": "Leaping Sword Attack increases greatly in power.",
+     "effect": "Leaping Sword leap deals 40 damage, or 180 to MOAB-class, onto up to 50 bloons. After-effect swords now deal 3 damage instead of 2. Stunned and/or \"harmed\" bloons are inflicted extra damage via Leaping Sword (leaping impact: +20, +40 MOAB-class; leaping contact: +3, +25 MOAB-class).",
+     "cost": "20,520",
+     "unlock": "20,520"
+    },
+    {
+     "level": 13,
+     "description": "Enchanted blades do more damage and allow Sauda to damage all Bloons.",
+     "effect": "Main attack now damages Leads. Main attack also now deals even more damage to stunned Bloons (Bloons: +2 → +3; MOAB-class: +20 → +21).",
+     "cost": "23,726",
+     "unlock": "23,726"
+    },
+    {
+     "level": 14,
+     "description": "Sauda attacks even faster, and Sword Charge sweeps all track paths two times!",
+     "effect": "+56.25% attack speed (0.64x attack cooldown). Now attacks every 0.16s. Sword Charge ability now repeats two times.",
+     "cost": "21,290",
+     "unlock": "21,290"
+    },
+    {
+     "level": 15,
+     "description": "Increased attack range and popping power, and Leaping Sword Attack deals more damage.",
+     "effect": "Range increased from 26 to 29, pierce increased from 6 to 8, Leaping Sword ability's after-effects swords deal 4 damage, and Leaping Sword ability impact deals 80 damage instead of 40. Stunned and/or \"harmed\" bloons are inflicted extra damage via Leaping Sword (leaping impact: +40, +80 MOAB-class; leaping contact: +4, +30 MOAB-class).",
+     "cost": "23,342",
+     "unlock": "23,342"
+    },
+    {
+     "level": 16,
+     "description": "Sword Charge greatly increased damage.",
+     "effect": "Sword Charge deals 60 damage instead of 30. Stunned and/or \"harmed\" bloons are inflicted extra damage via Sword Charge (+30 versus bloons, +60 versus MOAB-class). Sword Charge radius increased from 19.5 to 22.5.",
+     "cost": "25,394",
+     "unlock": "25,394"
+    },
+    {
+     "level": 17,
+     "description": "Sauda's sword attacks slice through many Bloon layers at once.",
+     "effect": "Sword deals 4 damage and +4 damage to Ceramic and MOAB-class, alongside a bigger bonus against stunned and \"harmed\" bloons.",
+     "cost": "27,446",
+     "unlock": "27,446"
+    },
+    {
+     "level": 18,
+     "description": "Sauda's swords attack with a blur of speed.",
+     "effect": "+60% attack speed (0.625x attack cooldown). Now attacks every 0.1s.",
+     "cost": "29,498",
+     "unlock": "29,498"
+    },
+    {
+     "level": 19,
+     "description": "Enchanted Blades do extra damage to Regrow, Fortified, and Camo Bloons.",
+     "effect": "Deals +2 damage to bloons with Camo, Regrow, Fortified, or any valid combination of the three. For blimps, blimps with Camo and/or Fortified are dealt +10 damage. Damage bonus to those types are mutually exclusive.",
+     "cost": "23,470",
+     "unlock": "23,470"
+    },
+    {
+     "level": 20,
+     "description": "More powerful Sword Charge sweeps all track paths three times! Leaping Sword power greatly increased.",
+     "effect": "Sword Charge now deals 220 damage, pops up to 1400 bloons, and repeats three times. Leaping Sword leap deals 400 damage, or 540 MOAB-class damage, and pops up to 70 bloons on the initial hit. Leaping Sword's after-effect swords deal 6 damage. All abilities deal more damage to stunned and/or \"harmed\" bloons (leaping impact: +200, +400 MOAB-class; leaping contact: +6, +40 MOAB-class; charging: +110, +220 MOAB-class).",
+     "cost": "24,624",
+     "unlock": "24,624"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Psi",
+   "page": "Psi (BTD6)",
+   "base_cost": {
+    "easy": 850,
+    "medium": 1000,
+    "hard": 1080,
+    "impoppable": 1200
+   },
+   "hero_favor_cost": {
+    "easy": 765,
+    "medium": 900,
+    "hard": 970,
+    "impoppable": 1080
+   },
+   "abilities": "Psychic Blast (Level 3) Psionic Scream (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Over any range or obstacle, Psi sets up deadly vibrations that completely destroy one Bloon at a time. Can target Camo.",
+     "effect": "Psi creates psychic attacks that instantly hold and destroy their targets. Each psychic attack sends mind-powered vibrations that slowly destroy the targeted bloon at any range, ignoring Line of Sight. Initially cannot target Leads, Purples, Ceramics, or MOAB-class. Each bloon layer takes a set amount of time to destroy, and once fully popped Psi's psychic attack undergoes an attack cooldown before attacking again. Psi starts with a \"dummy\" range of 20.",
+     "cost": "1000",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "The psionic vibrations destroy Bloons faster than normal.",
+     "effect": "It now takes 0.15s per single-HP bloon layer until Psi can make another psychic attack, and then the attack cooldown begins.",
+     "cost": "270",
+     "unlock": "270"
+    },
+    {
+     "level": 3,
+     "description": "Psychic Blast: Psi unleashes a wave of power that stuns nearby Bloons for a long time.",
+     "effect": "Gains the Psychic Blast ability. When activated, Psi creates a stunwave that stuns up to 200 nearby bloons for 6s, or 1.5s for MOAB-class. Range of 60. Cooldown of 40 seconds. The blast can affect any bloon type, even those that Psi cannot attack with vibrations. The stun affects only 1 layer of each bloon.",
+     "cost": "690",
+     "unlock": "690"
+    },
+    {
+     "level": 4,
+     "description": "Psi's attack can hit another Bloon if very close to the targeted Bloon.",
+     "effect": "Psychic attack produces a tiny blast that can hit up to 1 nearby bloon with a very small gap between. Blast radius of 6. Can affect more bloons with pierce buffs (e.g. Berserker Brew).",
+     "cost": "1500",
+     "unlock": "1500"
+    },
+    {
+     "level": 5,
+     "description": "Attacks slightly faster.",
+     "effect": "Psychic attack cooldown reduced from 1.0s to 0.85s. Uses the same waiting formula as Level 2.",
+     "cost": "2790",
+     "unlock": "2790"
+    },
+    {
+     "level": 6,
+     "description": "Psi's powerful mind can penetrate through Lead Bloons.",
+     "effect": "Psi's vibrations can target and affect Lead Bloons. Psi's contagious blast affects two bloons instead of one.",
+     "cost": "4920",
+     "unlock": "4920"
+    },
+    {
+     "level": 7,
+     "description": "Psychic Blast pulses twice. Psi can now destroy Ceramic Bloons.",
+     "effect": "Psychic Blast pulses twice, with a short delay of 2.0s between, each pulse remaining to stun up to 200 bloons each. Vibrations now target and affect Ceramics, dealing damage to each unit health remaining. Vibrations damage the Ceramic layer at a rate of 0.15s per unit health remaining.",
+     "cost": "7770",
+     "unlock": "7770"
+    },
+    {
+     "level": 8,
+     "description": "Destructive Resonance causes Bloons destroyed by Psi's main attack to damage other Bloons nearby.",
+     "effect": "Once the bloon pops, it will generate Destructive Resonance; it creates an explosion that inflicts 1 damage to up to 10 bloons. Explosion is plasma type. Blast radius of 20. Destructive Resonance can deal collateral damage to any non-Purple bloon type, even DDTs and BADs.",
+     "cost": "12480",
+     "unlock": "12480"
+    },
+    {
+     "level": 9,
+     "description": "Split the Mind. Psi can now target two different Bloons at once.",
+     "effect": "Gains twice the attacks. Second psychic attack just like the first one, vibrating bloons and creating a contagious blast and the resulting destructive resonance, except the second psychic attack has independent targeting. The second psychic attack will attack on First if bloons are past halfway or otherwise on Strong, mimicking Elite targeting. Both psychic attacks work independently.",
+     "cost": "14070",
+     "unlock": "14070"
+    },
+    {
+     "level": 10,
+     "description": "Psionic Scream: Psi unleashes a silent scream that throws the Bloons into utter chaos.",
+     "effect": "Gains the Psionic Scream ability. Psionic Scream causes up to 2000 affected bloons to have a random 50/50 chance of either getting blown backwards towards the start or undergoing an instakill. It can only affect bloons Psi can target with their main attack. Bloons affected by the blowback effect move backwards between 100 and 250 units. 60 second cooldown.",
+     "cost": "20430",
+     "unlock": "20430"
+    },
+    {
+     "level": 11,
+     "description": "Not even Purple Bloons can resist the power of Psi's mind attacks.",
+     "effect": "Psi's psychic attack and Psionic Scream can target and affect Purple Bloons.",
+     "cost": "24570",
+     "unlock": "24570"
+    },
+    {
+     "level": 12,
+     "description": "Psychic Blast pulses three times.",
+     "effect": "Psychic Blast now pulses a 3rd time after 2.0s from the 2nd.",
+     "cost": "21600",
+     "unlock": "21600"
+    },
+    {
+     "level": 13,
+     "description": "The psionic vibrations destroy Bloons even faster.",
+     "effect": "Vibrations now take 0.1s per bloon layer. Additionally, contagious blast affects up to 3 nearby bloons instead of 2.",
+     "cost": "24975",
+     "unlock": "24975"
+    },
+    {
+     "level": 14,
+     "description": "Psi's immense psychic power allows targeting and destruction of MOABs.",
+     "effect": "Can target and affect MOABs, now instakilling MOABs. Psionic Scream now can blowback or instakill MOABs depending on chance. Vibrations also deal damage at a much faster rate. Psychic attack now deals 4 damage every 0.1s instead of the old vibration formula. Psi's main psychic attack can now affect MOAB-class but does not allow its secondary vibrations to affect MOAB-class.",
+     "cost": "22410",
+     "unlock": "22410"
+    },
+    {
+     "level": 15,
+     "description": "Destructive Resonance is more destructive.",
+     "effect": "Popped bloon explosions now deal 3 damage onto up to 10 bloons.",
+     "cost": "24570",
+     "unlock": "24570"
+    },
+    {
+     "level": 16,
+     "description": "The psionic vibrations destroy Bloons very fast. Psi can now target BFBs.",
+     "effect": "Can target and affect BFBs. Will be able to instakill BFBs including its children. Psionic Scream now can blowback and/or instakill BFBs. Vibrations damage bloons even faster, with the psychic attack now dealing 4 damage every 0.075s.",
+     "cost": "26730",
+     "unlock": "26730"
+    },
+    {
+     "level": 17,
+     "description": "Split the Mind. Psi can now target three different Bloons at once.",
+     "effect": "Gains a third independent vibration attack. Third psychic attack mimics the second and is independent from the other psychic attacks.",
+     "cost": "28890",
+     "unlock": "28890"
+    },
+    {
+     "level": 18,
+     "description": "Psi's attacks affect Bloons within a larger radius of the target Bloon.",
+     "effect": "Contagious blast now affects up to 5 bloons. Blast radius increased to 15.",
+     "cost": "31050",
+     "unlock": "31050"
+    },
+    {
+     "level": 19,
+     "description": "Destructive Resonance is much much more destructive.",
+     "effect": "Popped bloon explosions now deal 10 damage onto up to 10 bloons. Blast radius of Destructive Resonance increased to 30.",
+     "cost": "24705",
+     "unlock": "24705"
+    },
+    {
+     "level": 20,
+     "description": "Psionic Scream holds and damages all Bloons on screen. Psi can now target DDTs and ZOMGs.",
+     "effect": "Psionic Scream now guarantees chance of affected bloons to become instakilled rather than the off-chance of receiving blowback instead. Main attack and Psionic Scream ability can affect DDTs and ZOMGs.",
+     "cost": "25920",
+     "unlock": "25920"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Geraldo",
+   "page": "Geraldo (BTD6)",
+   "base_cost": {
+    "easy": 640,
+    "medium": 750,
+    "hard": 810,
+    "impoppable": 900
+   },
+   "hero_favor_cost": {
+    "easy": 575,
+    "medium": 675,
+    "hard": 730,
+    "impoppable": 810
+   },
+   "abilities": "Geraldo's Shop (Level 1)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Available Items! Shooty Turret, Stack of Old Nails, Creepy Idol, Jar of Pickles. Geraldo also has a short range magical attack.",
+     "effect": "Geraldo owns a shop containing multiple items in stock at a limited supply, accessed using the ability button. Can restock some items after a certain number of rounds. Geraldo begins with the following items in his store: Shooty Turret, Stack of Old Nails, Creepy Idol, Jar of Pickles.",
+     "cost": "700",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "New Item! Rare Quincy Action Figure - increases in value the longer you possess it!",
+     "effect": "Unlocks Rare Quincy Action Figure, an action figure which can be placed on the map. It is a non-attacking sub-tower whose main purpose is to gain monetary value over time. The value (both buy and sell) increases exponentially over rounds. Disabled on CHIMPS and Deflation.",
+     "cost": "180",
+     "unlock": "180"
+    },
+    {
+     "level": 3,
+     "description": "New Item! See Invisibility Potion - grants short term camo detection to a Monkey Tower or Hero. Geraldo's attack range increases.",
+     "effect": "Unlocks See Invisibility Potion. The Invisibility Potion grants camo detection for 5 rounds.",
+     "cost": "460",
+     "unlock": "460"
+    },
+    {
+     "level": 4,
+     "description": "New Item! Tube of Amaz-o-Glue - can be placed on the track to slow Bloons down.",
+     "effect": "Unlocks Tube of Amaz-o-Glue, which can be placed on the track to slow any non-MOAB class Bloon by 50% for 24 seconds. Lasts for up to 100 Bloons or 4 rounds, whichever comes first.",
+     "cost": "1000",
+     "unlock": "1000"
+    },
+    {
+     "level": 5,
+     "description": "New Item! Sharpening Stone - boosts the pierce of a Monkey Tower or Hero when doing sharp-type damage. Geraldo attacks faster.",
+     "effect": "Unlocks Sharpening Stone, which grants +1 pierce to target tower whose default damage type is Sharp for 10 rounds.",
+     "cost": "1860",
+     "unlock": "1860"
+    },
+    {
+     "level": 6,
+     "description": "New Item! Worn Hero's Cape - turns a tier 2 or lower Dart Monkey into a Super Monkey! These converted Super Monkeys can only be upgraded to Tier 3.",
+     "effect": "Unlocks Worn Hero's Cape, which transforms a tier 2 or lower Dart Monkey into a Super Monkey which is capped at tier 3 upgrades. Cannot be used if Super Monkeys are not available.",
+     "cost": "3280",
+     "unlock": "3280"
+    },
+    {
+     "level": 7,
+     "description": "New Item! Blade Trap - when a visible Bloon touches the trap, a Blade Maelstrom goes off. Geraldo's main attack increases in damage and pierce.",
+     "effect": "Unlocks Blade Trap. Blade Traps can only be placed on bloon track. When touched by a bloon, the trap immediately produces a maelstrom of blades similarly to Blade Maelstrom. Works just like a raw Maelstrom; dealing 1 damage per blade, not detecting Camo, nor popping Frozen and Lead.",
+     "cost": "5180",
+     "unlock": "5180"
+    },
+    {
+     "level": 8,
+     "description": "New Item! Bottle of 'Gerry's Fire' - 2.8 million Bloonville units of pure hot sauce fire! Gives a Monkey, Hero, or minion a fiery attack for 5 rounds.",
+     "effect": "Unlocks Bottle of 'Gerry's Fire' Hot Sauce, which gives target tower a small familiar that circles a targeted tower for 5 rounds, and attacks by rapidly breathing fire, similarly to the Wizard Monkey's Dragon's Breath upgrade. Deals 1 damage per flame and adds a burn that damages every 1.5s and lasts for 3.0s.",
+     "cost": "8320",
+     "unlock": "8320"
+    },
+    {
+     "level": 9,
+     "description": "New Item! Fertilizer - targeted Banana Farms that produce visible bananas increase production and get a cash bonus over several rounds. Geraldo's main attack blast radius increases.",
+     "effect": "Unlocks Fertilizer, which increases Banana value of one Banana Farm by 20%. Lasts for 4 rounds and restocks one every 3 rounds. Can affect all Banana Farm upgrade paths. CHIMPS disables Fertilizer. Geraldo's blast radius increases from 10 to 13.",
+     "cost": "9380",
+     "unlock": "9380"
+    },
+    {
+     "level": 10,
+     "description": "New Item! Pet Rabbit - aww what a cute widdle bunny wabbit!",
+     "effect": "Allows the player to buy a Pet Rabbit. These pet rabbits can be placed within Geraldo's range. Buying 3 or less pet rabbits will not do anything other than being cosmetic at first. However, upon buying the 4th Pet Rabbit, will cause all rabbits to merge into an enraged Pet Rabbit with red eyes, and no more can be bought. This Pet Rabbit attacks relative to its current position, in an Area of effect swipe, rapidly hitting multiple bloons.",
+     "cost": "13620",
+     "unlock": "13620"
+    },
+    {
+     "level": 11,
+     "description": "New Item! Rejuv Potion - resets all Monkey Tower and Hero cooldowns, restores 50 lives. Geraldo's main attack pierce increases.",
+     "effect": "Unlocks Rejuv Potion, which resets ability cooldowns of all towers and heroes on screen, and restores 50 lives.",
+     "cost": "16380",
+     "unlock": "16380"
+    },
+    {
+     "level": 12,
+     "description": "New Item! Genie Bottle - summons a plasma-powered Genie Monkey that lasts for 2 rounds. Creepy Idol can now apply an occasional short stun to passive visible MOAB-class Bloons.",
+     "effect": "Unlocks Genie Bottle. Placing a Genie Bottle on the map will cause a flying genie to fly a figure-8 pattern on the center of the map for 2 rounds, attacking nearby bloons with Plasma attacks.",
+     "cost": "14400",
+     "unlock": "14400"
+    },
+    {
+     "level": 13,
+     "description": "Shooty Turret fires faster with increased damage, and Stack of Old Nails do more damage.",
+     "effect": "Geraldo now sells improved Shooty Turrets and improved Stacks of Old Nails. Shooty Turret deals 6 damage instead of 2, and Stack of Old Nails deals 6 damage per spike instead of 1.",
+     "cost": "16650",
+     "unlock": "16650"
+    },
+    {
+     "level": 14,
+     "description": "See Invisibility Potion grants additional range and lasts longer.",
+     "effect": "See Invisibility Potion also grants +20% range and lasts 5 more rounds.",
+     "cost": "14940",
+     "unlock": "14940"
+    },
+    {
+     "level": 15,
+     "description": "Sharpening Stone increases pierce even more, and Blade Trap creates a more powerful effect when triggered.",
+     "effect": "Upgrades Sharpening Stone and Blade Trap:",
+     "cost": "16380",
+     "unlock": "16380"
+    },
+    {
+     "level": 16,
+     "description": "Stack of Old Nails becomes a Nail Mine, Jar of Pickles grants additional bonus damage vs. Fortified Bloons, and Gerry's Fire gains bonus burny damage and lasts for 10 rounds.",
+     "effect": "Upgrades the Stack of Old Nails, Gerry's Fire, and Jar of Pickles:",
+     "cost": "17820",
+     "unlock": "17820"
+    },
+    {
+     "level": 17,
+     "description": "Geraldo's main attack does more damage and Amaz-o-Glue now has a small effect on MOAB-class Bloons.",
+     "effect": "Tube of Amaz-o-Glue can affect MOAB-class bloons. Blimps consume extra pierce.",
+     "cost": "19260",
+     "unlock": "19260"
+    },
+    {
+     "level": 18,
+     "description": "Genie gains a second close-target attack and does bonus damage to MOAB-class Bloons. When Creepy Idol expires, it covers nearby MOAB-Class Bloons in a Mystical Shroud, causing damage when popped.",
+     "effect": "Geraldo's Genie Bottle and Creepy Idol are upgraded:",
+     "cost": "20700",
+     "unlock": "20700"
+    },
+    {
+     "level": 19,
+     "description": "Geraldo's main attack is greatly improved and See Invisibility Potion gains bonus damage to Camo Bloons.",
+     "effect": "See Invisibility Potion now grants +1 damage to Camos on top of previous benefits. Geraldo attack cooldown reduced from 1s to 0.8s, damage increased from 3 to 4, gains +3 range, and pierce increased from 20 to 25.",
+     "cost": "16470",
+     "unlock": "16470"
+    },
+    {
+     "level": 20,
+     "description": "New Item! Paragon Power Totem - adds paragon power to the next paragon created. Shop restocks fully! Geraldo's main attack does more damage.",
+     "effect": "Unlocks Paragon Power Totem in Geraldo's Shop. Placing totems increases the amount of power, which give higher degrees, for your next Paragon. The total additional power scales with how many totems are on screen. Each totem will merge into the next Paragon you upgrade, providing 2,000 power, and getting consumed.",
+     "cost": "17280",
+     "unlock": "17280"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Corvus",
+   "page": "Corvus (BTD6)",
+   "base_cost": {
+    "easy": 1125,
+    "medium": 1325,
+    "hard": 1430,
+    "impoppable": 1590
+   },
+   "hero_favor_cost": {
+    "easy": 1015,
+    "medium": 1190,
+    "hard": 1290,
+    "impoppable": 1430
+   },
+   "abilities": null,
+   "levels": [
+    {
+     "level": 1,
+     "description": "Haunted Bloons are weakened and explode when popped, adding Mana to the Mana Pool. The Spirit attacks Bloons anywhere on the map at Corvus' command. Learns: Spear, Nourishment, Repel.",
+     "effect": "",
+     "cost": "925",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "The Spirit grows in size and can hit more Bloons.",
+     "effect": "",
+     "cost": "257",
+     "unlock": "257"
+    },
+    {
+     "level": 3,
+     "description": "Soul Harvest Ability: Harvests nearby Bloons in an instant. Learns: Echo, Haste",
+     "effect": "",
+     "cost": "656",
+     "unlock": "656"
+    },
+    {
+     "level": 4,
+     "description": "The Spirit does more damage. Learns: Soul Barrier, Trample",
+     "effect": "",
+     "cost": "1,425",
+     "unlock": "1,425"
+    },
+    {
+     "level": 5,
+     "description": "Learns: Frostbound, Aggression, Vision",
+     "effect": "",
+     "cost": "2,651",
+     "unlock": "2,651"
+    },
+    {
+     "level": 6,
+     "description": "Increased damage when Haunted Bloons explode. The Spirit does more damage. Learns: Ember",
+     "effect": "",
+     "cost": "4,674",
+     "unlock": "4,674"
+    },
+    {
+     "level": 7,
+     "description": "Spirit Walk ability: Corvus can shift to a valid location. Learns: Ancestral Might, Malevolence.",
+     "effect": "",
+     "cost": "7,382",
+     "unlock": "7,382"
+    },
+    {
+     "level": 8,
+     "description": "Spiritual Balance means the Mana Pool fills faster when it is nearly empty. Haste gives increased speed and agility. Learns: Storm",
+     "effect": "",
+     "cost": "11,856",
+     "unlock": "11,856"
+    },
+    {
+     "level": 9,
+     "description": "The Spirit's base damage increased and does extra damage to MOABs. Frostbound can hit MOABs. Soul Barrier can block more Bloons from leaking.",
+     "effect": "",
+     "cost": "13,367",
+     "unlock": "13,367"
+    },
+    {
+     "level": 10,
+     "description": "Dark Ritual ability: Harvest a huge number of Bloons near Corvus. Trample does more damage to more Bloons. Learns: Recovery",
+     "effect": "",
+     "cost": "19,409",
+     "unlock": "19,409"
+    },
+    {
+     "level": 11,
+     "description": "Spiritual Attunement means the Spirit grows in power as the Mana Pool fills. Soul Harvest does more damage, and extra damage to Ceramic Bloons. Frostbound gains permafrost.",
+     "effect": "",
+     "cost": "23,242",
+     "unlock": "23,242"
+    },
+    {
+     "level": 12,
+     "description": "Increased damage when Haunted Bloons explode. Spear does more damage. Repel can push MOABs.",
+     "effect": "",
+     "cost": "20,520",
+     "unlock": "20,520"
+    },
+    {
+     "level": 13,
+     "description": "Ancestral Might does more damage. Learns: Overload",
+     "effect": "",
+     "cost": "23,726",
+     "unlock": "23,726"
+    },
+    {
+     "level": 14,
+     "description": "The Spirit does more damage to Bloons. Malevolence does more damage and extra damage to Ceramic Bloons.",
+     "effect": "",
+     "cost": "21,290",
+     "unlock": "21,290"
+    },
+    {
+     "level": 15,
+     "description": "Ember's fire drops more often and does more damage. Nourishment gives more Cash per Mana.",
+     "effect": "",
+     "cost": "23,342",
+     "unlock": "23,342"
+    },
+    {
+     "level": 16,
+     "description": "Corvus has increased range. The Spirit does more damage to Bloons.",
+     "effect": "",
+     "cost": "25,394",
+     "unlock": "25,394"
+    },
+    {
+     "level": 17,
+     "description": "Haunted Bloons are weaker, and explosions do more damage. Soul Barrier can block more Bloons from leaking.",
+     "effect": "",
+     "cost": "27,446",
+     "unlock": "27,446"
+    },
+    {
+     "level": 18,
+     "description": "Storm's energy blades hit more Bloons and do more damage. Spear does more damage.",
+     "effect": "",
+     "cost": "29,498",
+     "unlock": "29,498"
+    },
+    {
+     "level": 19,
+     "description": "Corvus can Haunt MOAB-Class Bloons. Trample does more damage to Bloons.",
+     "effect": "",
+     "cost": "23,470",
+     "unlock": "23,470"
+    },
+    {
+     "level": 20,
+     "description": "The Spirit base damage increases and does extra damage to MOABs. Ancestral Might does more damage. Overload does more damage. Nourishment gives more Cash.",
+     "effect": "",
+     "cost": "24,624",
+     "unlock": "24,624"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Rosalia",
+   "page": "Rosalia (BTD6)",
+   "base_cost": {
+    "easy": 745,
+    "medium": 875,
+    "hard": 945,
+    "impoppable": 1050
+   },
+   "hero_favor_cost": {
+    "easy": 670,
+    "medium": 790,
+    "hard": 850,
+    "impoppable": 945
+   },
+   "abilities": "Scatter Missile (Level 3) Flight Boost (Level 7) Kinetic Charge (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Rosalia jets around her workshop equipped with a powerful laser.",
+     "effect": "Upon placement of Rosalia's Workshop, Rosalia the \"placeable unit\" (like a Beast Handler's Microraptor) is placed on a random valid land location that favours towards the range of nearby track. Rosalia wields a lasergun on her right hand, firing a laser every 1 second that deals 3 damage, has 40 range, and has 3 pierce, but can't damage Lead and Purple bloons. She can also reposition herself to any valid location (land, also includes her workshop) within her 60 range workshop, at a cooldown of 2 seconds. She will not attack while traveling. Flight speed of 1.5 units/second. She can be buffed the same way as a Monkey Ace or Heli Pilot (i.e. accepts Alchemist buffs and Overclock).",
+     "cost": "875",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Grenade attack unlocked! Switch between weapons to deal with all sorts of bloons.",
+     "effect": "With her left hand, wields a grenade launcher that shoots grenades at the same fire rate as laser gun, have 15 blast radius, 10 pierce, deal 2 damage, and bonus 1 damage to Ceramics, but can't pop Black Bloon properties. Rosalia gains the Switch Weapon targeting priority to swap between weapons, at a cooldown of 2 seconds.",
+     "cost": "257",
+     "unlock": "257"
+    },
+    {
+     "level": 3,
+     "description": "Scatter missile ability: Rosalia's workshop launches a missile that rains destruction from above.",
+     "effect": "Gains the Scatter Missile ability. While active, Rosalia's workshop locks onto a target based on Rosalia's position (not her workshop) for 0.4s, then launches 20 missiles every 0.25s within 40 radius of the target. Each missile deals 5 damage, has 50 pierce, and stuns the regular bloons for 1 second on damage, but cannot affect black bloon properties. The missiles follow the target until the target popped. The ability cooldown is 45 seconds.",
+     "cost": "656",
+     "unlock": "656"
+    },
+    {
+     "level": 4,
+     "description": "Adrenaline Rush. Rosalia attacks faster the more Bloons are nearby!",
+     "effect": "Attacks 1% faster for every 2 bloons within range of herself (NOT the workshop's range, only the range of Rosalia the \"placeable unit\"). Maximum increase up to 25%.",
+     "cost": "1,425",
+     "unlock": "1,425"
+    },
+    {
+     "level": 5,
+     "description": "Rosalia's attacks are improved, grenades can bounce multiple times and weapons fire an enhanced shot every 10th attack.",
+     "effect": "",
+     "cost": "2,651",
+     "unlock": "2,651"
+    },
+    {
+     "level": 6,
+     "description": "Aircraft Efficiency. Monkey Aces and Heli Pilots placed near the workshop have all upgrade costs reducted.",
+     "effect": "Monkey Aces and Heli Pilots within range of Rosalia's workshop have their upgrade costs and base costs decreased by 10%. Does not affect Paragon upgrades.",
+     "cost": "4,674",
+     "unlock": "4,674"
+    },
+    {
+     "level": 7,
+     "description": "Upgraded Jetpack! Rosalia hovers above the Battlefield. Flight Boost ability: for a short while, all nearby aircraft fly faster & Rosalia pursues Bloons over the whole map, using both weapons!",
+     "effect": "",
+     "cost": "7,382",
+     "unlock": "7,382"
+    },
+    {
+     "level": 8,
+     "description": "Grenades deal more damage, and laser deals much more damage for MOAB-Class Bloons.",
+     "effect": "Grenades damage increased from 2 to 3. Laser deals extra 5 damage to MOAB-Class bloons, for a total of 10 to MOAB-Class bloons.",
+     "cost": "11,856",
+     "unlock": "11,856"
+    },
+    {
+     "level": 9,
+     "description": "Scatter Missile releases more mini-missiles when used.",
+     "effect": "Scatter Missile now unleashes 30 missiles instead of 20 when activated.",
+     "cost": "13,367",
+     "unlock": "13,367"
+    },
+    {
+     "level": 10,
+     "description": "Kinetic Charge Ability: Charge attaches to a Bloon, harnessing energy when the target takes damage. Then releases accumulated energy in a huge detonation.",
+     "effect": "Gains the Kinetic Charge ability. When activated, it releases a kinetic charge that attaches to a MOAB-Class Bloon, exploding after 10 seconds. The explosion deals 1500 base damage to up to 500 bloons within 50 radius. If its target is damaged, the explosion will deal extra damage, which is the same as the target takes up to 4500 (i.e. 6000 max damage). The bomb instantly explodes when its target takes 6000 damage. If there are no MOAB-Class bloons on the track, Kinetic Charge will stay at Rosalia's workshop, lasting up to 2 rounds and 60 seconds lifespan. Multiple Kinetic Charges can be stacked at once. The ability has a cooldown of 75 seconds.",
+     "cost": "19,409",
+     "unlock": "19,409"
+    },
+    {
+     "level": 11,
+     "description": "Adrenaline Rush. Maximum attack rate boost increased.",
+     "effect": "Attack speed boost cap increased to 40%.",
+     "cost": "23,242",
+     "unlock": "23,242"
+    },
+    {
+     "level": 12,
+     "description": "Grenades become much bouncier and Laser deals more damage!",
+     "effect": "Grenades can bounce up to 4 times. Laser damage increased from 5 to 10, and MOAB-class bonus from +5 to +10.",
+     "cost": "20,520",
+     "unlock": "20,520"
+    },
+    {
+     "level": 13,
+     "description": "Rosalia's attacks are improved with Bouncy Grenades now also creating cluster explosions, Lasers upgrading to Plasma and stronger enhanced 10th attacks.",
+     "effect": "",
+     "cost": "23,726",
+     "unlock": "23,726"
+    },
+    {
+     "level": 14,
+     "description": "Scatter Missile deals more damage, especially to MOABs!",
+     "effect": "Scatter Missile ability now deals 10 damage per missile instead of 5, along with an extra 5 damage to MOAB-Class Bloons.",
+     "cost": "21,290",
+     "unlock": "21,290"
+    },
+    {
+     "level": 15,
+     "description": "Laser attack deals much more damage to MOAB-Class Bloons, and Grenades deal more damage to Ceramic Bloons.",
+     "effect": "Laser MOAB-Class bloons damage bonus increased to +30, totalling 35 damage to MOAB-class bloons. Grenades deal 6 additional damage to Ceramics and every 10th shot fires 5 grenades instead of 3. Cluster explosions also deals 4 extra damage to Ceramics.",
+     "cost": "23,342",
+     "unlock": "23,342"
+    },
+    {
+     "level": 16,
+     "description": "Kinetic Charge and Scatter Missile cooldowns reduced.",
+     "effect": "Cooldown of Kinetic Charge reduced to 45 seconds and Scatter Missile cooldown reduced to 30 seconds.",
+     "cost": "25,394",
+     "unlock": "25,394"
+    },
+    {
+     "level": 17,
+     "description": "Adrenaline Rush. Maximum attack rate boost increased.",
+     "effect": "Attack speed boost cap further increased to 60%.",
+     "cost": "27,446",
+     "unlock": "27,446"
+    },
+    {
+     "level": 18,
+     "description": "Flight Boost cooldown greatly reduced.",
+     "effect": "Flight Boost cooldown reduced to 25 seconds.",
+     "cost": "29,498",
+     "unlock": "29,498"
+    },
+    {
+     "level": 19,
+     "description": "Rosalia's attacks are improved, Grenades have larger clusters and Laser deals even more damage to MOAB-Class Bloons.",
+     "effect": "Grenades creates 5 cluster explosions each hit instead of 3. Laser deals 15 damage and an extra +45 damage to MOAB-Class Bloons (60 MOAB-class damage).",
+     "cost": "23,470",
+     "unlock": "23,470"
+    },
+    {
+     "level": 20,
+     "description": "Guardian Automaton: The Anti-Bloon's upgrade cost is reduced by 30%. Scatter Missile now fires triple the missiles, and Kinetic Charge damage is greatly increased.",
+     "effect": "Anti-Bloon upgrade has its cost decreased by 30% when within the range of Rosalia's workshop. Scatter Missile now unleashes 90 missiles instead of 30 with triple firing speed. Kinetic Charge ability base damage increased from 1500 to 4000, max extra damage is now 12,000 and instant explosion damage threshold is 16,000.",
+     "cost": "24,624",
+     "unlock": "24,624"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Silas",
+   "page": "Silas (BTD6)",
+   "base_cost": {
+    "easy": 720,
+    "medium": 850,
+    "hard": 920,
+    "impoppable": 1020
+   },
+   "hero_favor_cost": {
+    "easy": 650,
+    "medium": 765,
+    "hard": 830,
+    "impoppable": 920
+   },
+   "abilities": "Frostbite (Level 3+) Frozen Cascade (Level 7+) Frozen Burial (Level 10+)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Silas attacks with magical ice. Hit Bloons are rimed. Already rimed Bloons are frozen. Rimed and frozen Bloons take extra damage. Bloons are slowed near Silas.",
+     "effect": "Silas has a magical ice attack that moves around ricochet towards Bloons, popping all except Purple and White. Bloons affected by this attack are rimed; they are partially frozen and slow down, and if hit again by his magical ice attack then they freeze and take extra damage. Silas also has a slowdown aura around himself that slows any non-White and non-Purple by 15%. He has Camo detection by default.",
+     "cost": "850",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Ice Monkeys in radius create orbiting Ice Fragment projectiles when they attack.",
+     "effect": "Every time that an Ice Monkey within Silas' range attacks, that Ice Monkey gains an Ice Fragment projectile that orbits around its range, just like Mystic Twister. It can have up to 3 orbiting Ice Fragments. Unlike ice shards from the eponymous upgrade, an Ice Fragment has 6 pierce, 1 damage, +1 Frozen damage, and rehit after 1 second, popping all except Purple and White.",
+     "cost": "270",
+     "unlock": "270"
+    },
+    {
+     "level": 3,
+     "description": "Frostbite ability: Silas can hit all Bloons while active. When hitting frozen Bloons, target takes extra damage based on remaining freeze time.",
+     "effect": "Gains the Frostbite ability: For 8 seconds, main attack damages all Bloon types and does 10 extra Frozen damage for every second remaining rounded up, but clears the freeze time before main attack freezing. Cooldown of 30 seconds.",
+     "cost": "690",
+     "unlock": "690"
+    },
+    {
+     "level": 4,
+     "description": "Ice Walls form on the track near Silas. Ice Walls push back and freeze Bloons. MOABs are frozen for less time.",
+     "effect": "Randomly places Ice Walls around the track near Silas, at a rate of every 10 seconds. Affected Bloons push back at about -400% speed briefly for 0.1s, and freeze them for 3 seconds, penetrating 10 layers. MOABs are frozen for half duration and consume 30 pierce, but will not freeze other blimps. Will not target Whites, Zebras, Leads, DDTs, and BADs, but will target and freeze Purples. Ice Walls last for 15 seconds, carry over 1 round, and has 15 pierce.",
+     "cost": "1500",
+     "unlock": "1500"
+    },
+    {
+     "level": 5,
+     "description": "White Bloons are less resistant to cold attacks. Monkeys that freeze Bloons freeze them for longer.",
+     "effect": "All White-properties Bloons have a 50% chance of being damaged by any freezing attack. All towers other than himself and Paragons gain +50% freeze duration.",
+     "cost": "2790",
+     "unlock": "2790"
+    },
+    {
+     "level": 6,
+     "description": "Silas can attack Bloons in the range of Ice Monkeys anywhere.",
+     "effect": "Works similarly to Monkey Sub's Advanced Intel. Extended range by allowing Silas to target all bloons within the radius of any Ice Monkeys on screen,",
+     "cost": "4920",
+     "unlock": "4920"
+    },
+    {
+     "level": 7,
+     "description": "Frozen Cascade ability: Creates a shattering blast of ice around Silas, and then for other Ice Monkeys spreading out from Silas, Frozen Bloons take extra damage from ability.",
+     "effect": "Gain a Frozen Cascade ability: Creates a shattering blast of ice around Silas, and then for other Ice Monkeys spreading out from Silas, up to 9 of the closest Ice Monkeys. All blasts have 40 blast radius, 45 pierce, 20 damage against all except Lead, and +15 Frozen damage. Affected non-blimps have up to 10 layers frozen for 9 seconds, Cooldown of 60 seconds.",
+     "cost": "7770",
+     "unlock": "7770"
+    },
+    {
+     "level": 8,
+     "description": "Buffs the ranges of all Ice Monkeys & grants more Hero XP for each Tier 3 Ice Monkey.",
+     "effect": "All Ice Monkeys gain +5 range. Silas gains an extra 5% Hero XP for every Tier 3 Ice Monkey on screen, capping at 50%.",
+     "cost": "12480",
+     "unlock": "12480"
+    },
+    {
+     "level": 9,
+     "description": "Frozen Bloons damaged during Frostbite take more damage. Ice Shards damage & pierce increased.",
+     "effect": "Frostbite increases Frozen damage per second remaining from 10 to 15. Ice Shards increase extra Frozen damage from +1 to +3 and pierce from 6 to 12.",
+     "cost": "14070",
+     "unlock": "14070"
+    },
+    {
+     "level": 10,
+     "description": "Frozen Burial ability: Immediately freezes and damages all Bloons, dealing far more damage to already frozen Bloons. Then fills the track with Ice Walls.",
+     "effect": "Freezes all Bloons on screen just like Absolute Zero, but also deals +60 damage to Frozen, and freezes 10 layers for 6 seconds with only 3 seconds versus MOAB-class. After 0.5s, Ice Walls are scattered around Silas evenly along the track, just like Mega Massive Munitions Factory's Spikeageddon ability. The distance between each Ice Wall is approximately 25 units. Cooldown is 90 seconds.",
+     "cost": "20430",
+     "unlock": "20430"
+    },
+    {
+     "level": 11,
+     "description": "Slowing aura around Silas slows Bloons more, and can slow MOABs.",
+     "effect": "Arctic aura slows down Bloons by 20% instead of 15%, and all MOAB-class Bloons are slowed by 10%.",
+     "cost": "24570",
+     "unlock": "24570"
+    },
+    {
+     "level": 12,
+     "description": "Ice Walls can hit more Bloons and last longer. Rimed and frozen Bloons take more damage from main attack.",
+     "effect": "Ice Walls last for 20 seconds instead of 15, pierce increased from 15 to 30, consumes less pierce on blue MOABs (5 instead of 15), and can affect BFBs and ZOMGs, but not DDTs. BFBs consume 15 pierce and ZOMGs consume 30 pierce. Cold explosion does 5 damage instead of 1.",
+     "cost": "21600",
+     "unlock": "21600"
+    },
+    {
+     "level": 13,
+     "description": "Ice Monkey Tier 5's are cheaper, and you can build a 4th Tier 5 of any path. White Bloons lose all resistance to cold attacks.",
+     "effect": "Cost of all Ice Monkey Tier 5 upgrades are reduced by 25% while he is on screen with at least this level. If he is on screen, he will also allow purchase of a second of any Tier 5 Ice Monkey that owned by the player (e.g. buying two Icicle Impales, but not two Icicle Impales and two Absolute Zeroes). If in Co-Op, having at least one Silas with this level or greater will allow all players to buy a second of any T5 Ice Monkey. All Bloons completely lose their White Bloon immunities.",
+     "cost": "24975",
+     "unlock": "24975"
+    },
+    {
+     "level": 14,
+     "description": "Ice Monkeys create more orbiting Ice Fragments when they attack.",
+     "effect": "Ice Fragment lifespan increased from 10 to 17 seconds, and the max Ice Fragments for all Tier 2 and above Ice Monkeys is increased from 3 to 6. 4th to 6th fragments move anti-clockwise in a faster, wider radius.",
+     "cost": "22410",
+     "unlock": "22410"
+    },
+    {
+     "level": 15,
+     "description": "Frozen Bloons take more damage from all abilities. Frostbite lasts longer, and Frozen Cascade and Frozen Burial have shorter cooldowns.",
+     "effect": "All of Silas' abilities deal more damage to Frozen. Frostbite lasts 12 seconds instead of 8 and each does extra +25 Frozen damage instead of +10, Frozen Cascade cooldown reduced from 60s to 45s and does +30 Frozen damage instead of +15, and Frozen Burial cooldown reduced from 90s to 75s with +200 Frozen damage instead of +60.",
+     "cost": "24570",
+     "unlock": "24570"
+    },
+    {
+     "level": 16,
+     "description": "Main attack does more area damage to rimed and frozen Bloons, and orbiting Ice Fragments do more damage to frozen Bloons.",
+     "effect": "Cold explosion damage increased from 5 to 10. Ice Fragment pierce increased from 12 to 24, and does +6 Frozen damage instead of +1.",
+     "cost": "26730",
+     "unlock": "26730"
+    },
+    {
+     "level": 17,
+     "description": "Tier 3 Ice Monkeys create even more orbiting Ice Shards.",
+     "effect": "Ice Fragments last for 24 seconds, and all Tier 3 and above Ice Monkeys can have up to 9 Ice Fragments. 7th to 9th Ice Fragments are further away from the first two orbitals and have even faster projectile speed.",
+     "cost": "28890",
+     "unlock": "28890"
+    },
+    {
+     "level": 18,
+     "description": "Slowing aura around Silas slows Bloons even more. Rimed Bloons take even more damage from cold attacks, and main attack does more area damage to rimed and frozen Bloons.",
+     "effect": "Arctic aura slows non-blimps by 30%, and MOAB-class by 15%. Rimed Bloons take extra +5 damage from Shatter/Cold/Metal Freeze/Glacier/Metal Glacier Freeze/Arctic attack instead of 1. Cold explosion deals 15 damage.",
+     "cost": "31050",
+     "unlock": "31050"
+    },
+    {
+     "level": 19,
+     "description": "Ice Walls have more pierce & lifespan, Ice Fragments pierce more and deal even more damage to frozen Bloons",
+     "effect": "Ice Wall pierce increased from 30 to 60, and lifespan increased from 20 to 30 seconds. Ice Fragments does +8 Frozen damage instead of +6 and pierce from 18 to 24.",
+     "cost": "24705",
+     "unlock": "24705"
+    },
+    {
+     "level": 20,
+     "description": "Frozen Bloons take even more damage during Frostbite. Silas creates Ice Walls more often. Monkeys that freeze Bloons freeze them yet longer again.",
+     "effect": "Frostbite bonus Frozen damage increased from +25 to +50, Ice Walls are produced much faster (10s → 7s), and freeze duration of all freezes other than himself and Paragons increased by +150% instead of +50%.",
+     "cost": "25920",
+     "unlock": "25920"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  },
+  {
+   "name": "Dan D'Monke",
+   "page": "Dan D'Monke (BTD6)",
+   "base_cost": {
+    "easy": 550,
+    "medium": 650,
+    "hard": 700,
+    "impoppable": 780
+   },
+   "hero_favor_cost": {
+    "easy": 495,
+    "medium": 585,
+    "hard": 630,
+    "impoppable": 730
+   },
+   "abilities": "Transform (Level 3) Reposition / Volant Strike (Level 7) Rabble Rouser / Berserk Frenzy (Level 10)",
+   "levels": [
+    {
+     "level": 1,
+     "description": "Dan D'Monke stabs at Bloons with his sword.",
+     "effect": "Dan D'Monke has a short-ranged melee attack with 1 damage and 4 pierce. Attacks every 0.5s. This melee attack is shot like a short-ranged projectile, taking delay before hitting further targets.",
+     "cost": "650",
+     "unlock": "N/A"
+    },
+    {
+     "level": 2,
+     "description": "Dan D'Monke gets his eye in and is able to wield his sword to hit more Bloons at once.",
+     "effect": "Increase Dan D'Monke's sword pierce from 4 to 6.",
+     "cost": "257",
+     "unlock": "257"
+    },
+    {
+     "level": 3,
+     "description": "",
+     "effect": "Unlocks a new form, The Masqued Macaque, who has a slower attack speed (every 1 second) but 2 damage and 9 pierce. The Masqued Macaque also uses lightning every third attack, forking twice up to three times (similarly to Corvus's Spear lightning). Lightning does one damage and can hit up to 15 targets. Both forms gain Transform, which transforms between the two forms while unleashing 5 arcs of lightning that do 1 damage each. Every fourth attack from Dan D'Monke applies blowback to non-MOAB class Bloons.",
+     "cost": "656",
+     "unlock": "656"
+    },
+    {
+     "level": 4,
+     "description": "",
+     "effect": "Dan D'Monke's sword damage is increased to 2, and he occasionally places net traps which will trigger when at least 4 bloons pass by, slowing non-blimp Bloons inside an 18 radius radius, slowing them by 50% for 12 seconds. The Masqued Macaque's sword damage is increased to 4, and his lightning damage is increased to 2. Lightning from the Transform ability is increased to 2.",
+     "cost": "1,425",
+     "unlock": "1,425"
+    },
+    {
+     "level": 5,
+     "description": "",
+     "effect": "Dan D'Monke and The Masqued Macaque place a shield at the end of each track, reducing the health lost from the first non-MOAB class Bloon leaked by half (rounded down), then pushing back non-blimps by 20 units and stunning other Bloons close to the exit for 3 seconds. After 12 seconds, this shield fully recharges and restores itself. Does not affect Purple or Lead, but always affects Camo.",
+     "cost": "2,651",
+     "unlock": "2,651"
+    },
+    {
+     "level": 6,
+     "description": "",
+     "effect": "Increases Dan D'Monke's sword damage to 3. Increases The Masqued Macaque's sword damage to 6, and his lightning damage to 3. Transform's lightning now deals 2 damage.",
+     "cost": "4,674",
+     "unlock": "4,674"
+    },
+    {
+     "level": 7,
+     "description": "",
+     "effect": "Gains two new abilities, one for each form. Dan D'Monke's Reposition functions mechanically identically to Support Chinook's Chinook ability but with faster teleportation, while The Masqued Macaque's Volant Strike repositions himself, attacking in his range to deal 75 damage to all affected Bloons and stun them for 6 seconds, with less stun duration on larger blimps. Has 35 pierce.",
+     "cost": "7,382",
+     "unlock": "7,382"
+    },
+    {
+     "level": 8,
+     "description": "",
+     "effect": "Dan D'Monke unleashes a shockwave every twenty-fourth attack, causing affected Bloons in range to take +1 damage for a short time and blowing them back; this affects all except ZOMGs, DDTs, and BADs. The Masqued Macaque stomps every tenth attack, dealing 1 damage to Bloons in range and knocking some of them backwards.",
+     "cost": "11,856",
+     "unlock": "11,856"
+    },
+    {
+     "level": 9,
+     "description": "",
+     "effect": "Dan D'Monke creates a 2 hit sword combo attack on every third attack, with 0.05s after the first hit, and must play before cooling off the next attack. The Masqued Macque attacks faster.",
+     "cost": "13,367",
+     "unlock": "13,367"
+    },
+    {
+     "level": 10,
+     "description": "",
+     "effect": "Gains two new abilities, one for each form. Dan D'Monke's Rabble Rouser grants nearby towers 50% damage increased but 20% attack slower within his range, triggering any passive abilities towers with no lives lost, and prevents all affected towers from being stunned, stopped, or interrupted from certain map mechanics and/or those given from Boss Bloons. The Masqued Macque's Berzerk Frenzy ability allow him to pursue the Bloons to swipe them with 30 damage and 18 pierce at quick rates, before returning back to his old location.",
+     "cost": "19,409",
+     "unlock": "19,409"
+    },
+    {
+     "level": 11,
+     "description": "",
+     "effect": "Increased Dan D'Monke's range and pierce and increased The Masqued Macque Range and pierce of sword attacks, chain lightning, Stomp damage and Transform upon ability damage.",
+     "cost": "23,242",
+     "unlock": "23,242"
+    },
+    {
+     "level": 12,
+     "description": "",
+     "effect": "Just before leaking to an exit, trigger the Quick Thinking passive. Up to 40 Bloons are blown back, with blimps taking more pierce, and leak damage is halved (rounded down). Cooldown of 60 seconds and begins while the passive ability is in play.",
+     "cost": "20,520",
+     "unlock": "20,520"
+    },
+    {
+     "level": 13,
+     "description": "",
+     "effect": "Dan D'Monke gains a flurry of jabs, creating an extra attack after 0.05 seconds that swipes again a third time. Masqued Macaque attacks even faster.",
+     "cost": "23,726",
+     "unlock": "23,726"
+    },
+    {
+     "level": 14,
+     "description": "",
+     "effect": "After leaking, he will heal 1 life per second from the last leaked Bloon, up to 100 lives for that Bloon. Masqued Macaque will sometimes smacks a base MOAB that pushes it backwards and deal 40 damage to Bloons it keeps hitting, every 0.1s, and pushing back more Bloons with pushback; it can re-hit Bloons.",
+     "cost": "21,290",
+     "unlock": "21,290"
+    },
+    {
+     "level": 15,
+     "description": "",
+     "effect": "Gains even more pierce for all sword attacks. All blowback effects including his own gain 40% blowback distance.",
+     "cost": "23,342",
+     "unlock": "23,342"
+    },
+    {
+     "level": 16,
+     "description": "",
+     "effect": "Even more damage!",
+     "cost": "25,394",
+     "unlock": "25,394"
+    },
+    {
+     "level": 17,
+     "description": "",
+     "effect": "Post-transformation buff lasts for 15 seconds instead of 9. His Level 7 ability cooldowns are reduced from 30 to 15 seconds, and Level 10 ability cooldowns reduced from 60 to 45 seconds.",
+     "cost": "27,446",
+     "unlock": "27,446"
+    },
+    {
+     "level": 18,
+     "description": "",
+     "effect": "Dan D'Monke makes 2 jabs every 2nd attack and 3 jabs every 3rd attack, with the triple jab prioritizing over the double jab. Masqued Macaque attacks even faster.",
+     "cost": "29,498",
+     "unlock": "29,498"
+    },
+    {
+     "level": 19,
+     "description": "",
+     "effect": "",
+     "cost": "23,470",
+     "unlock": "23,470"
+    },
+    {
+     "level": 20,
+     "description": "",
+     "effect": "Just like the scaling effects of Avatar of Wrath's wrath damage and Elite Defender's distance-per-speed, both forms deal more damage per \"leak damage\" (not the same as RBE) and +1% additive attack speed per 1% distance the furthest Bloon from the start is. Dan and Masqued Macaque scale differently.",
+     "cost": "24,624",
+     "unlock": "24,624"
+    }
+   ],
+   "levels_found": 20,
+   "uncertain": false
+  }
+ ]
+}

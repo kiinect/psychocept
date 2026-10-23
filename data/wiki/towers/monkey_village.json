@@ -1,0 +1,27 @@
+{"source":["https://www.bloonswiki.com/Monkey_Village_(BTD6)","https://www.bloonswiki.com/Monkeyopolis_(BTD6)","https://bloons.fandom.com/wiki/Monkey_Village_(BTD6)"],"data":{
+"id":"monkey_village","name":"Monkey Village","class":"Support","wiki_version":"46.2",
+"base_cost_medium":1200,"footprint_radius":11,"footprint_uncertain":true,"range":40,"water_only":false,
+"targeting":[],"targeting_extra":["No attack; First/Last/Close/Strong available for Mega Ballista at 5-x-x (Primary Expertise)"],
+"base_stats":{"buff":"All towers in radius +10% range","camo":false},
+"crosspath_rule":"Standard BTD6: one path to tier 5, a second path up to tier 2, third path locked at 0.",
+"paths":{
+"1":[
+{"tier":1,"name":"Bigger Radius","cost_medium":400,"stats":{"range_add":8,"range":48},"text":"Village range +8 (+20% of base)."},
+{"tier":2,"name":"Jungle Drums","cost_medium":1500,"stats":{"cooldown_mult":0.85,"attack_speed_pct":17.6},"text":"Towers in range: attack cooldown -15% (~+17.6% attack speed)."},
+{"tier":3,"name":"Primary Training","cost_medium":800,"stats":{"primary_pierce_add":1,"primary_range_pct":10,"primary_projectile_speed_pct":25},"text":"Primary towers in radius: +1 pierce, +10% range (multiplicative with normal buff), +25% projectile speed."},
+{"tier":4,"name":"Primary Mentoring","cost_medium":2500,"stats":{"primary_range_add":5,"primary_free_tiers":1,"primary_ability_cooldown_reduction_pct":15,"village_range":55},"text":"Primary buff: +5 range (additive after Training), free tier 1 upgrades, ability cooldowns -15%. Village range 48->55."},
+{"tier":5,"name":"Primary Expertise","cost_medium":25000,"stats":{"primary_pierce_add":3,"primary_free_tiers":2,"primary_ability_cooldown_reduction_pct":25,"ballista_damage":10,"ballista_ceramic_bonus":270,"ballista_moab_bonus":270,"ballista_pierce":100,"ballista_cooldown":2.5,"ballista_range":"infinite","ballista_ricochet_radius":90,"damage_type":"Normal"},"text":"Primary buff: pierce +3, free tier 1 and 2 upgrades, ability cooldown -25%. Village gains Mega Ballista attack: infinite range, pierce 100, 10 Normal dmg +270 Ceramic +270 MOAB-class, cd 2.5s, natively detects Camo, ricochets to another target within 90 after short delay."}],
+"2":[
+{"tier":1,"name":"Grow Blocker","cost_medium":250,"stats":{"stops_regrow":true},"text":"Regrow bloons cannot regrow within radius."},
+{"tier":2,"name":"Radar Scanner","cost_medium":2000,"stats":{"grants_camo_detection":true},"text":"All towers in range (and the village) gain Camo detection."},
+{"tier":3,"name":"Monkey Intelligence Bureau","cost_medium":7500,"stats":{"damage_type_override":"Normal"},"text":"Buff: all projectiles, DoTs and damage sources of towers in range deal Normal damage (ignores bloon immunities). Effects that depend on specific damage types (Sharpening Stone, Flint Tips, Galvanic Conduit combos) ignore this buff."},
+{"tier":4,"name":"Call to Arms","cost_medium":20000,"stats":{"ability":"Call to Arms","pierce_pct":50,"attack_speed_pct":50,"duration":15,"duration_to_arms":18,"cooldown":45,"initial_cooldown":15},"text":"Ability: all towers on screen +50% pierce and +50% attack speed for 15s (18s with To ARMS! MK). Cd 45s, initial 15s, usable between rounds; cannot activate while a Call to Arms/Homeland Defense buff is active."},
+{"tier":5,"name":"Homeland Defense","cost_medium":40000,"stats":{"pierce_pct":100,"attack_speed_pct":100,"duration":20,"duration_to_arms":23},"text":"Ability buff +100% attack speed and pierce for 20s (23s with To ARMS!); can override a Call to Arms buff."}],
+"3":[
+{"tier":1,"name":"Monkey Business","cost_medium":500,"stats":{"discount_pct":10,"discount_pct_insider_trades":12,"max_discounted_tier":3},"text":"10% (12% with Insider Trades MK) discount on towers placed and upgrades up to tier 3 in range. Not Hero levels or Geraldo's shop."},
+{"tier":2,"name":"Monkey Commerce","cost_medium":500,"stats":{"discount_pct_each":5,"max_stack":3,"max_discount_pct":25,"max_discount_pct_insider_trades":27},"text":"Additional 5% discount stacking with Monkey Business and up to 3 villages with this upgrade; max 25% (27% with MK)."},
+{"tier":3,"name":"Monkey Town","cost_medium":10000,"stats":{"pop_cash_bonus_pct":50,"pop_cash_bonus_pct_inland_revenue_streams":60},"text":"Towers in range: +50% cash per pop (+60% with Inland Revenue Streams MK)."},
+{"tier":4,"name":"Monkey City","cost_medium":3000,"stats":{"income_buff_pct":20,"range_add":10,"free_dart_monkey_per_round":1},"text":"+20% income from income-producing towers in range, village range +10, free Dart Monkey every round."},
+{"tier":5,"name":"Monkeyopolis","cost_medium":null,"cost_rule":"$5,000 x number of Banana Farms in range; not scaled by difficulty; extra cost counts toward sellback, sacrifice value does not","stats":{"crates_per_round":10,"income_per_round_formula":"max(200, 200*floor(sacrificed_farm_value/2000)) + 1000 (wiki formula garbled)","sacrifice_max_farm_tier":4},"text":"Sacrifices all tier <=4 Banana Farms in range (not tier 5, not other player's in co-op); requires a farm in range. Produces 10 collectible cash crates per round based on sacrificed farm value.","uncertain":true}]},
+"paragon":null,"paragon_note":"No Monkey Village paragon."
+}}

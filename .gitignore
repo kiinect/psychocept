@@ -1,0 +1,12 @@
+.re/
+node_modules
+dist/
+.claude/
+.tasks/*.log
+.tasks/*.out
+.tasks/STOPPED
+dist-single/
+.wrangler
+.env
+.env.*
+!.env.example

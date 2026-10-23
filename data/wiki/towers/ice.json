@@ -1,0 +1,24 @@
+{"source":["https://www.bloonswiki.com/Ice_Monkey_(BTD6)"],"data":{"id":"ice","name":"Ice Monkey","category":"Primary","costMedium":400,"footprintRadius":6,"range":20,"waterOnly":false,
+"targeting":["Close (First/Last/Close/Strong + Camo Prioritization once Cryo Cannon bought; Cryo Cannon+ defaults First)"],
+"base":{"cooldown":2.4,"pierce":40,"damage":1,"damageType":"Cold","blastRadius":20,"freezeDuration":1.5,"freezeLayers":2,"camo":false,"lead":false,"moabClass":false,"frozen":false,"note":"AoE around tower; ceramic freeze duration penalty 50%"},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Permafrost","cost":150,"effects":{"slowAfterThaw":0.5,"layers":2}},
+{"name":"Cold Snap","cost":350,"effects":{"lead":true,"camo":true}},
+{"name":"Ice Shards","cost":1500,"effects":{"range":"+5 (25)","shards":{"count":3,"damage":2,"pierce":3,"type":"Shatter"},"stripsCamoRegrow":true,"soakLayers":2}},
+{"name":"Embrittlement","cost":2300,"effects":{"moabTargetable":true,"brittle":{"extraDamage":1,"duration":2,"removesLeadFrozenImmunity":true},"soakLayers":3}},
+{"name":"Super Brittle","cost":28000,"effects":{"cooldown":1.56,"damageType":"Normal","damage":5,"ceramicBonus":5,"brittle":{"extraDamage":4,"duration":3},"shards":{"count":6,"damage":5,"range":40},"soakLayers":6,"moabPermafrost":0.25}}],
+"2":[
+{"name":"Enhanced Freeze","cost":200,"effects":{"freezeDuration":1.75,"cooldown":1.8}},
+{"name":"Deep Freeze","cost":300,"effects":{"pierce":45,"freezeLayers":3,"freezeDuration":2.2}},
+{"name":"Arctic Wind","cost":2750,"effects":{"aura":{"slow":0.4,"freezesWaterForLandTowers":true},"ceramicFreezePenaltyRemoved":true}},
+{"name":"Snowstorm","cost":4750,"effects":{"range":"+10"},"ability":{"cooldown":40,"duration":6,"effect":"Freezes all regular bloons on screen (brief for White/Zebra/Camo, slows MOAB-class), 1 damage to all on screen","uncertain":true}},
+{"name":"Absolute Zero","cost":21000,"effects":{"range":"+10","freezeLayers":8,"pierce":300,"moabTargetable":true,"globalFreeze":"each attack freezes all non-MOAB bloons on screen 0.6s, 1 dmg +3 ceramic","auraSlow":0.6,"auraMoabSlow":0.3},"ability":{"cooldown":25,"duration":6,"effect":"Snowstorm freezing all bloon types longer, +4 damage to frozen, slows MOAB-class; +50% attack speed to all Ice Monkeys for 10s"}}],
+"3":[
+{"name":"Larger Radius","cost":150,"effects":{"range":"+7 (27)"}},
+{"name":"Re-Freeze","cost":200,"effects":{"refreezeFrozen":true}},
+{"name":"Cryo Cannon","cost":1900,"effects":{"attack":"cannon","cooldown":1.2,"range":46,"damage":1,"pierce":40,"blastRadius":20,"freezeDuration":1.5,"freezeLayers":3,"targeting":"First/Last/Close/Strong"}},
+{"name":"Icicles","cost":2750,"effects":{"cooldown":0.75,"damage":2,"moabDamage":"+8","moabTargetable":true,"icicleChance":0.25,"icicle":{"damage":6,"pierce":6,"rehit":0.2}}},
+{"name":"Icicle Impale","cost":30000,"effects":{"moabDamage":"+48","damageType":"Shatter","freezesMOAB":true,"frozenZOMGSpeed":2.25,"frozenOtherMOABSpeed":5}}]},
+"paragon":{"name":"Herald of Everfrost","cost":300000,"effect":"Alternates 4 Ice Lance Beams (very high pierce, freeze 10s, ice shards) with 1 Snowstorm Roar (freeze screen, +8 dmg debuff, +40 vs cold types); Arctic Wind aura; global ice platforms; ability Eclipse of Fimbulwinter (5s delay, freeze all 10s, bosses/BADs 5s, 90s cooldown, once per round). Requires 3 tier-5 Ice Monkeys.","uncertain":true}}}

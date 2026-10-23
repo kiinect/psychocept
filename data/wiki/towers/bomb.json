@@ -1,0 +1,25 @@
+{"source":["https://www.bloonswiki.com/Bomb_Shooter_(BTD6)"],"data":{"id":"bomb","name":"Bomb Shooter","category":"Primary","costMedium":375,"footprintRadius":7,"range":40,"waterOnly":false,
+"targeting":["First","Last","Close","Strong"],
+"base":{"cooldown":1.5,"damage":1,"damageType":"Explosion","explosionPierce":22,"explosionRadius":12,"projectileSpeed":180,"camo":false,"lead":true},
+"crosspathRule":"Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+"paths":{
+"1":[
+{"name":"Bigger Bombs","cost":250,"effects":{"projectileSize":"+20%","blastRadius":"+50%","pierce":"+6 (28)"}},
+{"name":"Heavy Bombs","cost":650,"effects":{"damage":"+1","pierce":"+10"}},
+{"name":"Really Big Bombs","cost":1100,"effects":{"damage":4,"pierce":80,"radius":27,"pushback":20,"pushbackNote":"not MOAB-class"}},
+{"name":"Bloon Impact","cost":2800,"effects":{"stun":1.4,"stunNote":"non-MOAB-class","range":"+3"}},
+{"name":"Bloon Crush","cost":55000,"effects":{"damage":24,"damageType":"Normal","moabStun":2,"moabPushback":5}}],
+"2":[
+{"name":"Faster Reload","cost":250,"effects":{"cooldown":1.125}},
+{"name":"Missile Launcher","cost":400,"effects":{"cooldown":0.825,"range":"+4 (44)","projectileSpeed":270}},
+{"name":"MOAB Mauler","cost":1000,"effects":{"moabDamage":"+15 (16 total)","range":"+5 (49)"}},
+{"name":"MOAB Assassin","cost":3450,"effects":{"moabDamage":"+30 (31 total)","range":"+5 (54)"},"ability":{"name":"Assassinate MOAB","cooldown":30,"effect":"special missile, 750 direct damage to MOAB-class"}},
+{"name":"MOAB Eliminator","cost":26000,"effects":{"moabDamage":"+99 (100 total)"},"ability":{"name":"Assassinate MOAB","cooldown":10,"effect":"4500 direct damage to MOAB-class"}}],
+"3":[
+{"name":"Extra Range","cost":200,"effects":{"range":"+12 (52)"}},
+{"name":"Frag Bombs","cost":300,"effects":{"frags":8,"fragDamage":1,"fragPierce":2,"fragPierceCost":2,"range":"+2","note":"frags do not damage main target"}},
+{"name":"Cluster Bombs","cost":700,"effects":{"clusters":"replace frags","clusterDamage":1,"clusterPierce":8,"clusterRadius":15,"damageType":"Explosion"}},
+{"name":"Recursive Cluster","cost":2500,"effects":{"damage":"+1 all explosions","tertiary":{"everyNthShot":2,"damage":2,"pierce":32}}},
+{"name":"Bomb Blitz","cost":30000,"effects":{"damage":"+3 (5)","cooldown":0.9,"recursive":"every shot"},"ability":{"name":"Bomb Storm (passive)","trigger":"lives would be lost / bloon leaks","uses":"once per round","effect":"damages all bloons on screen, destroys all but biggest"}}]},
+"crosspathNotes":"Frag Bombs crosspaths scale with Really Big Bombs (frags 12, dmg 6, pierce 3), Bloon Impact (16 frags, pierce 4), Bloon Crush (dmg 36, pierce 21); MOAB path +4/+9/+29 frag MOAB damage.",
+"paragon":{"name":"Ballistic Obliteration Missile Bunker","cost":650000,"effect":"Slow homing missiles with stun+pushback spawning 8 clusters each with 8 subclusters, very high Normal damage, no camo without Ascended Shadow; active ability Indomitable Surface-to-Air Ballistic Missile; passive Blitz Tactical Storm on life loss (map-wide missiles). Requires 3 tier-5 Bomb Shooters.","uncertain":true}}}

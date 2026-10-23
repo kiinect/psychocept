@@ -1,0 +1,253 @@
+{
+ "source": [
+  "https://www.bloonswiki.com/Heli_Pilot_(BTD6)"
+ ],
+ "data": {
+  "id": "heli",
+  "name": "Heli Pilot",
+  "category": "Military",
+  "costMedium": 1500,
+  "footprint": {
+   "shape": "rect",
+   "width": 27,
+   "height": 27
+  },
+  "range": 42,
+  "displayRange": 22,
+  "waterOnly": false,
+  "targeting": [
+   "Follow",
+   "Touch",
+   "Lock in Place",
+   "Patrol Points",
+   "Pursuit (path1 tier2)"
+  ],
+  "base": {
+   "cooldown": 0.57,
+   "dartsPerShot": 2,
+   "pierce": 3,
+   "damage": 1,
+   "damageType": "Sharp",
+   "projectileSpeed": 260,
+   "lifespan": 1,
+   "projectileRadius": 3,
+   "moveSpeed": 40,
+   "ignoresBlockers": true,
+   "camo": false,
+   "lead": false
+  },
+  "crosspathRule": "Standard BTD6: one path to tier 5, second to tier 2, third 0.",
+  "paths": {
+   "1": [
+    {
+     "name": "Quad Darts",
+     "cost": 800,
+     "effects": {
+      "dartsPerShot": 4
+     }
+    },
+    {
+     "name": "Pursuit",
+     "cost": 500,
+     "effects": {
+      "targetingOption": "Pursuit (flies just ahead of farthest bloon)"
+     }
+    },
+    {
+     "name": "Razor Rotors",
+     "cost": 1450,
+     "effects": {
+      "rotorAura": {
+       "radius": 35,
+       "damage": 2,
+       "pierce": 10,
+       "cooldown": 0.45,
+       "damageType": "Normal"
+      }
+     }
+    },
+    {
+     "name": "Apache Dartship",
+     "cost": 20000,
+     "effects": {
+      "flightSpeed": "+25%",
+      "machineGun": {
+       "damage": 1,
+       "pierce": 7,
+       "cooldown": 0.05
+      },
+      "missiles": {
+       "rockets": 4,
+       "damage": 2,
+       "pierce": 40,
+       "cooldown": 1,
+       "range": 84,
+       "homing": true,
+       "blackImmune": true
+      },
+      "quadDartsCooldownMult": 0.75,
+      "rotor": {
+       "damage": 4,
+       "pierce": 20
+      }
+     }
+    },
+    {
+     "name": "Apache Prime",
+     "cost": 45000,
+     "effects": {
+      "quadLasers": {
+       "damage": 6,
+       "pierce": 23
+      },
+      "machineGunLasers": {
+       "damage": 5,
+       "pierce": 11
+      },
+      "rocketMoabBonus": 15,
+      "rotor": {
+       "damage": 8,
+       "pierce": 40
+      }
+     }
+    }
+   ],
+   "2": [
+    {
+     "name": "Bigger Jets",
+     "cost": 300,
+     "effects": {
+      "moveSpeed": "+30"
+     }
+    },
+    {
+     "name": "IFR",
+     "cost": 600,
+     "effects": {
+      "camo": true
+     }
+    },
+    {
+     "name": "Downdraft",
+     "cost": 3500,
+     "effects": {
+      "downdraft": {
+       "damage": 0,
+       "pushback": "32-150 units",
+       "cooldown": 0.18,
+       "pierce": 2,
+       "excludes": "MOAB-class, Lead"
+      }
+     }
+    },
+    {
+     "name": "Support Chinook",
+     "cost": 9500,
+     "effects": {
+      "dartDamage": 2,
+      "dartRadius": 6,
+      "downdraft": {
+       "cooldown": 0.15,
+       "pierce": 4,
+       "minPushback": 64
+      },
+      "flightSpeed": 80
+     },
+     "abilities": [
+      {
+       "name": "Reposition",
+       "effect": "picks up a non-heavy tower and moves it"
+      },
+      {
+       "name": "Supply Crate",
+       "effect": "drops 2 crates of cash and lives"
+      }
+     ],
+     "uncertain": true
+    },
+    {
+     "name": "Special Poperations",
+     "cost": 30000,
+     "effects": {
+      "moveSpeed": "+25%",
+      "downdraftCooldown": 0.075
+     },
+     "abilities": [
+      {
+       "name": "Monkey Marine",
+       "effect": "drops marine sub-tower with machine gun"
+      }
+     ],
+     "uncertain": true
+    }
+   ],
+   "3": [
+    {
+     "name": "Faster Darts",
+     "cost": 250,
+     "effects": {
+      "range": 54.6,
+      "projectileSpeed": "increased",
+      "lifespan": "increased"
+     }
+    },
+    {
+     "name": "Faster Firing",
+     "cost": 350,
+     "effects": {
+      "cooldownMult": 0.8
+     }
+    },
+    {
+     "name": "MOAB Shove",
+     "cost": 3400,
+     "effects": {
+      "shove": "slows/reverses MOAB-class below ZOMG, no damage, pierce 1",
+      "missile": {
+       "damage": 2,
+       "ceramicBonus": 2,
+       "moabBonus": 5,
+       "pierce": 10,
+       "cooldown": 3,
+       "range": "infinite"
+      }
+     }
+    },
+    {
+     "name": "Comanche Defense",
+     "cost": 8500,
+     "effects": {
+      "dartDamage": 2,
+      "summons": "mini Comanches at track-progress thresholds",
+      "missile": {
+       "damage": 3,
+       "pierce": 30,
+       "cooldownMult": 0.333
+      },
+      "shoveAffectsZOMG": true
+     }
+    },
+    {
+     "name": "Comanche Commander",
+     "cost": 35000,
+     "effects": {
+      "dartDamage": 4,
+      "missile": {
+       "damage": 13,
+       "moabBonus": 8
+      },
+      "permanentComanches": 3,
+      "comanche": {
+       "dartDamage": 3,
+       "rocketDamage": 15,
+       "rocketCeramicBonus": 10
+      },
+      "moveSpeed": "+10"
+     }
+    }
+   ]
+  },
+  "paragon": null,
+  "paragonNote": "No Paragon section on wiki page."
+ }
+}
