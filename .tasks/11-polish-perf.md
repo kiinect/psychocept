@@ -5,4 +5,4 @@ Polish/perf/mobile: touch controls and responsive layout, 60fps stress test with
 
 Required check: extend tools/checks.ts so rounds 81-140 compute RBE from the SIM's own HP rules (MOAB-class ramp in src/sim.ts, super ceramic 60/120 HP, fortified) and compare to data/wiki/rounds.json `rbe_scaled`; tune the ramp constants until all 60 rounds match, then make it a failing vitest, not info-only.
 
-HARD CONSTRAINT: the final deliverable is ONE self-contained index.html (npm run build:single -> dist-single/index.html, vite-plugin-singlefile). No external fonts/images/audio files, no fetch/XHR/CDN, no separate JSON requests (data is imported and inlined), no service-worker file; everything generated at runtime (sprites, map art, synthesized audio). Must run when opened from file:// with zero network requests. Check this in every milestone.
+Deployment note (user, 2026-10-22): hosted on the user's own site, so multi-file dist/ is fine and external files, fonts, workers and fetch of own static files are allowed. `npm run build:single` (one inlined index.html) stays available as an optional build, no longer required.
