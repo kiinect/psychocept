@@ -5,7 +5,8 @@ import rounds from '../data/wiki/rounds.json';
 export const PATH: Pt[] = [{ x: 0, y: 270 }, { x: 900, y: 270 }, { x: 900, y: 60 }, { x: 60, y: 60 }, { x: 60, y: 480 }, { x: 900, y: 480 }];
 
 /** Fresh Sim with long path, huge cash and lives so nothing ends the run. */
-export function bigSim(): Sim { const s = new Sim(PATH); s.cash = 1e12; s.lives = 1e9; return s; }
+/** A pond near the beast spot satisfies Beast Handler's water/track placement prerequisites. */
+export function bigSim(): Sim { const s = new Sim(PATH, 'medium', [{ x: 380, y: 215, width: 40, height: 30 }]); s.cash = 1e12; s.lives = 1e9; return s; }
 
 /** Push bloons spread along the path (bypasses the round spawner). */
 export function fill(s: Sim, n: number, type = 'ceramic') {
@@ -20,8 +21,18 @@ export function sweepTowers(seconds = 20): SweepRow[] {
   for (const kind of Object.keys(TOWERS) as TowerKind[]) for (let path = 0; path < 3; path++) for (let tier = 0; tier <= 5; tier++) {
     if (tier === 0 && path > 0) continue;
     const s = bigSim();
-    let ok = s.placeTower(450, 200, kind) || s.addTower(450, 200, kind);
-    for (let n = 0; n < tier && ok; n++) ok = s.upgrade(0, path);
+    const y = kind === 'beast' ? 225 : 200;
+    let ok = s.placeTower(450, y, kind) || s.addTower(450, y, kind);
+    // Support prerequisites: Monkey City needs farms in range; tier 5 beast paths need three merged tier-4 beasts.
+    if (kind === 'village' && path === 2 && tier === 5) s.addTower(470, 200, 'farm');
+    for (let n = 0; n < tier && ok; n++) {
+      if (kind === 'beast' && n === 4) for (let m = 0; m < 3; m++) {
+        const i = s.towers.length; s.addTower(430 + m * 15, 235, 'beast');
+        for (let k = 0; k < 4; k++) s.upgrade(i, path);
+        s.mergeBeast(i, 0, path);
+      }
+      ok = s.upgrade(0, path);
+    }
     let fired = false;
     if (ok) {
       fill(s, 40, 'ceramic'); fill(s, 4, 'moab');

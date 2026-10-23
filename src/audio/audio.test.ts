@@ -6,7 +6,8 @@ import { readSettings } from './settings';
 
 const make = () => new Sim([{ x: 0, y: 100 }, { x: 960, y: 100 }]);
 test('each tower and all ninety upgrades produce an attack cue headlessly', () => {
-  for (const type of Object.keys(TOWERS) as (keyof typeof TOWERS)[]) {
+  // farm and village are passive (no attack cue); every other tower must cue.
+  for (const type of (Object.keys(TOWERS) as (keyof typeof TOWERS)[]).filter(k => k !== 'farm' && k !== 'village')) {
     for (let path = 0; path < 3; path++) for (let tier = 0; tier <= 5; tier++) {
       const s = make(); s.cash = 1e7; s.addTower(100, 115, type);
       for (let i = 0; i < tier; i++) s.upgrade(0, path);

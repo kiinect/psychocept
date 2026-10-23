@@ -93,7 +93,7 @@ export function updateExtras(s: Sim) {
     if (a.id === 'barrier') continue;
     if (a.expires <= s.round || a.hp <= 0 || s.tick < a.next) continue;
     a.next = s.tick + (a.id === 'genie' ? 6 : a.id === 'fire' ? 6 : a.id === 'rabbit' ? 12 : 60);
-    const targets = s.bloons.filter(b => Math.hypot(s.posAt(b.dist).x - a.x, s.posAt(b.dist).y - a.y) < (a.id === 'genie' ? 2000 : a.id === 'turret' ? 60 : 30));
+    const targets = s.bloons.filter(b => Math.hypot(s.posOf(b).x - a.x, s.posOf(b).y - a.y) < (a.id === 'genie' ? 2000 : a.id === 'turret' ? 60 : 30));
     const stats = baseStats({ damageType: 'normal', camo: a.id === 'nails' || a.id === 'genie', pierce: 20 });
     if (a.id === 'turret') { stats.damageType = 'sharp'; stats.damage = h.level >= 13 ? 6 : 2; }
     else if (a.id === 'nails') { stats.damage = h.level >= 13 ? 6 : 1; stats.pierce = a.hp; }

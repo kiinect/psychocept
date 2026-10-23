@@ -1,6 +1,8 @@
 import { ROUNDS, type Sim, type Tower } from '../sim';
 import type { TowerKind } from '../towers';
-export type Cue = 'pop' | 'ceramic' | 'placement' | 'upgrade' | 'sell' | 'ability' | 'roundStart' | 'roundEnd' | 'defeat' | 'victory' | `attack:${TowerKind}`;
+/** Towers that never attack (income / aura only), so they have no attack cue. */
+export type Passive = 'farm' | 'village';
+export type Cue = 'pop' | 'ceramic' | 'placement' | 'upgrade' | 'sell' | 'ability' | 'roundStart' | 'roundEnd' | 'defeat' | 'victory' | `attack:${Exclude<TowerKind, Passive>}`;
 export class AudioObserver {
   private sim?: Sim;
   private towers = new Map<Tower, { cost: number; shots: number; ready: number }>();
@@ -24,7 +26,7 @@ export class AudioObserver {
         if (!old) cues.add('placement');
         else {
           if (t.cost > old.cost) cues.add('upgrade');
-          if (t.shots > old.shots) cues.add(`attack:${t.type}`);
+          if (t.shots + (t.magicActs ?? 0) > old.shots) cues.add(`attack:${t.type as Exclude<TowerKind, Passive>}`);
           // Learning an ability sets its initial cooldown too; exclude upgrades.
           if (t.cost === old.cost && t.abilityReady > old.ready && t.abilityUntil >= s.tick) cues.add('ability');
         }
@@ -41,7 +43,7 @@ export class AudioObserver {
       }
     }
     this.sim = s; this.cash = s.cash; this.lives = s.lives; this.round = s.round; this.active = s.roundActive;
-    this.towers = new Map(s.towers.map(t => [t, { cost: t.cost, shots: t.shots, ready: t.abilityReady }]));
+    this.towers = new Map(s.towers.map(t => [t, { cost: t.cost, shots: t.shots + (t.magicActs ?? 0), ready: t.abilityReady }]));
     this.bloons = new Map(s.bloons.map(b => [b.id, { hp: b.hp, type: b.type }]));
     return [...cues];
   }
