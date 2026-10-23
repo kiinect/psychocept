@@ -9,7 +9,7 @@ export const TOWER_IDS = [
 ] as const;
 export const PATH_COLORS = ['#ff5a4a', '#37a8ff', '#4fdc5a'] as const;
 
-export type Hat = 'none' | 'band' | 'helmet' | 'wiz' | 'ninja' | 'goggles' | 'hard' | 'safari' | 'leaf' | 'camo' | 'pirate' | 'cap' | 'crown';
+export type Hat = 'none' | 'band' | 'helmet' | 'wiz' | 'ninja' | 'goggles' | 'hard' | 'safari' | 'leaf' | 'camo' | 'pirate' | 'cap' | 'crown' | 'hood';
 export interface Monk { fur: string; outfit: string; accent: string; hat: Hat; hatCol: string }
 const FUR = '#b9722f';
 const H = { x: 62, y: 54 }; // hand position the props attach to
@@ -50,6 +50,10 @@ function hat(c: Ctx, h: Hat, col: string): void {
       c.beginPath(); c.arc(50, 33, 18, Math.PI, 0); c.closePath(); fs(c, glossy(c, 50, 26, 20, col), 3); ell(c, 70, 34, 12, 4, mix(col, -0.25), 2.5); break;
     case 'crown':
       poly(c, [34, 30, 36, 14, 43, 24, 50, 10, 57, 24, 64, 14, 66, 30], '#ffd23c', 3); ball(c, 50, 22, 3, '#ff4a6a', 1.5); break;
+    case 'hood':
+      c.beginPath(); c.arc(50, 37, 20, Math.PI, 0); c.closePath(); fs(c, glossy(c, 50, 28, 22, col), 3);
+      c.beginPath(); c.arc(50, 38, 19, Math.PI * 0.92, Math.PI * 2.08); inkStroke(c, '#f4f8ff', 6);
+      ell(c, 50, 17, 5, 5, '#f4f8ff', 2.5); break;
     default:
   }
 }
@@ -165,19 +169,6 @@ const DEVICES: Record<string, (c: Ctx, s: number) => void> = {
     }
     ball(c, 48, 48, 21, '#e8873a'); ball(c, 48, 48, 11, '#ffd23c', 2.5); ell(c, 48, 48, 4, 4, INK, 0); shine(c, 40, 36, 7, 3);
   },
-  ice(c) {
-    poly(c, [34, 40, 40, 14, 47, 36], '#bff1ff', 2.5); poly(c, [50, 34, 58, 10, 63, 38], '#9be4ff', 2.5);
-    ball(c, 48, 52, 24, '#58c8ff'); ball(c, 48, 52, 15, '#d8f6ff', 2);
-    for (let i = 0; i < 3; i++) { const a = (i * Math.PI) / 3; bar(c, 48 - Math.cos(a) * 10, 52 - Math.sin(a) * 10, 48 + Math.cos(a) * 10, 52 + Math.sin(a) * 10, '#4ab0ee', 2); }
-    shine(c, 38, 38, 8, 4);
-  },
-  sub(c, s) {
-    ell(c, 44, 54, 38, 17, lin(c, 0, 38, 0, 70, '#8fb0d8', '#3e5f8c'), 3);
-    rr(c, 36, 24, 18, 22, 6, lin(c, 0, 24, 0, 46, '#8fb0d8', '#46689a'), 3); bar(c, 46, 25, 46, 14, '#6d7f9a', 3); bar(c, 46, 14, 54, 14, '#6d7f9a', 3);
-    ball(c, 30, 56, 5, '#bfeaff', 2); ball(c, 46, 58, 5, '#bfeaff', 2); ball(c, 62, 56, 5, '#bfeaff', 2);
-    poly(c, [8, 54, 0, 42, 10, 48], '#46689a', 2.5); poly(c, [8, 54, 0, 66, 10, 60], '#46689a', 2.5);
-    rr(c, 78, 50, 14 * s, 8, 4, '#2e3b52', 2.5); ball(c, 46, 36, 6, FUR, 2); hat(c, 'cap', '#2f8fe8');
-  },
   buccaneer(c, s) {
     poly(c, [8, 58, 88, 58, 76, 78, 20, 78], lin(c, 0, 58, 0, 78, '#a8683a', '#5e3a1e'), 3);
     bar(c, 12, 63, 84, 63, '#d9a05a', 2); bar(c, 46, 58, 46, 14, '#7a4a22', 4);
@@ -218,16 +209,63 @@ const DEVICES: Record<string, (c: Ctx, s: number) => void> = {
     rr(c, 36, 58, 16, 22, 8, '#3a2412', 2.5); ball(c, 62, 62, 4, '#ffd23c', 1.5);
     ell(c, 82, 70, 9, 8, '#a8683a', 3); ell(c, 82, 64, 9, 4, '#f2cf9b', 2); star(c, 44, 28, 5, 2, 5, '#ff4a4a', 1.5);
   },
+  ice(c) {
+    // glacier base with crystals + frosty monkey in a parka
+    poly(c, [14, 82, 20, 66, 34, 72, 40, 60, 54, 70, 64, 62, 78, 82], lin(c, 0, 60, 0, 84, '#e6fbff', '#7fcaf0'), 3);
+    poly(c, [16, 70, 22, 44, 30, 70], '#bff1ff', 2.5); poly(c, [70, 74, 78, 50, 84, 74], '#9be4ff', 2.5);
+    shine(c, 22, 60, 1.6, 6, 0.1, 0.8);
+    monkey(c, mk('#3a8ad8', '#ffffff', 'hood', '#3a8ad8', '#c9a074'), () => {
+      bar(c, 64, 58, 76, 40, '#cfe8f6', 3); star(c, 80, 36, 13, 5, 6, '#e8fbff', 2.5); ball(c, 80, 36, 3.5, '#7fd0ff', 1.5);
+      shine(c, 76, 31, 2.5, 4, 0.4, 0.85);
+    }, 1);
+    for (const [x, y, r] of [[18, 30, 3], [86, 22, 2.4], [10, 50, 2]]) star(c, x, y, r * 2, r * 0.8, 4, '#fff', 1.2);
+  },
+  sub(c, s) {
+    c.save(); c.translate(0, 4);
+    // propeller + tail fins
+    poly(c, [12, 54, 2, 38, 14, 46], '#2f5a96', 2.5); poly(c, [12, 54, 2, 70, 14, 62], '#2f5a96', 2.5);
+    ell(c, 4, 54, 3, 11, '#c8d8ee', 2); ell(c, 4, 54, 3.5, 3.5, '#4a5266', 1.5);
+    // hull
+    ell(c, 46, 54, 40, 18, lin(c, 0, 36, 0, 72, '#9fc0e8', '#355a8c'), 3.5);
+    c.save(); c.beginPath(); c.ellipse(46, 54, 40, 18, 0, 0, 7); c.clip();
+    c.fillStyle = '#ff6a4a'; c.fillRect(0, 56, 96, 5); c.fillStyle = 'rgba(255,255,255,.3)'; c.fillRect(0, 40, 96, 4);
+    for (const x of [24, 66]) { c.fillStyle = 'rgba(20,30,60,.35)'; c.fillRect(x, 34, 2.5, 40); }
+    c.restore();
+    shine(c, 34, 43, 10, 2.5, -0.05, 0.6);
+    // conning tower + periscope + monkey
+    rr(c, 36, 24, 22, 20, 7, lin(c, 0, 24, 0, 44, '#aac8ee', '#46689a'), 3);
+    bar(c, 54, 26, 54, 12, '#6d7f9a', 3); bar(c, 54, 12, 62, 12, '#6d7f9a', 3); ell(c, 63, 12, 2.5, 3.5, '#bfeaff', 1.5);
+    ball(c, 46, 26, 8.5, FUR, 2.5); ell(c, 50, 29, 4.5, 3.5, '#f2cf9b', 1.5);
+    ell(c, 47, 24, 2.6, 3, '#fff', 1.5); ell(c, 54, 24, 2.6, 3, '#fff', 1.5); ell(c, 48, 25, 1.2, 1.5, INK, 0); ell(c, 55, 25, 1.2, 1.5, INK, 0);
+    hat(c, 'cap', '#2f8fe8');
+    // portholes, torpedo tubes
+    for (const x of [30, 46, 62]) { ball(c, x, 56, 5.5, '#bfeaff', 2.5); shine(c, x - 1.5, 54, 1.6, 1.2, 0, 0.9); }
+    rr(c, 80, 46, 14 * s, 6, 3, '#2e3b52', 2.5); rr(c, 80, 56, 14 * s, 6, 3, '#2e3b52', 2.5);
+    c.restore();
+    // bubbles + waterline foam
+    for (const [x, y, r] of [[8, 34, 3], [14, 26, 2], [4, 22, 1.6]]) ell(c, x, y, r, r, 'rgba(210,245,255,.8)', 1.4);
+    c.beginPath(); c.moveTo(16, 70); c.quadraticCurveTo(26, 64, 36, 70); c.quadraticCurveTo(46, 64, 56, 70); c.quadraticCurveTo(66, 64, 76, 70);
+    c.strokeStyle = 'rgba(255,255,255,.85)'; c.lineWidth = 3; c.lineCap = 'round'; c.stroke();
+  },
   banana_farm(c) {
-    rr(c, 14, 52, 68, 30, 5, lin(c, 0, 52, 0, 82, '#c68a4a', '#7a4a22'), 3); bar(c, 14, 66, 82, 66, '#7a4a22', 2);
-    for (let i = 0; i < 4; i++) {
-      c.save(); c.translate(26 + i * 15, 48); c.rotate(-0.5 + i * 0.35);
-      c.beginPath(); c.moveTo(-10, 0); c.quadraticCurveTo(0, -14, 12, 0); c.quadraticCurveTo(0, -6, -10, 0); fs(c, '#ffe14a', 2.5); c.restore();
-    }
-    for (let i = 0; i < 3; i++) {
-      c.save(); c.translate(48, 36); c.rotate(-1.6 + i * 0.8); ell(c, 0, -12, 5, 14, glossy(c, 0, -12, 14, '#3fc23f'), 2.5); c.restore();
-    }
-    bar(c, 48, 50, 48, 30, '#7a4a22', 4); ball(c, 48, 30, 3, '#ffd23c', 1);
+    ell(c, 48, 82, 40, 9, lin(c, 0, 74, 0, 90, '#7ac04a', '#3f7a2e'), 3);
+    // palm tree
+    c.beginPath(); c.moveTo(20, 76); c.quadraticCurveTo(14, 46, 26, 20); inkStroke(c, '#a8723a', 6);
+    for (let i = 0; i < 5; i++) { c.save(); c.translate(26, 20); c.rotate(-2.4 + i * 0.75); ell(c, 0, -10, 4.5, 12, glossy(c, 0, -10, 12, '#3fc23f'), 2.5); c.restore(); }
+    ball(c, 24, 24, 3, '#ffe14a', 1.5); ball(c, 29, 26, 3, '#ffe14a', 1.5);
+    // stall
+    rr(c, 30, 54, 54, 26, 4, lin(c, 0, 54, 0, 80, '#d49a58', '#7a4a22'), 3);
+    for (const y of [62, 70]) bar(c, 31, y, 83, y, '#6a3c18', 1.5);
+    for (let i = 0; i < 4; i++) { c.save(); c.translate(38 + i * 12, 54); c.rotate(-0.5 + i * 0.3);
+      c.beginPath(); c.moveTo(-9, 0); c.quadraticCurveTo(0, -13, 11, 0); c.quadraticCurveTo(0, -5, -9, 0); fs(c, '#ffe14a', 2.5); c.restore(); }
+    // striped awning
+    for (let i = 0; i < 6; i++) poly(c, [28 + i * 10, 34, 38 + i * 10, 34, 40 + i * 10, 46, 30 + i * 10, 46], i % 2 ? '#fff6e0' : '#ee4a3a', 2);
+    bar(c, 28, 32, 88, 32, '#7a4a22', 3);
+    // monkey shopkeeper peeking over the counter
+    ball(c, 60, 44, 8, FUR, 2.5); ell(c, 63, 47, 4.5, 3.5, '#f2cf9b', 1.5);
+    ell(c, 58, 42, 2.4, 2.8, '#fff', 1.5); ell(c, 65, 42, 2.4, 2.8, '#fff', 1.5); ell(c, 59, 43, 1.1, 1.5, INK, 0); ell(c, 66, 43, 1.1, 1.5, INK, 0);
+    // coin sign
+    ball(c, 80, 20, 8, '#ffc61f', 2.5); bar(c, 80, 15, 80, 25, '#b8791a', 2.5); star(c, 91, 10, 4, 1.6, 4, '#fff', 1);
   },
 };
 
@@ -244,18 +282,36 @@ function drawBody(c: Ctx, id: string, scale: number): void {
 
 /** Draw one tower sprite. path in 0..2 and tier in 1..5 (tier 0 = base look). */
 export function drawTower(c: Ctx, id: string, path = 0, tier = 0): void {
-  const col = PATH_COLORS[path] ?? PATH_COLORS[0];
+  const col = PATH_COLORS[path] ?? PATH_COLORS[0], gold = '#ffd23c', acc = tier === 5 ? gold : col;
   c.save();
   if (tier > 0) {
-    // platform ring in the path colour; glow for upper tiers
-    ell(c, 48, 80, 34, 10, mix(col, -0.2), 3);
-    if (tier >= 3) { const g = c.createRadialGradient(48, 48, 12, 48, 48, 48); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, tier === 5 ? 'rgba(255,214,60,.7)' : col + '88'); c.fillStyle = g; c.fillRect(0, 0, 96, 96); }
+    ell(c, 48, 82, 34, 10, mix(col, -0.2), 3);
+    if (tier >= 3) { // soft radial aura fully inside the 96x96 cell (no clipped square)
+      const g = c.createRadialGradient(48, 52, 4, 48, 52, 47);
+      g.addColorStop(0, acc + (tier === 5 ? 'cc' : '88')); g.addColorStop(0.55, acc + '44'); g.addColorStop(1, acc + '00');
+      c.fillStyle = g; c.beginPath(); c.arc(48, 52, 47, 0, 7); c.fill();
+    }
+    if (tier === 5) for (let i = 0; i < 12; i++) { // god-rays
+      const a = i * Math.PI / 6; c.beginPath(); c.moveTo(48 + Math.cos(a) * 20, 52 + Math.sin(a) * 20);
+      c.lineTo(48 + Math.cos(a - 0.1) * 46, 52 + Math.sin(a - 0.1) * 46); c.lineTo(48 + Math.cos(a + 0.1) * 46, 52 + Math.sin(a + 0.1) * 46); c.closePath();
+      c.fillStyle = 'rgba(255,230,120,.35)'; c.fill();
+    }
+    if (tier >= 3) { // fluttering cape behind the body, in the path colour
+      c.beginPath(); c.moveTo(34, 56); c.quadraticCurveTo(14, 58, 8, 80); c.quadraticCurveTo(22, 72, 26, 84); c.quadraticCurveTo(32, 72, 46, 76); c.closePath();
+      fs(c, lin(c, 8, 56, 40, 84, mix(acc, 0.25), mix(acc, -0.35)), 3);
+    }
   }
+  const sc = tier > 0 ? 0.94 + tier * 0.012 : 1;
+  c.translate(48, 56); c.scale(sc, sc); c.translate(-48, -56);
   drawBody(c, id, 1 + tier * 0.04);
+  c.restore();
   if (tier > 0) {
-    for (let i = 0; i < tier; i++) ball(c, 30 + i * 9, 90, 3.6, tier === 5 ? '#ffd23c' : col, 1.8);
-    if (tier === 5) star(c, 82, 14, 11, 5, 5, '#ffd23c', 2.5);
+    for (let i = 0; i < tier; i++) ball(c, 30 + i * 9, 91, 3.6, acc, 1.8);
+    if (tier >= 4) for (let i = 0; i < (tier === 5 ? 4 : 2); i++) { // orbiting power gems
+      const a = -0.7 + i * (Math.PI / 2) * (tier === 5 ? 1 : 2), x = 48 + Math.cos(a) * 41, y = 52 + Math.sin(a) * 36;
+      poly(c, [x, y - 6, x + 4.5, y, x, y + 6, x - 4.5, y], mix(acc, 0.35), 2); shine(c, x - 1, y - 2, 1.2, 2, 0.3, 0.9);
+    }
+    if (tier === 5) { star(c, 82, 14, 12, 5.5, 5, gold, 2.5); star(c, 14, 20, 6, 2.6, 4, '#fff', 1.4); }
     else if (tier >= 3) star(c, 82, 14, 8, 3.6, 5, col, 2);
   }
-  c.restore();
 }
