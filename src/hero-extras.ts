@@ -71,7 +71,7 @@ export function castSpell(s: Sim, id: string) {
   if (!h || h.kind !== 'corvus' || !d || s.gameOver || h.level < d.level || h.mana < d.mana || s.tick < (h.spellReady[id] ?? 0)) return false;
   if (id === 'nourishment' && h.mana <= 0) return false;
   h.mana -= d.mana; h.spellReady[id] = s.tick + d.cooldown * 60; h.until[id] = s.tick + d.duration * 60;
-  if (id === 'nourishment') { const mana = h.mana; h.mana = 0; s.grantHeroXP(mana * 4); s.cash += mana * (h.level === 20 ? 3 : h.level >= 15 ? 2 : 1); }
+  if (id === 'nourishment') { const mana = h.mana; h.mana = 0; s.grantHeroXP(mana * 4); s.earnIncome(mana * (h.level === 20 ? 3 : h.level >= 15 ? 2 : 1)); }
   if (id === 'recovery') h.mana = Math.min(800, h.mana + 100);
   if (id === 'overload') s.heroBurst(h, 2000, baseStats({ damage: h.level === 20 ? 1000 : 400, damageType: 'normal', pierce: 500, camo: true, frozen: true }));
   if (id === 'barrier') h.assets.push({ ...h, id: 'barrier', round: s.round, expires: Infinity, next: s.tick + d.duration * 60, hp: h.level >= 17 ? 200 : h.level >= 9 ? 100 : 50, value: 0 });
