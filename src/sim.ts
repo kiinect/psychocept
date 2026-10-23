@@ -42,6 +42,24 @@ export interface Effect extends Pt { radius: number; life: number; kind: string 
 export type Difficulty = keyof typeof modeJson.data.difficulties;
 export interface Circle extends Pt { r: number }
 // Mode rules (see modes/modes.ts); defaults = standard play.
+const MOAB_CLASS = ['moab', 'bfb', 'zomg', 'ddt', 'bad'];
+/** Freeplay MOAB-class HP multiplier: +2%/round 81-100, +5% 101-124, +15% 125-150 (fits wiki RBE r81-140 exactly). */
+export function moabHpMult(round: number) {
+  // uncertain: brackets past 150 (+35% to 250, +100% to 300, +150% to 400, +250% to 500, +500% after) are from memory, unverified by rounds.json.
+  const steps: [number, number][] = [[100, 0.02], [124, 0.05], [150, 0.15], [250, 0.35], [300, 1], [400, 1.5], [500, 2.5], [Infinity, 5]];
+  let m = 1, from = 80;
+  for (const [to, k] of steps) { if (round <= from) break; m += (Math.min(round, to) - from) * k; from = to; }
+  return m;
+}
+/** From round 81 ordinary bloons release a single child; MOAB-class keep their full payload. */
+export const kidsAt = (type: string, round: number) => round > 80 && !MOAB_CLASS.includes(type) ? BLOONS[type].kids.slice(0, 1) : BLOONS[type].kids;
+/** Layer-by-layer RBE with the sim's own HP rules (fortified is inherited by children, as in makeBloon). */
+export function bloonRbe(type: string, fortified: boolean, round: number): number {
+  const d = BLOONS[type], f = fortified && d.fortifiable;
+  let hp = f ? d.fortifiedHp : d.hp;
+  if (MOAB_CLASS.includes(type)) hp *= moabHpMult(round); else if (type === 'ceramic' && round > 80) hp = f ? 120 : 60;
+  return hp + kidsAt(type, round).reduce((a, k) => a + bloonRbe(k, fortified, round), 0);
+}
 export interface Rules { cashMult: number; incomeMult: number; noSell: boolean; moabHpMult: number; winRound: number; auto: boolean; allowed?: (k: string) => boolean }
 export const STANDARD_RULES: Rules = { cashMult: 1, incomeMult: 1, noSell: false, moabHpMult: 1, winRound: Infinity, auto: false };
 // regrow restores along single-child chains only (blue->red etc.), reverse-derived from bloons.json.
@@ -371,13 +389,13 @@ export class Sim {
     const fortified = Boolean(flags.fortified && def.fortifiable);
     let hp = fortified ? def.fortifiedHp : def.hp, spd = 1;
     const moab = this.isMoab({ type } as Bloon), late = Math.max(0, this.round - 80);
-    // uncertain: late-game ramp numbers are hand-tuned; wiki gives only the "slightly tougher/faster" prose.
-    if (moab) { hp *= this.rules.moabHpMult * (1 + Math.min(late, 20) * 0.02 + Math.max(0, Math.min(late, 44) - 20) * 0.05 + Math.max(0, late - 44) * 0.2); spd = 1 + Math.min(late, 60) * 0.005; }
+    // uncertain: the speed ramp is hand-tuned; HP ramp is moabHpMult (matches wiki RBE).
+    if (moab) { hp *= this.rules.moabHpMult * moabHpMult(this.round); spd = 1 + Math.min(late, 60) * 0.005; }
     else if (type === 'ceramic' && late > 0) hp = fortified ? 120 : 60; // r81+ "super ceramic"
     return { id: this.nextId++, type, dist, hp, fortified, regrow: flags.regrow, camo: flags.camo || type === 'ddt', lane: flags.lane, spd,
       regrowMax: flags.regrow ? flags.regrowMax ?? type : undefined };
   }
-  private isMoab(b: Bloon) { return ['moab', 'bfb', 'zomg', 'ddt', 'bad'].includes(b.type); }
+  private isMoab(b: Bloon) { return MOAB_CLASS.includes(b.type); }
   private canHit(b: Bloon, d: TowerStats) {
     if ((b.camo || b.type === 'ddt' && b.camo !== false) && !d.camo) return false;
     if (this.isMoab(b) && !d.moabTargetable) return false;
@@ -536,7 +554,7 @@ export class Sim {
         }
       }
     }
-    for (const type of b.noChildren ? [] : BLOONS[b.type].kids) {
+    for (const type of b.noChildren ? [] : kidsAt(b.type, this.round)) {
       const child = this.makeBloon(type, b.dist, b); child.cashMult = b.cashMult;
       if (!this.isMoab(child)) child.goldUntil=b.goldUntil;
       if (b.glue && b.glue.layers > 1 && !this.isMoab(child)) child.glue = { ...b.glue, layers: b.glue.layers - 1 };
