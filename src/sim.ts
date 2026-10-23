@@ -72,7 +72,7 @@ const POWER_IMPL = new Set(['super_monkey_storm', 'monkey_boost', 'thrive', 'tim
   'banana_farmer', 'banana_farmer_pro', 'pontoon', 'portable_lake', 'energizing_totem']);
 // uncertain: footprints and Banana Farmer Pro range are not in the wiki prose; pontoon fits a Banana Farm (footprint 30).
 const POWER_UNIT_R: Record<string, number> = { pontoon: 32, portable_lake: 14, banana_farmer: 8, banana_farmer_pro: 8, energizing_totem: 8 };
-export interface PowerTrap { id: string; lane: number; dist: number; left: number; hit: Set<number> }
+export interface PowerTrap { id: string; lane: number; dist: number; left: number; upgraded: boolean; hit: Map<number, number> }
 export interface PowerUnit extends Pt { id: string; r: number; range: number; untilRound: number }
 export interface Rules { cashMult: number; incomeMult: number; noSell: boolean; noPowers?: boolean; moabHpMult: number; winRound: number; auto: boolean; allowed?: (k: string) => boolean }
 export const STANDARD_RULES: Rules = { cashMult: 1, incomeMult: 1, noSell: false, moabHpMult: 1, winRound: Infinity, auto: false };
@@ -171,6 +171,7 @@ export class Sim {
     const overlaps = this.water.some(w => Math.hypot(x - Math.max(w.x, Math.min(x, w.x + w.width)), y - Math.max(w.y, Math.min(y, w.y + w.height))) < r);
     if (def.waterOnly ? !contained : !def.amphibious && overlaps) return false;
     if (this.towers.some(t => Math.hypot(t.x - x, t.y - y) < TOWERS[t.type].footprint + r)) return false;
+    if (this.powerUnits.some(u => Math.hypot(u.x - x, u.y - y) < u.r + r)) return false;
     const p = this.nearestTrack({ x, y });
     return Math.hypot(p.x - x, p.y - y) >= 20 + r;
   }
@@ -1001,33 +1002,37 @@ export class Sim {
     if(!this.powerNeedsPoint(id))return true;
     if(!point || !Number.isFinite(point.x) || !Number.isFinite(point.y))return false;
     if(POWER_BY_ID[id].kind==='trap')return !!this.trackSpot(point);
-    const r=POWER_UNIT_R[id],{x,y}=point;
-    if(this.powerUnits.some(u=>Math.hypot(u.x-x,u.y-y)<u.r+r) || this.towers.some(t=>!t.mergedInto && Math.hypot(t.x-x,t.y-y)<TOWERS[t.type].footprint+r))return false;
+    const r=POWER_UNIT_R[id],{x,y}=point,h=this.hero;
+    if(x<r || y<r || x>960-r || y>540-r || !this.offTrack(x,y,r) || this.blocked.some(o=>Math.hypot(o.x-x,o.y-y)<o.r+r)
+      || this.powerUnits.some(u=>Math.hypot(u.x-x,u.y-y)<u.r+r) || this.towers.some(t=>!t.mergedInto && Math.hypot(t.x-x,t.y-y)<TOWERS[t.type].footprint+r)
+      || h && Math.hypot(h.x-x,h.y-y)<HEROES[h.kind].footprint+r)return false;
     if(id==='pontoon')return this.water.some(w=>x-r>=w.x && x+r<=w.x+w.width && y-r>=w.y && y+r<=w.y+w.height);
-    if(id==='portable_lake')return x>=r && y>=r && x<=960-r && y<=540-r && this.offTrack(x,y,r) && !this.blocked.some(o=>Math.hypot(o.x-x,o.y-y)<o.r+r)
-      && !this.water.some(w=>Math.hypot(x-Math.max(w.x,Math.min(x,w.x+w.width)),y-Math.max(w.y,Math.min(y,w.y+w.height)))<r);
-    return this.canPlace(x,y,'dart');
+    return !this.water.some(w=>Math.hypot(x-Math.max(w.x,Math.min(x,w.x+w.width)),y-Math.max(w.y,Math.min(y,w.y+w.height)))<r);
   }
   /** Apply a power's sim effect. The caller (UI) owns the inventory and decrements it only when this returns true. */
   usePower(id:string,point?:Pt,upgraded=false) {
     if(!this.canUsePower(id,point))return false;
     const fx=POWER_BY_ID[id].fx,secs=(n:number)=>this.tick+n*60;
-    if(id==='super_monkey_storm')for(const b of [...this.bloons])if(this.bloons.includes(b))
-      this.applyHit(b,this.source({...TOWERS.dart.base,...this.posOf(b),damage:upgraded?fx.damageUpgraded:fx.damage,pierce:1,damageType:'normal',camo:true}));
+    if(id==='super_monkey_storm')for(const b of [...this.bloons])if(this.bloons.includes(b))this.powerHit(b,upgraded?fx.damageUpgraded:fx.damage);
     if(id==='monkey_boost' || id==='time_stop')this.activePowers.push({id,until:secs(upgraded?fx.durationUpgraded:fx.duration)});
-    if(id==='thrive')this.thrive={untilRound:this.round+1,mult:upgraded?fx.cashMultUpgraded:fx.cashMult};
+    if(id==='thrive'){this.thrive={untilRound:this.round+1,mult:upgraded?fx.cashMultUpgraded:fx.cashMult};this.activePowers=this.activePowers.filter(p=>p.id!=='thrive');this.activePowers.push({id,until:Infinity});}
     if(id==='cash_drop')this.cash+=fx.cash; // uncertain: crate collection is instant; not income, so mode multipliers do not apply
     if(POWER_BY_ID[id].kind==='trap') {
       const spot=this.trackSpot(point!)!;
       const left=id==='road_spikes'?(upgraded?fx.popsUpgraded:fx.pops):id==='glue_trap'?fx.bloons:id==='moab_mine'?fx.targets:(upgraded?fx.bloonsUpgraded:fx.bloons);
-      this.powerTraps.push({id,...spot,left,hit:new Set()});
+      this.powerTraps.push({id,...spot,left,upgraded,hit:new Map()});
     }
     if(POWER_UNIT_R[id]) {
       const range=id==='energizing_totem'?fx.range:id==='banana_farmer'?(upgraded?fx.rangeUpgraded:fx.range):id==='banana_farmer_pro'?80:0;
-      this.powerUnits.push({id,x:point!.x,y:point!.y,r:POWER_UNIT_R[id],range,untilRound:id==='energizing_totem'?this.round+fx.rounds:Infinity});
+      this.powerUnits.push({id,x:point!.x,y:point!.y,r:POWER_UNIT_R[id],range,untilRound:id==='energizing_totem'?this.round+fx.rounds-(this.roundActive?1:0):Infinity});
     }
     return true;
   }
+  /** Power damage: hits frozen/lead/camo, and MOAB-class damage stops at the outer layer (no spill into children). */
+  private powerHit(b:Bloon,damage:number) {
+    this.applyHit(b,this.source({...TOWERS.dart.base,...this.posOf(b),damage:this.isMoab(b)?Math.min(damage,b.hp):damage,pierce:1,damageType:'normal',camo:true,frozen:true,lead:true}));
+  }
+  // ponytail: speed powers scale main attacks only; ability/secondary timers, hero attacks and aircraft movement ignore them.
   /** Attack-speed factor from powers: Monkey Boost x2, Time Stop x0.6, Energizing Totem cooldown x0.75. Paragons are exempt. */
   private powerAttackSpeed(t:Tower) {
     if(t.degree)return 1;
@@ -1040,13 +1045,15 @@ export class Sim {
       if(Math.hypot(u.x-banana.x,u.y-banana.y)<=u.range)this.collectBanana(banana);
     for(const trap of this.powerTraps)for(const b of [...this.bloons]) {
       if(trap.left<=0)break;
-      if(!this.bloons.includes(b) || (b.lane??0)!==trap.lane || Math.abs(b.dist-trap.dist)>10 || trap.hit.has(b.id))continue;
-      const moab=this.isMoab(b),p=this.posOf(b);
-      if(trap.id==='road_spikes')this.applyHit(b,this.source({...TOWERS.dart.base,...p,damage:1,pierce:1,damageType:'normal',camo:true}));
-      else if(trap.id==='glue_trap'){if(moab)continue;b.glue={until:this.tick+POWER_BY_ID.glue_trap.fx.duration*60,next:Infinity,layers:99,stats:{...TOWERS.glue.base,slow:POWER_BY_ID.glue_trap.fx.slow,moabSlow:1,dotDamage:0,dotMoabBonus:0}};}
-      else if(trap.id==='moab_mine'){if(!moab)continue;this.applyHit(b,this.source({...TOWERS.dart.base,...p,damage:POWER_BY_ID.moab_mine.fx.damage,pierce:1,damageType:'normal',camo:true}));}
+      const last=trap.hit.get(b.id);
+      if(!this.bloons.includes(b) || (b.lane??0)!==trap.lane || Math.abs(b.dist-trap.dist)>10 || last!==undefined && (trap.id!=='moab_mine' || this.tick-last<POWER_BY_ID.moab_mine.fx.cooldown*60))continue;
+      const moab=this.isMoab(b);
+      if(trap.id==='road_spikes')this.powerHit(b,1);
+      // uncertain: Supersize Glue Trap prose is cut off; upgraded glue also takes non-BAD MOABs.
+      else if(trap.id==='glue_trap'){if(moab && (!trap.upgraded || b.type==='bad'))continue;b.glue={until:this.tick+POWER_BY_ID.glue_trap.fx.duration*60,next:Infinity,layers:99,stats:{...TOWERS.glue.base,slow:POWER_BY_ID.glue_trap.fx.slow,moabSlow:POWER_BY_ID.glue_trap.fx.slow,dotDamage:0,dotMoabBonus:0}};}
+      else if(trap.id==='moab_mine'){if(!moab)continue;this.powerHit(b,trap.upgraded?POWER_BY_ID.moab_mine.fx.damageUpgraded:POWER_BY_ID.moab_mine.fx.damage);}
       else{if(!b.camo)continue;b.camo=false;}
-      trap.hit.add(b.id);trap.left--;
+      trap.hit.set(b.id,this.tick);trap.left--;
     }
     this.powerTraps=this.powerTraps.filter(t=>t.left>0);
   }
@@ -1076,8 +1083,8 @@ export class Sim {
       else if(banana.until<=this.tick)this.collectBanana(banana,banana.owner.tiers[2]>=2?0.85:banana.owner.tiers[2]>=1?0.5:0);
     }
   }
-  private credit(amount:number) {
-    if(this.round<=this.thrive.untilRound)amount*=this.thrive.mult;
+  private credit(amount:number,thrive=true) {
+    if(thrive && this.round<=this.thrive.untilRound)amount*=this.thrive.mult;
     // uncertain: the loan prose omits repayment fraction; half of subsequent income repays debt.
     let repayment=amount*0.5;
     for(const t of this.towers)if((t.debt??0)>0){const paid=Math.min(t.debt!,repayment);t.debt!-=paid;repayment-=paid;amount-=paid;}
@@ -1139,7 +1146,7 @@ export class Sim {
     if(kind==='loan') {
       if(!this.roundActive || this.tick-this.roundStartTick>180*60 || (t.roundUses??0)>=2 || (t.debt??0)>0)return false;
       t.roundUses=(t.roundUses??0)+1;const cash=9000*(this.villages(t).some(v=>v.tiers[2]>=4)?1.2:1);
-      this.credit(cash);if(t.tiers[1]===4)t.debt=cash;
+      this.credit(cash,false);if(t.tiers[1]===4)t.debt=cash;
     }
     if(kind==='arms') {
       const active=this.towers.filter(v=>v.type==='village' && v.ability?.kind==='arms' && v.abilityUntil>this.tick);
@@ -1380,7 +1387,7 @@ export class Sim {
       for (const t of this.towers) {
         if (t.auraSlow < 1 && this.canHit(b, t) && Math.hypot(this.posOf(b).x - t.x, this.posOf(b).y - t.y) <= t.range) slow = Math.min(slow, this.isMoab(b) ? t.moabSlow : t.auraSlow);
       }
-      b.dist += BLOONS[b.type].speed * (b.spd ?? 1) * DT * (this.powerActive('time_stop') ? POWER_BY_ID.time_stop.fx.bloonSpeedMult : 1) * (b.type === 'bad' ? 1 : Math.max(b.frozenUntil ?? 0, b.stunnedUntil ?? 0) > this.tick ? 0 : slow);
+      b.dist += BLOONS[b.type].speed * (b.spd ?? 1) * DT * (this.powerActive('time_stop') ? b.type === 'bad' ? POWER_BY_ID.time_stop.fx.bossSpeedMult : POWER_BY_ID.time_stop.fx.bloonSpeedMult : 1) * (b.type === 'bad' ? 1 : Math.max(b.frozenUntil ?? 0, b.stunnedUntil ?? 0) > this.tick ? 0 : slow);
       if (b.dist >= this.laneLen(b.lane)) {
         const blitz = this.towers.find(t => t.type === 'bomb' && t.tiers[2] === 5 && t.blitzRound !== this.round);
         if (blitz) {
@@ -1541,6 +1548,7 @@ export class Sim {
   private endRound(cleared: boolean) {
     roundHero(this);
     this.powerUnits=this.powerUnits.filter(u=>u.untilRound>this.round);
+    if(this.round>=this.thrive.untilRound)this.activePowers=this.activePowers.filter(p=>p.id!=='thrive');
     this.earnIncome(100 + this.round); this.supportRoundEnd();
     this.roundActive = false; if (cleared) this.darts = [];
     for(const t of this.towers) {

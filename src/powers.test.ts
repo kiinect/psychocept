@@ -75,3 +75,55 @@ test('Banana Farmer collects bananas in range; Energizing Totem speeds towers an
   expect(t.powerUnits).toHaveLength(0);
   void STANDARD_RULES;
 });
+
+test('storm and MOAB mine stop at the outer MOAB layer; mine re-arms after 1s and keeps upgraded damage', () => {
+  const s = sim(); s.bloons.push(bloon(1, 'moab', 400)); s.usePower('super_monkey_storm');
+  expect(s.bloons.filter(b => b.type === 'ceramic')).toHaveLength(4);
+  expect(s.bloons.every(b => b.hp > 0 && b.hp === (b.type === 'ceramic' ? 10 : b.hp))).toBe(true);
+  const m = sim(); m.usePower('moab_mine', { x: 500, y: 150 }, true);
+  const zomg = bloon(2, 'zomg', 500, { hp: 20000, stunnedUntil: 1e9 } as Partial<Bloon>); m.bloons.push(zomg);
+  m.step(); expect(zomg.hp).toBe(20000 - 6250);
+  m.step(); expect(zomg.hp).toBe(20000 - 6250);
+  for (let i = 0; i < 60; i++) m.step(); expect(zomg.hp).toBe(20000 - 12500);
+});
+
+test('upgraded glue trap glues MOABs but not BADs; Time Stop slows BADs to 30%', () => {
+  const g = sim(); g.usePower('glue_trap', { x: 500, y: 150 }, true);
+  const moab = bloon(1, 'moab', 500), bad = bloon(2, 'bad', 500, { hp: 20000 }); g.bloons.push(moab, bad); g.step();
+  expect(moab.glue).toBeDefined(); expect(bad.glue).toBeUndefined();
+  const s = sim(), t = sim(); t.usePower('time_stop');
+  for (const x of [s, t]) { x.bloons.push(bloon(1, 'bad', 0, { hp: 20000 })); for (let i = 0; i < 60; i++) x.step(); }
+  expect(t.bloons[0].dist).toBeCloseTo(s.bloons[0].dist * 0.3, 1);
+});
+
+test('Thrive covers the current and next round, shows a badge, and skips IMF loan principal', () => {
+  const s = sim(); s.startRound([{ type: 'red', n: 1, gap: 1 }]); const r = s.round; s.usePower('thrive');
+  expect(s.activePowers.map(p => p.id)).toContain('thrive');
+  for (const [round, gain] of [[r, 125], [r + 1, 125], [r + 2, 100]] as const) { s.round = round; const c = s.cash; s.earnIncome(100); expect(s.cash - c).toBeCloseTo(gain); }
+  s.round = r + 1; s.spawnQ = []; s.bloons = []; s.step();
+  expect(s.activePowers.map(p => p.id)).not.toContain('thrive');
+  const l = sim(); l.addTower(100, 250, 'farm'); for (let i = 0; i < 4; i++) l.upgrade(0, 1);
+  l.startRound([{ type: 'red', n: 1, gap: 1 }]); l.usePower('thrive'); const t = l.towers[0]; l.tick = t.abilityReady; const c = l.cash;
+  expect(l.activate(0)).toBe(true); expect(l.cash - c).toBe(t.debt);
+});
+
+test('Energizing Totem speeds towers in range only and lasts exactly five rounds counting the current one', () => {
+  const shots = (tx: number) => {
+    const s = sim(); s.addTower(tx, 120, 'dart'); expect(s.usePower('energizing_totem', { x: 300, y: 90 })).toBe(true);
+    s.bloons.push(bloon(1, 'red', tx, { hp: 1e9, stunnedUntil: 1e9 } as Partial<Bloon>)); for (let i = 0; i < 600; i++) s.step(); return s.towers[0].shots;
+  };
+  const near = shots(300), far = shots(700); expect(near).toBeGreaterThan(far * 1.25);
+  const t = sim(); t.startRound([{ type: 'red', n: 1, gap: 1 }]); t.usePower('energizing_totem', { x: 300, y: 250 });
+  const finish = () => { t.spawnQ = []; t.bloons = []; t.step(); };
+  finish(); for (let r = 0; r < 3; r++) { t.startRound([{ type: 'red', n: 1, gap: 1 }]); finish(); }
+  expect(t.powerUnits).toHaveLength(1); // 4 rounds done
+  t.startRound([{ type: 'red', n: 1, gap: 1 }]); finish(); expect(t.powerUnits).toHaveLength(0);
+});
+
+test('power units validate their own footprint: no track, blocked areas, hero overlap, or off-board pontoons', () => {
+  const s = sim(); s.placeHero(400, 250, 'quincy');
+  expect(s.canUsePower('energizing_totem', { x: 400, y: 252 })).toBe(false);
+  expect(s.canPlaceHero(300, 250, 'quincy', true)).toBe(true); s.usePower('energizing_totem', { x: 300, y: 250 });
+  expect(s.canPlaceHero(300, 250, 'quincy', true)).toBe(false);
+  expect(s.canUsePower('banana_farmer', { x: 300, y: 177 })).toBe(false); // 8-radius unit touches the track buffer, a dart (6) would not
+});
