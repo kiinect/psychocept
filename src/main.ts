@@ -3,11 +3,14 @@ import { Sim, DT, roundGroups, type Difficulty } from './sim';
 import { canUpgrade, TOWERS, type TowerKind } from './towers';
 import { fitWorld, worldPoint } from './viewport';
 import './style.css';
+import { heroControls } from './hero-ui';
+import { HEROES, type HeroKind } from './heroes';
 import { DEFAULT_MAP } from './map';
 
 const { path, water } = DEFAULT_MAP;
 let sim = new Sim(path, 'medium', water);
 let selected = -1, placing: TowerKind | null = null, speed = 1, aiming = false;
+let placingHero: HeroKind | null = null;
 const root = document.getElementById('app')!;
 root.innerHTML = `
   <header><h1>Monkey Pop TD</h1><output id="hud" aria-label="Game status"></output></header>
@@ -31,12 +34,15 @@ const shop = element<HTMLElement>('shop');
 const shopButtons = (Object.keys(TOWERS) as TowerKind[]).map(type => {
   const button = document.createElement('button');
   button.addEventListener('click', () => {
-    aiming = false; placing = placing === type ? null : type;
+    placingHero = null; heroUI.cancel(); aiming = false; placing = placing === type ? null : type;
     hint.textContent = placing ? `Click on ${TOWERS[type].waterOnly ? 'water' : 'grass'} to place your ${TOWERS[type].name}. Escape cancels.` : 'Placement cancelled.';
     refresh();
   });
   shop.appendChild(button); return { type, button };
 });
+const heroUI = heroControls(root.querySelector('aside')!, () => sim, () => selected, kind => {
+  placingHero = kind; placing = null; aiming = false; refresh();
+}, message => { hint.textContent = message; });
 const start = element<HTMLButtonElement>('start');
 const towerSelect = element<HTMLSelectElement>('tower-select');
 const difficulty = element<HTMLSelectElement>('difficulty');
@@ -85,10 +91,10 @@ target.addEventListener('click', () => { sim.cycleTargeting(selected); refresh()
 sell.addEventListener('click', () => { if (sim.sell(selected)) selected = -1; refresh(); });
 towerSelect.addEventListener('change', () => { selected = Number(towerSelect.value); placing = null; aiming = false; refresh(); });
 difficulty.addEventListener('change', () => {
-  sim = new Sim(path, difficulty.value as Difficulty, water); selected = -1; placing = null; aiming = false; acc = 0; refresh();
+  sim = new Sim(path, difficulty.value as Difficulty, water); placingHero = null; heroUI.cancel(); selected = -1; placing = null; aiming = false; acc = 0; refresh();
 });
 addEventListener('keydown', e => {
-  if (e.key === 'Escape') { placing = null; aiming = false; refresh(); }
+  if (e.key === 'Escape') { placingHero = null; heroUI.cancel(); placing = null; aiming = false; refresh(); }
   if (e.code === 'Space' && (e.target === document.body || e.target === app.canvas)) { e.preventDefault(); beginRound(); }
 });
 app.canvas.addEventListener('pointerdown', e => {
@@ -98,6 +104,11 @@ app.canvas.addEventListener('pointerdown', e => {
   if (x < 0 || y < 0 || x > 960 || y > 540) return;
   if (aiming) {
     if (sim.setTarget(selected, { x, y })) { aiming = false; hint.textContent = 'Target point updated.'; }
+    refresh(); return;
+  }
+  if (placingHero) {
+    if (sim.placeHero(x, y, placingHero)) { placingHero = null; heroUI.cancel(); hint.textContent = 'Hero placed. Gain XP by completing rounds.'; }
+    else hint.textContent = 'Choose a valid location clear of the track, water restrictions, and towers.';
     refresh(); return;
   }
   const hit = sim.towers.findIndex(t => Math.hypot(t.x - x, t.y - y) < 16);
@@ -110,14 +121,15 @@ app.canvas.addEventListener('pointerdown', e => {
 });
 let lastOptions = '', lastAim = '';
 function refresh() {
+  heroUI.refresh();
   hud.textContent = `$${sim.cash.toFixed(0)} · Lives ${sim.lives} · Round ${sim.round}${sim.gameOver ? ' · Game over' : ''}`;
   shopButtons.forEach(({ type, button }) => {
     button.textContent = `${placing === type ? 'Cancel' : TOWERS[type].name} · $${sim.price(TOWERS[type].cost)}`;
     button.disabled = sim.gameOver || (placing !== type && sim.cash < sim.price(TOWERS[type].cost));
     button.setAttribute('aria-pressed', String(placing === type));
   });
-  field.classList.toggle('placing', placing !== null || aiming);
-  difficulty.disabled = sim.roundActive || sim.towers.length > 0 || sim.round > (sim.difficulty === 'impoppable' ? 5 : 0);
+  field.classList.toggle('placing', placing !== null || placingHero !== null || aiming);
+  difficulty.disabled = sim.roundActive || !!sim.hero || sim.towers.length > 0 || sim.round > (sim.difficulty === 'impoppable' ? 5 : 0);
   start.disabled = sim.roundActive || sim.gameOver || !roundGroups(sim.round + 1).length;
   start.textContent = sim.gameOver ? 'Game over' : sim.roundActive ? `Round ${sim.round} running` : `Start round ${sim.round + 1}`;
   const options = sim.towers.map((t, i) => `<option value="${i}">${TOWERS[t.type].name} ${i + 1} · ${t.tiers.join('-')}</option>`).join('');
@@ -142,8 +154,8 @@ function refresh() {
   upgradeButtons.forEach((button, path) => {
     const next = TOWERS[t.type].paths[path][t.tiers[path]];
     const allowed = canUpgrade(t.tiers, path);
-    button.textContent = next ? `Path ${path + 1}: ${next.name} · $${sim.price(next.cost)}${allowed ? '' : ' · Locked'}` : `Path ${path + 1}: ${TOWERS[t.type].paths[path][4].name} · Max`;
-    button.disabled = sim.gameOver || !allowed || !next || sim.cash < sim.price(next.cost);
+    button.textContent = next ? `Path ${path + 1}: ${next.name} · $${sim.towerPrice(t.type, next.cost, t, t.tiers[path] + 1)}${allowed ? '' : ' · Locked'}` : `Path ${path + 1}: ${TOWERS[t.type].paths[path][4].name} · Max`;
+    button.disabled = sim.gameOver || !allowed || !next || sim.cash < sim.towerPrice(t.type, next.cost, t, t.tiers[path] + 1);
   });
 }
 const COL: Record<string, number> = { red: 0xee3333, blue: 0x3399ff, green: 0x33cc33, yellow: 0xeeee33, pink: 0xff88bb, black: 0x222222, white: 0xeeeeee, purple: 0x9933cc, lead: 0x888899, zebra: 0xcccccc, rainbow: 0xff9900, ceramic: 0xbb8855, moab: 0x3366cc };
@@ -174,6 +186,13 @@ app.ticker.add(t => {
     g.circle(t.x, t.y, 12).fill(TOWERS[t.type].color).circle(t.x, t.y + 3, 7).fill(0xe2b67b);
     g.circle(t.x - 4, t.y - 2, 2).circle(t.x + 4, t.y - 2, 2).fill(0x201a16);
     if (tower === chosen) g.circle(t.x, t.y, 16).stroke({ width: 2, color: 0xffdf66 });
+  }
+  if (sim.hero) {
+    const h = sim.hero;
+    g.poly([h.x, h.y - 13, h.x + 12, h.y, h.x, h.y + 13, h.x - 12, h.y], true).fill(HEROES[h.kind].color).stroke({ color: 0xffdf66, width: 2 });
+    g.circle(h.x - 4, h.y - 1, 2).circle(h.x + 4, h.y - 1, 2).fill(0x172b21);
+    for (const asset of h.assets) if (!asset.tower) g.rect(asset.x - 4, asset.y - 4, 8, 8).fill(0xeed34e);
+    for (const zone of h.zones) g.circle(zone.point.x, zone.point.y, 9).stroke({ color: 0x9ef2cc, width: 2 });
   }
   for (const d of sim.darts) g.circle(d.x, d.y, d.kind === 'bomb' || d.kind === 'boomerang' || d.bounce ? 5 : 2).fill(d.kind === 'glue' ? 0xeed34e : d.kind === 'bomb' ? 0x222222 : 0xffffff);
   for (const e of sim.effects) g.circle(e.x, e.y, e.radius).stroke({ color: e.kind === 'ice' ? 0xbbeeff : 0xffdd77, width: 2, alpha: e.life / 0.2 });
