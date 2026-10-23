@@ -4,6 +4,7 @@ import { canUpgrade, TOWERS, type TowerKind } from './towers';
 import { fitWorld, worldPoint } from './viewport';
 import './style.css';
 import { DEFAULT_MAP } from './map';
+import { initAudio } from './audio';
 
 const { path, water } = DEFAULT_MAP;
 let sim = new Sim(path, 'medium', water);
@@ -152,6 +153,7 @@ refresh();
 app.ticker.add(t => {
   acc = Math.min(acc + Math.min(t.deltaMS / 1000, 0.25) * speed, 0.75);
   while (acc >= DT) { sim.step(); acc -= DT; }
+  initAudio(sim);
   g.clear().rect(0, 0, 960, 540).fill(0x4a8f3c).poly(path.flatMap(p => [p.x, p.y]), false).stroke({ width: 40, color: 0xc9a66b });
   const chosen = sim.towers[selected];
   for (const w of water) g.rect(w.x, w.y, w.width, w.height).fill(0x388fc1).stroke({ color: 0x92d3ee, width: 2 });
