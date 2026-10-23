@@ -5,6 +5,7 @@
 - Create an account and sign in with a username and password, without email.
 - Accept usernames without regard to capitalization and explain password recovery limits.
 - Preserve cloud saves, guest play and separate progress for each account.
+- Restore cloud preferences on a fresh browser without treating loaded audio settings as new local edits.
 
 Previous email accounts remain separate. Create a username account to use the new flow.
 

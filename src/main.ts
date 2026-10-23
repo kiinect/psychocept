@@ -199,6 +199,8 @@ function syncAudio() {
   for (const [label, value, key] of [['Sound effects volume', savedSettings.volume, 'volume'], ['Music volume', savedSettings.music, 'music']] as const) {
     const input = audioPanel?.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
     if (!input) continue;
+    // Apply cloud/guest audio to the audio listeners without recording a new user edit.
+    input.oninput = null;
     input.value = String(Math.round(value * 100)); input.dispatchEvent(new Event('input'));
     input.oninput = () => changeSetting(key, Number(input.value) / 100);
   }

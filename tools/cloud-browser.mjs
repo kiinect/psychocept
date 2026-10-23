@@ -29,9 +29,9 @@ await context.addInitScript(() => {
   // Fixture data only: no real sessions or credentials are accessed by this test.
   localStorage.setItem('mpt.profile', JSON.stringify({ v: 2, data: { xp: 5, rank: 1, mm: 10 } }));
 });
-await context.route('https://cloud-test.supabase.co/**', async route => {
+const respond = async route => {
   const url = new URL(route.request().url()), request = route.request();
-  const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*' };
+  const headers = { 'Content-Type': 'application/json', 'X-Supabase-Api-Version': '2024-01-01', 'Access-Control-Expose-Headers': 'X-Supabase-Api-Version', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*' };
   if (offline) { await route.abort('internetdisconnected'); return; }
   let body;
   if (url.pathname.endsWith('/signup') || url.pathname.endsWith('/token')) {
@@ -54,7 +54,8 @@ await context.route('https://cloud-test.supabase.co/**', async route => {
     }
   } else throw Error(`Unexpected fake request: ${url.pathname}`);
   await route.fulfill({ status: 200, headers, body: JSON.stringify(body) });
-});
+};
+await context.route('https://cloud-test.supabase.co/**', respond);
 const cloud = await context.newPage(); watch(cloud);
 await cloud.goto(process.env.CLOUD_URL ?? 'http://127.0.0.1:5197');
 await cloud.getByRole('button', { name: 'Tap to start', exact: true }).click(); await cloud.locator('#account-open').click();
@@ -109,7 +110,9 @@ await cloud.waitForFunction(() => document.querySelector('#account-message')?.te
 await cloud.getByLabel('Username', { exact: true }).fill('Player');
 await cloud.getByLabel('Password', { exact: true }).fill('fake-test-password');
 await cloud.locator('#account-submit').click();
-await cloud.waitForFunction(() => document.querySelector('#account-message')?.textContent.includes('already taken'));
+await cloud.waitForFunction(() => document.querySelector('#account-message')?.textContent.includes('already taken')).catch(async error => {
+  console.log({ signupRequests: signup, message: await cloud.locator('#account-message').textContent() }); throw error;
+});
 await cloud.locator('#account-signin-mode').click();
 await cloud.getByLabel('Password', { exact: true }).fill('wrong-password'); await cloud.locator('#account-submit').click();
 await cloud.waitForFunction(() => document.querySelector('#account-message')?.textContent === 'Username or password is incorrect.');
@@ -121,6 +124,22 @@ await cloud.waitForFunction(() => document.querySelector('#account-message')?.te
 await cloud.locator('#account-guest').click();
 assert.equal(await cloud.locator('.rank-badge').textContent(), '1');
 assert.equal(await cloud.locator('.mm-pill').textContent(), '10');
+// A clean device must hydrate older cloud preferences without creating local
+// audio edits or showing a conflict with untouched defaults.
+remote = remote.filter(r => r.slot_key !== 'mpt.settings');
+remote.push({ slot_key: 'mpt.settings', version: 1, data: { volume: 0.8, music: 0.5, fastForward: false, autoplay: false, showRange: true, reducedMotion: true }, deleted: false, updated_at: new Date(Date.now() - 10000).toISOString() });
+const fresh = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+await fresh.route('https://cloud-test.supabase.co/**', respond);
+const otherDevice = await fresh.newPage(); watch(otherDevice);
+await otherDevice.goto(process.env.CLOUD_URL ?? 'http://127.0.0.1:5197');
+await otherDevice.getByRole('button', { name: 'Tap to start', exact: true }).click(); await otherDevice.locator('#account-open').click();
+await otherDevice.getByLabel('Username', { exact: true }).fill('Player'); await otherDevice.getByLabel('Password', { exact: true }).fill('fake-test-password'); await otherDevice.locator('#account-submit').click();
+await otherDevice.waitForFunction(() => document.querySelector('#account-message')?.textContent.startsWith('Signed in'));
+assert.equal(await otherDevice.evaluate(() => JSON.parse(localStorage.getItem('mpt.settings') ?? 'null')?.data.reducedMotion), true);
+assert.equal(await otherDevice.locator('#account-conflicts').textContent(), '');
+assert.equal(remote.find(r => r.slot_key === 'mpt.settings').data.reducedMotion, true);
+await fresh.close();
+console.log('PASS fresh browser restores cloud preferences without false conflicts or overwrites');
 // Direct game links are an existing supported entry point. Keep this check focused on saves.
 await cloud.goto((process.env.CLOUD_URL ?? 'http://127.0.0.1:5197') + '/?map=monkey_meadow&mode=easy');
 await cloud.setViewportSize({ width: 960, height: 600 });
@@ -140,5 +159,5 @@ await cloud.locator('#settings').click(); await cloud.locator('[data-action="bac
 await cloud.locator('[data-action="home"]').click();
 await cloud.locator('[data-action="loadRun"]').waitFor();
 assert.equal(errors.length, 0, errors.join('\n'));
-console.log(JSON.stringify({ result: 'PASS', checks: ['guest fallback', 'immediate username signup', 'duplicate username', 'wrong password', 'case-insensitive sign-in', 'conflict selection', 'cloud hydration', 'settings autosave', 'offline retry', 'responsive dialog 320/768/1024/1440', 'sign-out isolation', 'guest round autosave and Continue', 'modal Escape/focus'], writes, pageErrors: errors }, null, 2));
+console.log(JSON.stringify({ result: 'PASS', checks: ['guest fallback', 'immediate username signup', 'duplicate username', 'wrong password', 'case-insensitive sign-in', 'conflict selection', 'cloud hydration', 'fresh browser preferences', 'settings autosave', 'offline retry', 'responsive dialog 320/768/1024/1440', 'sign-out isolation', 'guest round autosave and Continue', 'modal Escape/focus'], writes, pageErrors: errors }, null, 2));
 await browser.close();

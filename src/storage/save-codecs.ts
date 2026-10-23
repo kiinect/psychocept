@@ -1,4 +1,4 @@
-import { profileSlot, settingsSlot, runSlot, defaultSettings, restoreSim, type Profile } from '../meta/profile';
+import { profileSlot, settingsSlot, runSlot, defaultSettings, restoreSim, type Profile, type Settings } from '../meta/profile';
 import { contextSlot, validRunContext } from '../meta/run-context';
 import { MAPS } from '../maps/maps';
 import { createGame, MODES } from '../modes/modes';
@@ -37,7 +37,7 @@ const profileMeaningful = (p: Profile) => p.xp > 0 || p.mm > 0 || p.wins.length 
   || p.achievements.length > 0 || Object.values(p.powers).some(n => n > 0) || Object.values(p.stats).some(n => n > 0);
 export const saveCodecs: Record<string, SaveCodec> = {
   'mpt.profile': codec(profileSlot(memoryKV()), validProfile, profileMeaningful),
-  'mpt.settings': codec(settingsSlot(memoryKV()), validSettings, s => JSON.stringify(s) !== JSON.stringify(defaultSettings())),
+  'mpt.settings': codec(settingsSlot(memoryKV()), validSettings, s => Object.entries(defaultSettings()).some(([key, value]) => s[key as keyof Settings] !== value)),
   'mpt.run': codec(runSlot(memoryKV()), validRun, r => r !== null),
   'mpt.run.ui': codec(contextSlot(memoryKV()), r => r === null || validRunContext(r), r => r !== null),
 };

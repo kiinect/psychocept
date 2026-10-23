@@ -20,3 +20,8 @@ it('accepts legacy profiles and validates settings and Continue bookkeeping', ()
   expect(saveCodecs['mpt.settings'].decode({ v: 1, data: { volume: 10 } })).toBeNull();
   expect(saveCodecs['mpt.run.ui'].decode({ v: 1, data: { mode: 'easy', hero: 'unknown', savedAt: 2, rewardedRound: 1, recorded: false } })).toBeNull();
 });
+it('does not treat reordered default settings as meaningful guest progress', () => {
+  const defaults = { autoplay: false, fastForward: false, music: 0.5, reducedMotion: false, showRange: true, volume: 0.8 };
+  expect(saveCodecs['mpt.settings'].meaningful(defaults)).toBe(false);
+  expect(saveCodecs['mpt.settings'].meaningful({ ...defaults, reducedMotion: true })).toBe(true);
+});

@@ -5,11 +5,12 @@ Latest change: the owner requested username/password accounts without email.
 mapped to Supabase internal identities. Supabase retains password handling,
 rate limits and save RLS. No email recovery; no existing identity is changed.
 Version 1.2.0 is prepared on `lane/supabase`; production still serves 1.1.0.
-Local tests/build/browser checks pass. Publishing is pending the owner disabling
-Confirm email in Auth → Sign In / Providers; MCP has no Auth settings mutation,
-and the separate dashboard session is signed out. Verify public Auth settings
-show `mailer_autoconfirm: true` before any real username signup or deployment.
-No real username signup has been attempted yet. Keep source PR #1 draft until
+The owner disabled Confirm email; the public Auth settings were verified to show
+`mailer_autoconfirm: true`. Real browser signup and cloud autosave passed. The
+fresh-browser check found programmatic audio hydration recording local edits;
+this is fixed, along with order-dependent comparison of default settings.
+There are 1,028 passing unit tests. Final browser checks and fixture cleanup are
+in progress before publication. Keep source PR #1 draft until
 independent review; the owner has already authorized pushing and publishing.
 
 2026-10-23: `lane/supabase` adds optional email/password accounts, local-first autosave, account caches, conflict choices, strict save decoding, and an owner-only SQL migration; see `supabase/README.md`. Verified: 1,015 Vitest tests, tsc, Vite build, isolated Playwright flows, and PostgreSQL RLS assertions. Auth sessions are memory-only (refresh requires sign-in).
