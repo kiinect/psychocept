@@ -1,69 +1,36 @@
-// Original cartoon map art as a flat shape list, rendered by PixiJS (game) and SVG (map-select thumbnails).
-import { Texture, type Graphics } from 'pixi.js';
+// Map art entry points: the painted background (Pixi sprite in the game, image in map-select cards) with a flat
+// polygon fallback when there is no DOM (tests, headless tools).
+import { Sprite, Texture, type Container } from 'pixi.js';
+import { nestedAreas } from '../sim';
 import type { MapDef } from './maps';
-import { mapCanvas } from './paint';
-
-export type Shape =
-  | { t: 'rect'; x: number; y: number; w: number; h: number; fill: number; rx?: number; stroke?: number; sw?: number; a?: number }
-  | { t: 'circle'; x: number; y: number; r: number; fill: number; a?: number }
-  | { t: 'ellipse'; x: number; y: number; rx: number; ry: number; fill: number; a?: number }
-  | { t: 'line'; pts: number[]; w: number; color: number };
-
-const hex = (c: number) => '#' + c.toString(16).padStart(6, '0');
-
-export function scene(map: MapDef): Shape[] {
-  const s: Shape[] = [{ t: 'rect', x: 0, y: 0, w: 960, h: 540, fill: 0x62b946 }];
-  for (let y = 0; y < 540; y += 60) s.push({ t: 'rect', x: 0, y, w: 960, h: 30, fill: 0x6cc24e });
-  for (const l of map.lanes) {
-    const pts = l.flatMap(p => [p.x, p.y]);
-    s.push({ t: 'line', pts, w: 52, color: 0x8a6a3c }, { t: 'line', pts, w: 44, color: 0xd9b36f }, { t: 'line', pts, w: 26, color: 0xe6c685 });
-  }
-  for (const w of map.water) s.push(
-    { t: 'rect', x: w.x - 6, y: w.y - 6, w: w.width + 12, h: w.height + 12, fill: 0xe9d9a0, rx: 22 },
-    { t: 'rect', x: w.x, y: w.y, w: w.width, h: w.height, fill: 0x3da5d9, rx: 16 },
-    { t: 'rect', x: w.x + 8, y: w.y + 8, w: w.width - 16, h: w.height - 16, fill: 0x56bde8, rx: 12, a: 0.6 });
-  for (const w of map.water) for (let x = w.x + 24; x < w.x + w.width - 20; x += 46) for (let y = w.y + 22; y < w.y + w.height - 14; y += 40)
-    s.push({ t: 'line', pts: [x - 8, y, x - 3, y - 3, x + 3, y + 3, x + 8, y], w: 2, color: 0xd5f1fb });
-  for (const d of map.deco) {
-    if (d.kind === 'tree') s.push({ t: 'ellipse', x: d.x + 4, y: d.y + 18, rx: 20, ry: 7, fill: 0x3f8a2c, a: 0.5 }, { t: 'rect', x: d.x - 4, y: d.y + 2, w: 8, h: 16, fill: 0x7a4a24 },
-      { t: 'circle', x: d.x, y: d.y - 4, r: 19, fill: 0x2f8f3a }, { t: 'circle', x: d.x - 7, y: d.y - 8, r: 11, fill: 0x45b04a }, { t: 'circle', x: d.x + 8, y: d.y - 2, r: 9, fill: 0x45b04a });
-    else if (d.kind === 'rock') s.push({ t: 'ellipse', x: d.x, y: d.y + 3, rx: 13, ry: 9, fill: 0x7b8088 }, { t: 'ellipse', x: d.x - 2, y: d.y, rx: 10, ry: 7, fill: 0xa4a9b0 });
-    else if (d.kind === 'bush') s.push({ t: 'circle', x: d.x, y: d.y, r: 11, fill: 0x3d9d3f }, { t: 'circle', x: d.x + 6, y: d.y + 2, r: 8, fill: 0x56b955 });
-    else s.push({ t: 'circle', x: d.x, y: d.y, r: 4, fill: 0xffe14d }, { t: 'circle', x: d.x, y: d.y, r: 1.6, fill: 0xf08a24 });
-  }
-  return s;
-}
+import { MARGIN, mapCanvas } from './paint';
 
 const tex = new Map<string, Texture>(), thumbs = new Map<string, string>();
+const FILL = { water: '#3da5d9', land: '#7cc35a', blocked: '#2f6a2a' } as const;
+const pts = (poly: { x: number; y: number }[]) => poly.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
 
-/** Painted background (cached texture, rendered once per map); falls back to the flat shape list without a DOM. */
-export function drawScene(g: Graphics, map: MapDef) {
-  g.clear();
-  const cv = mapCanvas(map);
-  if (cv) {
-    let t = tex.get(map.id); if (!t) tex.set(map.id, t = Texture.from(cv));
-    g.rect(0, 0, 960, 540).fill({ texture: t }); return;
-  }
-  for (const s of scene(map)) {
-    if (s.t === 'rect') { (s.rx ? g.roundRect(s.x, s.y, s.w, s.h, s.rx) : g.rect(s.x, s.y, s.w, s.h)).fill({ color: s.fill, alpha: s.a ?? 1 }); }
-    else if (s.t === 'circle') g.circle(s.x, s.y, s.r).fill({ color: s.fill, alpha: s.a ?? 1 });
-    else if (s.t === 'ellipse') g.ellipse(s.x, s.y, s.rx, s.ry).fill({ color: s.fill, alpha: s.a ?? 1 });
-    else g.poly(s.pts, false).stroke({ width: s.w, color: s.color, join: 'round', cap: 'round' });
-  }
+/** World-space rectangle the painted background covers (play area plus margin), in map units. */
+export const sceneRect = (m: MapDef) => ({ x: -MARGIN.x, y: -MARGIN.y, w: m.width + 2 * MARGIN.x, h: m.height + 2 * MARGIN.y });
+
+/** Put the painted background into `layer` (cached texture per map). Without a DOM the layer is left empty. */
+export function drawScene(layer: Container, map: MapDef) {
+  layer.removeChildren();
+  const cv = mapCanvas(map); if (!cv) return;
+  let t = tex.get(map.id); if (!t) tex.set(map.id, t = Texture.from(cv));
+  const r = sceneRect(map), s = new Sprite(t);
+  s.x = r.x; s.y = r.y; s.width = r.w; s.height = r.h; layer.addChild(s);
 }
 
+/** Map-select thumbnail: the painted map cropped to the play area, or flat polygons without a DOM. */
 export function sceneSvg(map: MapDef): string {
-  const cv = mapCanvas(map, 0.5);
+  const view = `0 0 ${map.width} ${map.height}`;
+  const cv = mapCanvas(map, 0.35);
   if (cv) {
     let u = thumbs.get(map.id); if (!u) thumbs.set(map.id, u = cv.toDataURL('image/jpeg', 0.82));
-    return `<svg viewBox="0 0 960 540" aria-hidden="true"><image href="${u}" width="960" height="540"/></svg>`;
+    const r = sceneRect(map);
+    return `<svg viewBox="${view}" aria-hidden="true"><image href="${u}" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" preserveAspectRatio="none"/></svg>`;
   }
-  const body = scene(map).map(s => {
-    const o = 'a' in s && s.a !== undefined ? ` opacity="${s.a}"` : '';
-    if (s.t === 'rect') return `<rect x="${s.x}" y="${s.y}" width="${s.w}" height="${s.h}" rx="${s.rx ?? 0}" fill="${hex(s.fill)}"${o}/>`;
-    if (s.t === 'circle') return `<circle cx="${s.x}" cy="${s.y}" r="${s.r}" fill="${hex(s.fill)}"${o}/>`;
-    if (s.t === 'ellipse') return `<ellipse cx="${s.x}" cy="${s.y}" rx="${s.rx}" ry="${s.ry}" fill="${hex(s.fill)}"${o}/>`;
-    return `<polyline points="${s.pts.join(' ')}" fill="none" stroke="${hex(s.color)}" stroke-width="${s.w}" stroke-linejoin="round" stroke-linecap="round"/>`;
-  }).join('');
-  return `<svg viewBox="0 0 960 540" aria-hidden="true">${body}</svg>`;
+  const body = [...nestedAreas(map)].reverse().map(a => `<polygon points="${pts(a.poly)}" fill="${FILL[a.kind]}"/>`).join('')
+    + map.track.map(t => `<polygon points="${pts(t)}" fill="#c9a36b" stroke="#5a4a32" stroke-width="1"/>`).join('');
+  return `<svg viewBox="${view}" aria-hidden="true"><rect x="0" y="0" width="${map.width}" height="${map.height}" fill="${FILL.land}"/>${body}</svg>`;
 }

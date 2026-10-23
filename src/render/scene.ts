@@ -5,6 +5,10 @@ import type { TowerStats } from '../towers/types';
 import { HEROES } from '../heroes';
 import { BLOONS, type Sim, type Bloon, type Pt } from '../sim';
 
+/** Sprite sizes are in world units. The world is now the real map in BTD6 units (300x230), so sprites authored for the old
+ * 960-wide world scale by K; a tower sprite is ~23 units, about twice a dart's 6-unit footprint radius, like the real game. */
+export const K = 0.55, TOWER_W = 42 * K;
+
 /** Minimal display contract: the update path can run with mock textures, without a renderer. */
 export interface Visual {
   x: number; y: number; width: number; height: number; rotation: number;
@@ -129,7 +133,7 @@ export class SceneAdapter {
       const slot = this.bloons[i];
       if (slot.source && slot.source.hp <= 0) {
         popX = slot.sprite.x; popY = slot.sprite.y;
-        this.burst(popX, popY, 'pop', 30);
+        this.burst(popX, popY, 'pop', 30 * K);
         this.number(popX, popY, '+1');
       }
       slot.source = undefined;
@@ -137,7 +141,7 @@ export class SceneAdapter {
     for (let i = 0; i < s.bloons.length; i++) {
       const b = s.bloons[i], slot = this.slot(this.bloons, i, 1, true), v = slot.sprite;
       this.position(b.dist, b.lane);
-      const size = BLIMP_SIZE[b.type], w = size ? size[0] * 0.55 : 18, h = size ? size[1] * 0.55 : 22;
+      const size = BLIMP_SIZE[b.type], w = (size ? size[0] * 0.55 : 18) * K, h = (size ? size[1] * 0.55 : 22) * K;
       this.set(v, bloonKeys[b.type], this.px, this.py, w, h, size ? this.angle : 0);
       // No damaged atlas variants exist; HP drives two damage tint states.
       const maxHp = (b.fortified ? BLOONS[b.type].fortifiedHp : BLOONS[b.type].hp) * s.rules.moabHpMult;
@@ -162,7 +166,7 @@ export class SceneAdapter {
       v.rotation = t.type === 'dartling' ? t.aimAngle : t.type === 'mortar' ? Math.atan2(t.targetPoint.y - t.y, t.targetPoint.x - t.x) : this.nearestAngle(t, v.x, v.y, t.aimAngle);
       v.tint = t.degree ? 0xe5b8ff : 0xffffff;
       if (slot.owner !== t) { slot.owner = t; slot.shots = t.shots; slot.punch = 0; }
-      this.punch(slot, t.shots, motion ? dt : 1, 42);
+      this.punch(slot, t.shots, motion ? dt : 1, TOWER_W);
     }
     this.hide(this.towers, s.towers.length);
     const chosen = s.towers[selected]; this.ring.visible = !!chosen && range > 0 && range < 1000;
@@ -173,17 +177,17 @@ export class SceneAdapter {
       const v = this.hero.sprite; v.visible = true; v.x = h.x; v.y = h.y;
       if (this.hero.owner !== h) { this.hero.owner = h; this.hero.shots = h.shots; this.hero.punch = 0; }
       // uncertain: heroes expose no aim angle; face the nearest detectable bloon within attack range.
-      v.rotation = this.nearestAngle(h.stats, h.x, h.y, v.rotation); this.punch(this.hero, h.shots, motion ? dt : 1, 46);
+      v.rotation = this.nearestAngle(h.stats, h.x, h.y, v.rotation); this.punch(this.hero, h.shots, motion ? dt : 1, 46 * K);
     } else if (this.hero) this.hero.sprite.visible = false;
     for (let i = 0; i < s.darts.length; i++) {
       const d = s.darts[i], slot = this.slot(this.projectiles, i, 2);
       const id = d.kind === 'projectile' ? weaponIds[d.owner?.type ?? ''] ?? 'dart' : projectileIds[d.kind] ?? 'dart';
-      this.set(slot.sprite, projKeys[id], d.x, d.y, id === 'bomb' ? 18 : 14, id === 'bomb' ? 18 : 14, Math.atan2(d.vy, d.vx));
+      this.set(slot.sprite, projKeys[id], d.x, d.y, (id === 'bomb' ? 18 : 14) * K, (id === 'bomb' ? 18 : 14) * K, Math.atan2(d.vy, d.vx));
     }
     this.hide(this.projectiles, s.darts.length);
     for (let i = 0; i < s.effects.length; i++) {
       const e = s.effects[i]; if (this.effectSeen.has(e)) continue;
-      this.effectSeen.add(e); this.burst(e.x, e.y, e.kind === 'hero' ? 'pop' : e.kind === 'ice' ? 'frost' : e.kind === 'glue' ? 'splat' : 'boom', Math.max(24, e.radius * 2));
+      this.effectSeen.add(e); this.burst(e.x, e.y, e.kind === 'hero' ? 'pop' : e.kind === 'ice' ? 'frost' : e.kind === 'glue' ? 'splat' : 'boom', Math.max(24 * K, e.radius * 2));
     }
     if (s.cash > this.cash) this.number(popX, popY - 10, `+$${Math.floor(s.cash - this.cash)}`);
     this.cash = s.cash;
@@ -215,22 +219,22 @@ export class SceneAdapter {
   }
   private updateProps(s: Sim) {
     let i = 0;
-    for (let j = 0; j < s.collectibles.length; j++) { const b = s.collectibles[j]; this.set(this.slot(this.props, i++, 2).sprite, 'proj/banana', b.x, b.y, 20); }
+    for (let j = 0; j < s.collectibles.length; j++) { const b = s.collectibles[j]; this.set(this.slot(this.props, i++, 2).sprite, 'proj/banana', b.x, b.y, 20 * K); }
     for (let j = 0; j < s.roadItems.length; j++) {
       const item = s.roadItems[j]; const point = s.posAt(item.dist, item.lane);
-      this.set(this.slot(this.props, i++, 2).sprite, item.kind === 'foam' ? 'fx/splat/0' : item.kind === 'trap' ? 'tower/engineer_monkey' : 'proj/spike', point.x, point.y, 20);
+      this.set(this.slot(this.props, i++, 2).sprite, item.kind === 'foam' ? 'fx/splat/0' : item.kind === 'trap' ? 'tower/engineer_monkey' : 'proj/spike', point.x, point.y, 20 * K);
     }
-    for (let j = 0; j < s.sentries.length; j++) { const t = s.sentries[j]; this.set(this.slot(this.props, i++, 2).sprite, 'tower/engineer_monkey', t.x, t.y, 24); }
+    for (let j = 0; j < s.sentries.length; j++) { const t = s.sentries[j]; this.set(this.slot(this.props, i++, 2).sprite, 'tower/engineer_monkey', t.x, t.y, 24 * K); }
     if (s.hero) {
-      for (let j = 0; j < s.hero.assets.length; j++) { const a = s.hero.assets[j]; if (!a.tower) this.set(this.slot(this.props, i++, 2).sprite, 'proj/spike', a.x, a.y, 18); }
-      for (let j = 0; j < s.hero.zones.length; j++) { const z = s.hero.zones[j]; this.set(this.slot(this.props, i++, 0).sprite, 'ring/ok', z.point.x, z.point.y, 24); }
+      for (let j = 0; j < s.hero.assets.length; j++) { const a = s.hero.assets[j]; if (!a.tower) this.set(this.slot(this.props, i++, 2).sprite, 'proj/spike', a.x, a.y, 18 * K); }
+      for (let j = 0; j < s.hero.zones.length; j++) { const z = s.hero.zones[j]; this.set(this.slot(this.props, i++, 0).sprite, 'ring/ok', z.point.x, z.point.y, 24 * K); }
     }
     this.hide(this.props, i);
   }
   placement(kind: 'tower' | 'hero', id: string, point: Pt | null, range: number, valid: boolean) {
     this.ghost.visible = this.ghostRing.visible = !!point;
     if (!point) return;
-    this.set(this.ghost, spriteKey(kind, kind === 'tower' ? towerIds[id] ?? id : slug(HEROES[id as keyof typeof HEROES].name)), point.x, point.y, 42);
+    this.set(this.ghost, spriteKey(kind, kind === 'tower' ? towerIds[id] ?? id : slug(HEROES[id as keyof typeof HEROES].name)), point.x, point.y, TOWER_W);
     this.ghost.alpha = 0.65; this.ghost.tint = valid ? 0xffffff : 0xff5555;
     this.set(this.ghostRing, valid ? 'ring/ok' : 'ring/bad', point.x, point.y, Math.min(range, 1000) * 2);
   }

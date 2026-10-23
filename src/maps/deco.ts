@@ -1,6 +1,7 @@
-// No-build objects: visuals sized to match the blocking circles (tree r=20, rock r=12, bush r=11, flower r=4).
+// Scenery drawers used to fill no-build polygons (tree r=20px, rock r=12px, bush r=11px, flower r=4px before scaling).
 import { type Ctx, type Rng, css, lit, drk, pick } from './util';
-import type { Deco } from './maps';
+/** A scenery item at px coordinates in the painted map (r = visual radius in px). */
+export interface Deco { x: number; y: number; r: number; kind: 'tree' | 'rock' | 'flower' | 'bush' }
 import type { Theme } from './paint';
 
 const ell = (c: Ctx, x: number, y: number, rx: number, ry: number, col: string, rot = 0) => { c.fillStyle = col; c.beginPath(); c.ellipse(x, y, rx, ry, rot, 0, 7); c.fill(); };

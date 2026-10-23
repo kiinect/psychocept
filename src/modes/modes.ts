@@ -45,7 +45,9 @@ export function rulesFor(m: ModeDef): Rules {
 export function createGame(mapId: string, modeId: string): Sim {
   const map = MAPS[mapId] ?? MAPS.monkey_meadow, m = modeById(modeId);
   const lanes = map.lanes.map(l => m.reverse ? [...l].reverse() : l);
-  const sim = new Sim(lanes[0], m.difficulty, map.water, lanes, map.blocked);
+  const sim = new Sim(lanes[0], m.difficulty, [], lanes, []);
+  sim.width = map.width; sim.height = map.height;
+  sim.polys = { track: map.track, water: map.water, land: map.land, blocked: map.blocked };
   sim.rules = rulesFor(m); sim.modeId = m.id;
   sim.round = m.startRound - 1;
   if (m.cash !== undefined) sim.cash = m.cash;

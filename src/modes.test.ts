@@ -2,38 +2,49 @@ import { test, expect } from 'vitest';
 import { Sim, BLOONS, roundGroups } from './sim';
 import { MAPS } from './maps/maps';
 import { MODES, createGame } from './modes/modes';
+import { spots } from './test-spots';
+import { inPoly } from './sim';
 
 const run = (s: Sim, ticks: number) => { for (let i = 0; i < ticks; i++) s.step(); };
 
-test('12 maps load with lanes, water and no-build obstacles clear of the track', () => {
+test('12 real map layouts: lanes run along the track polygons, no-build and track areas reject towers', () => {
   expect(Object.keys(MAPS).length).toBe(12);
   for (const m of Object.values(MAPS)) {
-    expect(m.lanes.length).toBeGreaterThan(0);
+    expect([m.width, m.height]).toEqual([300, 230]); expect(m.lanes.length).toBeGreaterThan(0);
     const s = createGame(m.id, 'medium');
-    for (const o of m.blocked) expect(s.canPlace(o.x, o.y, 'dart'), `${m.id} obstacle`).toBe(false);
+    for (const lane of m.lanes) {
+      const pts = lane.filter(p => p.x > 5 && p.y > 5 && p.x < m.width - 5 && p.y < m.height - 5);
+      const onTrack = pts.filter(p => m.track.some(t => inPoly(p, t))).length / pts.length;
+      expect(onTrack, `${m.id} lane on track`).toBeGreaterThan(0.85); // Dark Castle's exit runs under the castle, off the road polygon
+      for (const p of pts.filter((_, i) => i % 7 === 0)) expect(s.canPlace(p.x, p.y, 'dart'), `${m.id} track`).toBe(false);
+    }
+    for (const b of m.blocked) { const c = b.find(p => inPoly(p, b)) ?? b.reduce((a, p) => ({ x: a.x + p.x / b.length, y: a.y + p.y / b.length }), { x: 0, y: 0 });
+      if (inPoly(c, b) && s.groundAt(c) === 'blocked') expect(s.canPlace(c.x, c.y, 'dart'), `${m.id} no-build`).toBe(false); } // nested land can override
+    expect(spots(s, 'dart', 3)).toHaveLength(3);
   }
-  expect(MAPS.town_center.lanes.length).toBe(2);
+  expect([MAPS.ravine.lanes.length, MAPS.dark_castle.lanes.length, MAPS.sunken_columns.lanes.length]).toEqual([4, 4, 2]);
 });
 
 test('multi-lane spawning alternates lanes and bloons follow their own lane', () => {
-  const s = createGame('town_center', 'medium');
+  const s = createGame('sunken_columns', 'medium');
   s.startRound([{ type: 'red', n: 4, gap: 0.1 }]); run(s, 60);
   expect(new Set(s.bloons.map(b => b.lane))).toEqual(new Set([0, 1]));
-  const b1 = s.bloons.find(b => b.lane === 1)!;
-  expect(s.posOf(b1).x).toBeGreaterThan(720); // lane 1 starts at the right edge
+  const b1 = s.bloons.find(b => b.lane === 1)!, start = MAPS.sunken_columns.lanes[1][0];
+  expect(Math.abs(s.posOf(b1).x - start.x)).toBeLessThan(15); // lane 1 enters at its own (right) column
 });
 
 test('water towers need water; land towers cannot sit on it', () => {
-  const s = createGame('in_the_loop', 'medium');
-  expect(s.canPlace(850, 100, 'sub')).toBe(true);
-  expect(s.canPlace(850, 100, 'dart')).toBe(false);
+  const s = createGame('in_the_loop', 'medium'); const [w] = spots(s, 'sub');
+  expect(MAPS.in_the_loop.water.some(p => inPoly(w, p))).toBe(true);
+  expect(s.canPlace(w.x, w.y, 'dart')).toBe(false);
+  const [l] = spots(s, 'dart'); expect(s.canPlace(l.x, l.y, 'sub')).toBe(false);
 });
 
 test('MOAB-class pop spawns children in the same lane; regrow restores layers', () => {
-  const s = createGame('town_center', 'medium');
+  const s = createGame('sunken_columns', 'medium');
   s.startRound([{ type: 'moab', n: 1, gap: 1 }, { type: 'moab', n: 1, gap: 1 }]); run(s, 90);
   const m = s.bloons.find(b => b.lane === 1)!;
-  s.addTower(300, 220);
+  const [p] = spots(s); s.addTower(p.x, p.y);
   (s as any).damage(m, m.hp, { ...(s as any).source(s.towers[0]), moabTargetable: true, damageType: 'normal', camo: true });
   const kids = s.bloons.filter(b => b.type === 'ceramic' && b.lane === 1);
   expect(kids.length).toBe(BLOONS.moab.kids.length);
@@ -68,7 +79,8 @@ test('mode rules', () => {
 test('reverse mode runs the lane backwards', () => {
   const s = createGame('monkey_meadow', 'reverse');
   s.startRound([{ type: 'red', n: 1, gap: 1 }]); run(s, 2);
-  expect(s.posOf(s.bloons[0]).x).toBeGreaterThan(900);
+  const end = MAPS.monkey_meadow.lanes[0].at(-1)!; // reverse enters where the normal lane exits
+  expect(Math.hypot(s.posOf(s.bloons[0]).x - end.x, s.posOf(s.bloons[0]).y - end.y)).toBeLessThan(5);
 });
 
 test('apopalypse auto-starts the next round', () => {

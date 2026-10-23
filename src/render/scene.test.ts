@@ -1,3 +1,4 @@
+import { TOWER_W } from './scene';
 import { describe, expect, it } from 'vitest';
 import { ALL_KEYS } from '../art';
 import { HEROES, type HeroKind } from '../heroes';
@@ -59,10 +60,10 @@ describe('sprite scene', () => {
     const tower = s.towers[0]; tower.tiers = [0, 2, 3]; tower.aimAngle = 1;
     h.scene.update(s, 0);
     const v = h.visuals.find(v => v.texture === 'tower/dart/p3t3')!;
-    expect(v.rotation).toBe(1); expect(v.width).toBe(42);
+    expect(v.rotation).toBe(1); expect(v.width).toBe(TOWER_W);
     tower.shots++; h.scene.update(s, 0);
-    expect(v.width).toBeLessThan(42);
-    h.scene.update(s, 0.2); expect(v.width).toBe(42);
+    expect(v.width).toBeLessThan(TOWER_W);
+    h.scene.update(s, 0.2); expect(v.width).toBe(TOWER_W);
     const warm = h.created(); h.scene.reset(); h.scene.update(s, 0);
     expect(h.created()).toBe(warm);
   });

@@ -51,7 +51,7 @@ test('traps: road spikes pop up to 20, glue slows non-MOABs, MOAB mine hits MOAB
   const g = sim(); g.usePower('glue_trap', { x: 300, y: 150 }); g.usePower('moab_mine', { x: 500, y: 150 }); g.usePower('camo_trap', { x: 700, y: 150 });
   const red = bloon(1, 'red', 300), moab = bloon(2, 'moab', 500), camo = bloon(3, 'red', 700, { camo: true }); g.bloons.push(red, moab, camo);
   g.step(); expect(red.glue?.stats.slow).toBe(0.5); expect(g.bloons).not.toContain(moab); expect(camo.camo).toBe(false);
-  const two = createGame('town_center', 'medium'); const p = two.posAt(200, 1);
+  const two = createGame('sunken_columns', 'medium'); const p = two.posAt(200, 1);
   two.usePower('road_spikes', p); expect(two.powerTraps[0].lane).toBe(1);
   const other = bloon(9, 'red', two.powerTraps[0].dist, { lane: 0 }); two.bloons.push(other); two.step(); expect(two.bloons).toContain(other);
 });
