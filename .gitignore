@@ -7,3 +7,6 @@ dist/
 .tasks/STOPPED
 dist-single/
 .wrangler
+.env
+.env.*
+!.env.example
