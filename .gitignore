@@ -5,3 +5,4 @@ dist/
 .tasks/*.log
 .tasks/*.out
 .tasks/STOPPED
+dist-single/
