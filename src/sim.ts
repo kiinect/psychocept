@@ -90,7 +90,7 @@ export function popCashMultiplier(round: number) {
 export class Sim {
   bloons: Bloon[] = []; towers: Tower[] = []; darts: Dart[] = []; effects: Effect[] = [];
   collectibles:Collectible[]=[];
-  roadItems: RoadItem[] = []; sentries: Sentry[] = []; roundStartTick=0;
+  roadItems: RoadItem[] = []; sentries: Sentry[] = []; roundStartTick=0; modeId?: string;
   activePowers: { id: string; until: number }[] = []; powerTraps: PowerTrap[] = []; powerUnits: PowerUnit[] = [];
   private thrive = { untilRound: -1, mult: 1 };
   cash: number; lives: number; round = 0; tick = 0; nextId = 1; rng = mulberry32(1);
@@ -1136,10 +1136,14 @@ export class Sim {
     // uncertain: wiki omits degree power formula; use deterministic spending/pops with a hard 1..100 cap.
     const degree=Math.min(100,1+Math.floor(Math.sqrt((Math.max(0,value-50000)+investment)/1000+pops/1000)));
     this.cash-=cost;this.towers=this.towers.filter(a=>a.type!==t.type || a===t);
-    Object.assign(t,def.stats,{degree,tiers:[0,0,0],cost:value+cost,cd:0,magicNext:{},abilityReady:this.tick,abilityUntil:0});
-    t.damage*=1+(degree-1)*0.05;t.pierce*=1+(degree-1)*0.025;t.cooldown/=1+(degree-1)*0.01;
+    this.paragonize(t,degree);t.cost=value+cost;
     this.roadItems=this.roadItems.filter(i=>!sacrifices.includes(i.owner));this.sentries=this.sentries.filter(i=>!sacrifices.includes(i.owner));
     return true;
+  }
+  /** Turn t into its type's paragon at the given degree (used by makeParagon and run restore). */
+  paragonize(t:Tower,degree:number) {
+    Object.assign(t,PARAGONS[t.type]!.stats,{degree,tiers:[0,0,0],cd:0,magicNext:{},abilityReady:this.tick,abilityUntil:0});
+    t.damage*=1+(degree-1)*0.05;t.pierce*=1+(degree-1)*0.025;t.cooldown/=1+(degree-1)*0.01;
   }
   private activateSupport(t:Tower) {
     const kind=t.ability?.kind;

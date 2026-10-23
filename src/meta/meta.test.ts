@@ -70,3 +70,20 @@ test('run snapshot survives save and restores a Sim', () => {
   expect(M.restoreSim(new Sim(path, 'easy'), snap)).toBe(false);
   kv.setItem('mpt.run', JSON.stringify({ v: 1, data: { map: 1 } })); expect(rs.load()).toBeNull();
 });
+
+test('run snapshot keeps mode, hero level, paragons, bank and power units through JSON', async () => {
+  const { createGame } = await import('../modes/modes');
+  const a = createGame('monkey_meadow', 'deflation'); a.cash = 1e7;
+  expect(a.placeHero(130, 330, 'quincy'), 'hero').toBe(true); a.grantHeroXP(1e9);
+  a.addTower(300, 320, 'dart'); a.paragonize(a.towers[0], 7); a.towers[0].cost = 500000;
+  a.addTower(500, 320, 'farm'); a.towers[1].bank = 1234;
+  const spot = Array.from({ length: 900 }, (_, i) => ({ x: 20 + (i % 30) * 30, y: 20 + Math.floor(i / 30) * 17 })).find(p => a.canUsePower('energizing_totem', p))!;
+  expect(a.usePower('energizing_totem', spot), 'totem').toBe(true);
+  const rs = M.runSlot(M.memoryKV()); expect(rs.save(M.snapshotSim(a, 'monkey_meadow', 1)), 'save').toBe(true);
+  const snap = rs.load()!; expect(snap.mode).toBe('deflation');
+  const b = createGame(snap.map, snap.mode!); expect(M.restoreSim(b, snap), 'restore').toBe(true);
+  expect(b.rules.cashMult).toBe(0);
+  expect([b.hero?.kind, b.hero?.level, b.hero?.stats]).toEqual([a.hero!.kind, 20, a.hero!.stats]);
+  expect(b.towers[0]).toMatchObject({ degree: 7, cost: 500000, damage: a.towers[0].damage }); expect(b.towers[1].bank).toBe(1234);
+  expect(b.powerUnits).toEqual(a.powerUnits);
+});
