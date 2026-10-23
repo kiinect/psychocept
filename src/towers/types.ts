@@ -2,7 +2,7 @@
 export type AttackKind = 'projectile' | 'boomerang' | 'bomb' | 'tack' | 'ice' | 'glue' | 'ring';
 export type DamageType = 'sharp' | 'explosion' | 'cold' | 'fire' | 'normal' | 'shatter' | 'acid' | 'energy' | 'plasma' | 'frigid';
 export interface Ability {
-  kind: 'loan' | 'storm' | 'arms' | 'overclock' | 'stomp' | 'paragon' | 'boost' | 'missile' | 'blades' | 'snow' | 'glue' | 'cash' | 'strike' | 'hook' | 'blast' | 'awe' | 'phoenix' | 'annihilate' | 'sabotage' | 'transform' | 'vines' | 'icejet' | 'darkshift' | 'stub';
+  kind: 'chinook' | 'marine' | 'rocketstorm' | 'loan' | 'storm' | 'arms' | 'overclock' | 'stomp' | 'paragon' | 'boost' | 'missile' | 'blades' | 'snow' | 'glue' | 'cash' | 'strike' | 'hook' | 'blast' | 'awe' | 'phoenix' | 'annihilate' | 'sabotage' | 'transform' | 'vines' | 'icejet' | 'darkshift' | 'stub';
   cooldown: number; initial: number; duration: number;
   damage: number; speed: number; count: number; pierce: number;
 }

@@ -187,6 +187,11 @@ export class Sim {
     Object.assign(t, resultingStats(TOWERS[t.type], t.tiers));
     if(t.type==='engineer' && path===1 && t.tiers[1]===5)t.abilityReady=this.tick;
     if (t.ability && !hadAbility) t.abilityReady = this.tick + t.ability.initial * 60;
+    if (t.type === 'heli' && path === 1 && t.tiers[1] === 4) {
+      t.magicNext ??= {};
+      t.magicNext.relocate = this.tick + 15 * 60;
+      t.magicNext.crate = this.tick + 90 * 60;
+    }
     return true;
   }
   setTarget(towerIdx: number, p: Pt) {
@@ -202,6 +207,18 @@ export class Sim {
   }
   canSetTarget(t: Tower) {
     return t.type==='spike' && t.tiers[2]>=2 || t.type==='engineer' && (t.tiers[1]>=3 || t.tiers[2]>=4) || t.type==='beast' && t.tiers[2]>0 || ['mortar','heli','dartling','ace'].includes(t.type) || t.type === 'super' && t.tiers[2] >= 3 || t.type === 'mermonkey' && t.tiers[2] >= 4;
+  }
+  relocate(heliIdx: number, towerIdx: number, point: Pt) {
+    const heli = this.towers[heliIdx], tower = this.towers[towerIdx];
+    if (this.gameOver || !heli || heli.type !== 'heli' || heli.tiers[1] < 4 || !tower || tower === heli ||
+      tower.degree || tower.mergedInto || tower.type === 'super' && tower.tiers[0] >= 4 ||
+      this.tick < (heli.magicNext?.relocate ?? 0) || !this.canPlace(point.x, point.y, tower.type, tower)) return false;
+    tower.x = point.x; tower.y = point.y;
+    heli.magicNext ??= {};
+    // uncertain: tier-5 redeploy cooldown is unspecified locally; retain Chinook's 45s.
+    heli.magicNext.relocate = this.tick + 45 * 60;
+    this.effect(point, 15, 'reposition');
+    return true;
   }
   activate(towerIdx: number) {
     const t = this.towers[towerIdx], a = t?.ability;
@@ -232,6 +249,22 @@ export class Sim {
     if (a.kind === 'icejet' && t.tiers[1] === 5) {
       this.burst(t, this.source(t, { damage:70, damageType:'frigid', camo:true, pierce:1e6, moabBonus:0 }), 2000);
       for (const b of this.bloons) if (b.type !== 'bad') { b.slow=0.5; b.slowUntil=this.tick+480; }
+    }
+    if (a.kind === 'chinook' || a.kind === 'marine') {
+      t.magicNext ??= {};
+      // The single activate entry point deploys the Marine and collects ready crates.
+      // uncertain: crate flight/collection is instantaneous in this headless ability API.
+      if (this.tick >= (t.magicNext.crate ?? (a.kind === 'marine' ? t.abilityReady : 0))) {
+        this.earnIncome(a.damage);
+        this.lives += t.tiers[1] === 5 ? 25 : 10;
+        t.magicNext.crate = this.tick + 90 * 60;
+      }
+      if (a.kind === 'marine') {
+        // uncertain: prose disagrees between 0.04s and 0.06s; use 0.04s Marine gun.
+        this.sentries.push({ ...t.targetPoint, owner: t, until: this.tick + 30 * 60, next: this.tick,
+          variant: 0, stats: { ...TOWERS.dart.base, damage: 6, pierce: 20, cooldown: 0.04,
+            range: 50, damageType: 'normal', camo: true, lead: true, frozen: true } });
+      }
     }
     if (a.kind === 'cash') this.cash += a.damage;
     if (a.kind === 'blast') {
@@ -302,6 +335,23 @@ export class Sim {
   }
   private runAbility(t: Tower) {
     if (!t.ability || this.tick >= t.abilityUntil || this.tick < t.abilityNext) return;
+    if (t.ability.kind === 'rocketstorm') {
+      const a = t.ability, mad = t.tiers[1] === 5;
+      const targets = this.bloons.filter(b => this.canHit(b, t)).sort((x, y) =>
+        BLOONS[y.type].rbe - BLOONS[x.type].rbe || y.dist - x.dist);
+      // uncertain: wiki describes aimed cones; task requires strongest/first targeting.
+      // Use 15 waves over 7.5s (overview); popology rounds the duration to 8s.
+      for (let n = 0; n < a.count; n++) {
+        const target = targets[n % Math.max(1, targets.length)];
+        if (!target) continue;
+        const p = this.posOf(target), angle = Math.atan2(p.y - t.y, p.x - t.x);
+        this.darts.push({ ...this.source(t, { kind: 'bomb', damageType: 'normal', damage: a.damage,
+          moabBonus: mad ? 250 : 0, ceramicBonus: mad ? 5 : 1, burnDamage: 0,
+          pierce: a.pierce + (t.tiers[2] >= 2 ? 2 : 0), radius: mad ? 12 : 8 }),
+          vx: Math.cos(angle) * 350, vy: Math.sin(angle) * 350, life: 3, target: { ...p } });
+      }
+      t.abilityNext += 30;
+    }
     if (t.ability.kind === 'phoenix') {
       const target = this.magicTargets({ ...t, camo:true }, 2000)[0];
       if (target) this.burst(this.posOf(target), this.source(t, {damage:t.ability.damage, damageType:'fire',

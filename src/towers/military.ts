@@ -82,10 +82,10 @@ export const heli: TowerDefinition={name:'Heli Pilot',cost:1500,footprint:14,col
   h('Apache Dartship',20000,{projectiles:4,pursuit:true,rotor:4,moveSpeed:50,damage:1,pierce:7,cooldown:0.05,secondaryCooldown:1,meteor:8}),
   h('Apache Prime',45000,{projectiles:4,pursuit:true,rotor:8,moveSpeed:50,damage:6,pierce:23,cooldown:0.05,damageType:'normal',secondaryCooldown:1,meteor:68})],
  [h('Bigger Jets',300,{moveSpeed:70}),h('IFR',600,{moveSpeed:70,camo:true}),h('Downdraft',3500,{moveSpeed:70,camo:true,knockback:true}),
-  // TODO(ability): Support Chinook Reposition and Supply Crate; wiki omits amounts/cooldowns.
-  h('Support Chinook',9500,{moveSpeed:80,camo:true,knockback:true,damage:2,ability:ability('stub',60,0,0)}),
-  // TODO(ability): Special Poperations Marine deployment and inherited Chinook abilities.
-  h('Special Poperations',30000,{moveSpeed:100,camo:true,knockback:true,damage:2,ability:ability('stub',60,0,0)})],
+  // uncertain: wiki overview gives $1800; older popology lists $1550. Use overview.
+  h('Support Chinook',9500,{moveSpeed:80,camo:true,knockback:true,damage:2,ability:ability('chinook',90,90,0,1800)}),
+  // Marine lasts 30s; its separate 25s cooldown permits overlapping deployments.
+  h('Special Poperations',30000,{moveSpeed:100,camo:true,knockback:true,damage:2,ability:ability('marine',25,0,0,4500)})],
  // uncertain: increased dart speed/lifespan are unspecified; use 1.3x.
  [h('Faster Darts',250,{range:54.6,projectileSpeed:338,lifespan:1.3}),h('Faster Firing',350,{range:54.6,projectileSpeed:338,lifespan:1.3,cooldown:0.456}),
   h('MOAB Shove',3400,{range:54.6,projectileSpeed:338,lifespan:1.3,cooldown:0.456,moabSlow:0.5,secondaryCooldown:3,meteor:7}),
@@ -116,10 +116,10 @@ export const dartling: TowerDefinition={name:'Dartling Gunner',cost:850,footprin
   d('Ray of Doom',75000,{accuracy:0,lifespan:4,damage:30,damageType:'plasma',pierce:999,lead:true,frozen:true,burnDamage:20,burnInterval:1,burnDuration:30})],
  [d('Advanced Targeting',250,{camo:true}),d('Faster Barrel Spin',950,{camo:true,cooldown:0.132}),
   d('Hydra Rocket Pods',4500,{camo:true,cooldown:0.132,kind:'bomb',damageType:'normal',damage:2,pierce:6,radius:8,lead:true,frozen:true}),
-  // TODO(ability): Rocket Storm waves; wiki has no cooldown or numeric wave stats.
-  d('Rocket Storm',5000,{camo:true,cooldown:0.132,kind:'bomb',damageType:'normal',damage:2,pierce:8,radius:8,lead:true,frozen:true,ability:ability('stub',60,0,0)}),
-  // TODO(ability): M.A.D Rocket Storm waves; same missing timings.
-  d('M.A.D',65000,{camo:true,cooldown:0.396,kind:'bomb',damageType:'normal',damage:3,pierce:8,radius:8,moabBonus:450,lead:true,frozen:true,ability:ability('stub',60,0,0)})],
+  // Wiki Rocket Storm prose: 15 waves of 10, every 0.5s, 40s cooldown.
+  d('Rocket Storm',5000,{camo:true,cooldown:0.132,kind:'bomb',damageType:'normal',damage:2,pierce:8,radius:8,lead:true,frozen:true,ability:ability('rocketstorm',40,16.67,7.5,5,1,10,8)}),
+  // M.A.D storm explosions: 18 pierce, +5 ceramic, +250 MOAB damage.
+  d('M.A.D',65000,{camo:true,cooldown:0.396,kind:'bomb',damageType:'normal',damage:3,pierce:8,radius:8,moabBonus:450,lead:true,frozen:true,ability:ability('rocketstorm',40,16.67,7.5,5,1,10,18)})],
  [d('Faster Swivel',150,{rotationSpeed:440}),d('Powerful Darts',1200,{rotationSpeed:440,pierce:3,damageType:'shatter',frozen:true}),
   d('Buckshot',3000,{rotationSpeed:440,accuracy:0,cooldown:1.2,projectiles:6,damage:3,pierce:4,projectileSpeed:520,lifespan:0.25,spread:9.2,knockback:true,damageType:'shatter',frozen:true}),
   d('Bloon Area Denial System',12000,{rotationSpeed:440,accuracy:0,cooldown:0.3,projectiles:6,damage:3,pierce:4,projectileSpeed:520,lifespan:0.25,spread:9.2,knockback:true,damageType:'shatter',frozen:true}),
