@@ -18,3 +18,13 @@ password handling, memory-only sessions, save formats, guest saves and owner RLS
 - Verify canonicalization, invalid input, real SDK requests, immediate signup,
   duplicate names, wrong passwords, cloud saves, sign-out and fresh-browser login.
   Run TypeScript, Vitest, browser checks and a production build before publishing.
+
+Shipped as 1.2.0 (`v1.2.0`, source `385e718`, Pages `08cec2f`). The owner disabled
+Confirm email and the public settings verify it. Validation: 1,028 tests, tsc,
+clean release build, audit zero vulnerabilities, isolated browser errors/sync/
+responsive flows, and real signup, autosave and fresh-browser restoration.
+The hydration check found programmatic audio edits and order-dependent default
+settings comparison; both have regression coverage and are fixed. The temporary
+live account and its saves were deleted, with zero remaining fixtures verified.
+The live site displays username/password signup without JS errors. Source PR #1
+remains draft for independent review.

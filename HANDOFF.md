@@ -4,13 +4,23 @@ Latest change: the owner requested username/password accounts without email.
 `.tasks/17-username-accounts.md` defines case-insensitive 3–24 ASCII names,
 mapped to Supabase internal identities. Supabase retains password handling,
 rate limits and save RLS. No email recovery; no existing identity is changed.
-Version 1.2.0 is prepared on `lane/supabase`; production still serves 1.1.0.
+Version 1.2.0 is live at `https://psychocept.org`, release source/tag `v1.2.0`
+= `385e718703c855303533c91b3754aa63f0e1f024`, Pages commit
+`08cec2f4f2d9a3c3307219e74bb9199595b920da`. GitHub Pages reports built; the public
+version marker and live username/password UI passed browser checks without JS errors.
 The owner disabled Confirm email; the public Auth settings were verified to show
 `mailer_autoconfirm: true`. Real browser signup and cloud autosave passed. The
 fresh-browser check found programmatic audio hydration recording local edits;
 this is fixed, along with order-dependent comparison of default settings.
-There are 1,028 passing unit tests. Final browser checks and fixture cleanup are
-in progress before publication. Keep source PR #1 draft until
+There are 1,028 passing unit tests; TypeScript, clean build, zero-vulnerability
+audit and isolated browser flows pass. Real fresh-browser sign-in restores cloud
+preferences without conflicts or writes, and sign-out restores guest preferences.
+The one disposable live account and its saves were deleted; zero fixtures remain.
+Automatic review rejected a rerun of the account-creation script because cleanup
+was separate; a read-only browser follow-up blocked all save writes instead.
+The owner explicitly approved creating/deleting test accounts. No user accounts
+were changed. Rollback: restore Pages `b417be8` in a new commit.
+Keep source PR #1 draft until
 independent review; the owner has already authorized pushing and publishing.
 
 2026-10-23: `lane/supabase` adds optional email/password accounts, local-first autosave, account caches, conflict choices, strict save decoding, and an owner-only SQL migration; see `supabase/README.md`. Verified: 1,015 Vitest tests, tsc, Vite build, isolated Playwright flows, and PostgreSQL RLS assertions. Auth sessions are memory-only (refresh requires sign-in).
