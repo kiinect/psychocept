@@ -67,17 +67,23 @@ export const speedMultiplier = (s: Settings) => (s.fastForward ? 3 : 1);
 // ---------- Mid-game save ----------
 export interface RunSnapshot {
   map: string; difficulty: Difficulty; round: number; cash: number; lives: number;
+  /** Mode id: rebuild the Sim with createGame(map, mode) before restoreSim. */
+  mode?: string;
+  /** Summary list (menus, legacy saves). Full fidelity lives in `state`. */
   towers: { type: TowerKind; x: number; y: number; tiers: [number, number, number]; targeting: Targeting }[];
+  /** Sim.saveState(): towers with links, hero, traps, power units, cooldown ticks. Absent in old saves. */
+  state?: unknown;
   savedAt: number;
 }
-/** Capture a between-rounds snapshot from a Sim (public fields only). Mid-round state (bloons, projectiles) is not saved. */
+/** Capture a between-rounds snapshot. Mid-round state (bloons, projectiles) is not saved. */
 export function snapshotSim(sim: Sim, map: string, now = 0): RunSnapshot {
-  return { map, difficulty: sim.difficulty, round: sim.round, cash: sim.cash, lives: sim.lives, savedAt: now,
+  return { map, mode: sim.modeId, difficulty: sim.difficulty, round: sim.round, cash: sim.cash, lives: sim.lives, savedAt: now, state: sim.saveState(),
     towers: sim.towers.map(t => ({ type: t.type, x: t.x, y: t.y, tiers: [...t.tiers] as [number, number, number], targeting: t.targeting })) };
 }
-/** Rebuild towers/cash/lives/round into a fresh Sim (built with the same map path + difficulty). Returns false on failure. */
+/** Restore into a fresh Sim built with the same map + mode. Uses `state` when present, else replays the legacy tower list. Returns false on failure. */
 export function restoreSim(sim: Sim, snap: RunSnapshot): boolean {
   if (sim.difficulty !== snap.difficulty) return false;
+  if (snap.state) return sim.loadState(snap.state);
   sim.cash = 1e12;
   for (const t of snap.towers) {
     if (!sim.addTower(t.x, t.y, t.type)) return false;
@@ -90,7 +96,8 @@ export function restoreSim(sim: Sim, snap: RunSnapshot): boolean {
 function validateRun(r: any): RunSnapshot | null {
   if (!r || typeof r !== 'object' || typeof r.map !== 'string' || !Array.isArray(r.towers)) return null;
   if (!['easy', 'medium', 'hard', 'impoppable'].includes(r.difficulty)) return null;
-  return { map: r.map, difficulty: r.difficulty, round: Math.floor(num(r.round)), cash: Math.floor(num(r.cash)), lives: Math.floor(num(r.lives, 1)), savedAt: num(r.savedAt),
+  return { map: r.map, mode: typeof r.mode === 'string' ? r.mode : undefined, state: r.state && typeof r.state === 'object' ? r.state : undefined,
+    difficulty: r.difficulty, round: Math.floor(num(r.round)), cash: Math.floor(num(r.cash)), lives: Math.floor(num(r.lives, 1)), savedAt: num(r.savedAt),
     towers: r.towers.filter((t: any) => t && typeof t.type === 'string' && Number.isFinite(t.x) && Number.isFinite(t.y) && Array.isArray(t.tiers)).map((t: any) => ({ type: t.type, x: t.x, y: t.y, tiers: [0, 1, 2].map(i => Math.floor(num(t.tiers[i]))) as [number, number, number], targeting: t.targeting ?? 'First' })) };
 }
 export const runSlot = (kv?: KV): Slot<RunSnapshot | null> => slot('mpt.run', [], () => null, validateRun, kv ?? defaultKV());

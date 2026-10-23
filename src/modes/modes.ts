@@ -46,7 +46,7 @@ export function createGame(mapId: string, modeId: string): Sim {
   const map = MAPS[mapId] ?? MAPS.monkey_meadow, m = modeById(modeId);
   const lanes = map.lanes.map(l => m.reverse ? [...l].reverse() : l);
   const sim = new Sim(lanes[0], m.difficulty, map.water, lanes, map.blocked);
-  sim.rules = rulesFor(m);
+  sim.rules = rulesFor(m); sim.modeId = m.id;
   sim.round = m.startRound - 1;
   if (m.cash !== undefined) sim.cash = m.cash;
   if (m.lives !== undefined) sim.lives = m.lives;
