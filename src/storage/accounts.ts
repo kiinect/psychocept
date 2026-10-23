@@ -1,10 +1,23 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 export interface AccountUser { id: string; email?: string }
+const usernameDomain = '@players.psychocept.org';
+const usernamePattern = /^[a-z0-9_]{3,24}$/;
+function usernameAddress(input: string) {
+  const username = input.trim();
+  if (!/^[A-Za-z0-9_]{3,24}$/.test(username)) throw { code: 'invalid_username' };
+  // Supabase handles passwords and unique identities; this is not a mailbox.
+  return username.toLowerCase() + usernameDomain;
+}
+export function accountName(user: AccountUser) {
+  const email = user.email ?? '';
+  const name = email.endsWith(usernameDomain) ? email.slice(0, -usernameDomain.length) : '';
+  return usernamePattern.test(name) ? name : 'Player';
+}
 export interface AccountAuth {
   current(): Promise<AccountUser | null>;
   subscribe(fn: (user: AccountUser | null) => void): () => void;
-  signIn(email: string, password: string): Promise<AccountUser | null>;
-  signUp(email: string, password: string): Promise<AccountUser | null>;
+  signIn(username: string, password: string): Promise<AccountUser | null>;
+  signUp(username: string, password: string): Promise<AccountUser | null>;
   signOut(): Promise<void>;
 }
 export class SupabaseAuth implements AccountAuth {
@@ -18,12 +31,15 @@ export class SupabaseAuth implements AccountAuth {
     });
     return () => { data.subscription.unsubscribe(); timers.forEach(clearTimeout); };
   }
-  async signIn(email: string, password: string) {
+  async signIn(username: string, password: string) {
+    const email = usernameAddress(username);
     const { data, error } = await this.client.auth.signInWithPassword({ email, password });
     if (error) throw error; return data.user;
   }
-  async signUp(email: string, password: string) {
-    const { data, error } = await this.client.auth.signUp({ email, password, options: { emailRedirectTo: location.origin + location.pathname } });
+  async signUp(username: string, password: string) {
+    const email = usernameAddress(username);
+    if (password.length < 8) throw { code: 'weak_password' };
+    const { data, error } = await this.client.auth.signUp({ email, password });
     if (error) throw error; return data.session?.user ?? null;
   }
   async signOut() { const { error } = await this.client.auth.signOut({ scope: 'local' }); if (error) throw error; }
@@ -51,13 +67,13 @@ export class Accounts {
     if (!this.atMenu() || this.connected === id) return;
     this.connected = id; await this.connect(id);
   }
-  async submit(mode: 'signin' | 'signup', email: string, password: string) {
+  async submit(mode: 'signin' | 'signup', username: string, password: string) {
     if (!this.auth || this.busy) return;
     this.busy = true; this.message = ''; this.onChange();
     try {
-      const user = await (mode === 'signup' ? this.auth.signUp(email, password) : this.auth.signIn(email, password));
+      const user = await (mode === 'signup' ? this.auth.signUp(username, password) : this.auth.signIn(username, password));
       if (user) { await this.accept(user); this.message = 'Signed in. Your progress saves automatically.'; }
-      else this.message = 'Check your email to confirm your account, then sign in. Your progress stays on this device.';
+      else this.message = 'Account creation is unavailable. The game’s account settings need attention. Your progress stays on this device.';
     } catch (error) { this.message = authMessage(error); }
     finally { this.busy = false; this.onChange(); }
   }
@@ -72,8 +88,10 @@ export class Accounts {
 }
 function authMessage(error: unknown) {
   const code = (error as { code?: string })?.code;
-  if (code === 'invalid_credentials') return 'Email or password is incorrect.';
-  if (code === 'email_not_confirmed') return 'Confirm your email before signing in.';
+  if (code === 'invalid_username') return 'Use 3–24 letters, numbers or underscores for your username.';
+  if (code === 'invalid_credentials') return 'Username or password is incorrect.';
+  if (code === 'user_already_exists' || code === 'email_exists') return 'That username is already taken. Sign in or choose another.';
+  if (code === 'email_not_confirmed') return 'Account sign-in is unavailable. The game’s account settings need attention.';
   if (code === 'weak_password') return 'Choose a stronger password with at least 8 characters.';
   if (code === 'over_request_rate_limit' || code === 'over_email_send_rate_limit') return 'Too many attempts. Please wait a moment and try again.';
   return 'Could not connect to your account. Please try again. Your local progress is safe.';

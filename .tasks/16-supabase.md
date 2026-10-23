@@ -1,7 +1,9 @@
 # Accounts and cloud saves
 
 Implements Part 2 of `/home/kaden/handoff-gpt-vault-and-supabase.md`.
-Email/password accounts are optional; guest storage keys and save formats remain compatible.
+Accounts are optional; guest storage keys and save formats remain compatible.
+The owner's subsequent username/password requirement is in `17-username-accounts.md`
+and supersedes the original email confirmation flow below.
 
 ## Boundaries and build order
 1. Storage codecs: decode cloud envelopes through existing migrations/validators; reject invalid input.

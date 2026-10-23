@@ -1,5 +1,17 @@
 # Handoff (BTD6-style web clone, working title "Monkey Pop TD")
 
+Latest change: the owner requested username/password accounts without email.
+`.tasks/17-username-accounts.md` defines case-insensitive 3–24 ASCII names,
+mapped to Supabase internal identities. Supabase retains password handling,
+rate limits and save RLS. No email recovery; no existing identity is changed.
+Version 1.2.0 is prepared on `lane/supabase`; production still serves 1.1.0.
+Local tests/build/browser checks pass. Publishing is pending the owner disabling
+Confirm email in Auth → Sign In / Providers; MCP has no Auth settings mutation,
+and the separate dashboard session is signed out. Verify public Auth settings
+show `mailer_autoconfirm: true` before any real username signup or deployment.
+No real username signup has been attempted yet. Keep source PR #1 draft until
+independent review; the owner has already authorized pushing and publishing.
+
 2026-10-23: `lane/supabase` adds optional email/password accounts, local-first autosave, account caches, conflict choices, strict save decoding, and an owner-only SQL migration; see `supabase/README.md`. Verified: 1,015 Vitest tests, tsc, Vite build, isolated Playwright flows, and PostgreSQL RLS assertions. Auth sessions are memory-only (refresh requires sign-in).
 
 Live backend: project `eqkujaglstzcmhwezvmq`, migration `20261023044858_bloons_cloud_saves` applied. Owner CRUD, cross-user isolation, nullable payloads, tombstones, and stale-upsert assertions passed on the live database with test fixtures rolled back. The active public publishable key and API URL are in this worktree's ignored `.env.local`; the configured build passes, and a real anonymous API request is denied (`401`, PostgreSQL code `42501`). Existing `public.UserData` was left untouched. Pending: Auth URL configuration verification (Site URL `https://psychocept.org`, redirects `https://psychocept.org/`, `http://localhost:5199/`, `http://127.0.0.1:5199/`) and source peer review. MCP cannot inspect Auth URL configuration; the browser dashboard requires its own sign-in. No vault changes.
