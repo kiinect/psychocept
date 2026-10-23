@@ -3,6 +3,7 @@ import { Sim, DT, roundGroups, type Difficulty } from './sim';
 import { canUpgrade, TOWERS, type TowerKind } from './towers';
 import { fitWorld, worldPoint } from './viewport';
 import './style.css';
+import { initAudio } from './audio';
 
 const path = [{ x: 0, y: 150 }, { x: 700, y: 150 }, { x: 700, y: 450 }, { x: 200, y: 450 }, { x: 200, y: 300 }, { x: 960, y: 300 }];
 let sim = new Sim(path);
@@ -127,6 +128,7 @@ refresh();
 app.ticker.add(t => {
   acc = Math.min(acc + Math.min(t.deltaMS / 1000, 0.25) * speed, 0.75);
   while (acc >= DT) { sim.step(); acc -= DT; }
+  initAudio(sim);
   g.clear().rect(0, 0, 960, 540).fill(0x4a8f3c).poly(path.flatMap(p => [p.x, p.y]), false).stroke({ width: 40, color: 0xc9a66b });
   const chosen = sim.towers[selected];
   if (chosen) g.circle(chosen.x, chosen.y, chosen.range).fill({ color: 0xffffff, alpha: 0.12 }).stroke({ color: 0xffffff, alpha: 0.7, width: 1 });
