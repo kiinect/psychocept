@@ -102,4 +102,9 @@ test('legacy run snapshots without state still restore, and corrupt state fails 
   const s = new Sim(path); expect(M.restoreSim(s, legacy)).toBe(true); expect(s.towers[0].tiers).toEqual([1, 0, 0]);
   const t = new Sim(path); t.cash = 7;
   expect(M.restoreSim(t, { ...legacy, state: { towers: [{ x: { $t: 5 } }], cash: 1, lives: 1, round: 1 } })).toBe(false); expect(t.cash).toBe(7);
+  for (const bad of [{ towers: [{}], cash: 1, lives: 1, round: 1, tick: 0 }, { towers: [], cash: 1, lives: 1, round: 1, tick: 0, powerTraps: null, hero: {} },
+    JSON.parse('{"towers":[{"type":"dart","x":1,"y":1,"tiers":[0,0,0],"__proto__":{"damage":999}}],"cash":1,"lives":1,"round":1,"tick":0}'),
+    { towers: [{ type: 'dart', x: 1, y: 1, tiers: [0, 0, 0], brew: { source: { $t: '__proto__' } } }], cash: 1, lives: 1, round: 1, tick: 0 }])
+    expect(M.restoreSim(t, { ...legacy, state: bad })).toBe(false);
+  expect(t.cash).toBe(7);
 });

@@ -92,10 +92,13 @@ function decodeState(v: any, towers: object[]): any {
   if (v === null || typeof v !== 'object') return v;
   if (Array.isArray(v)) return v.map(x => decodeState(x, towers));
   if ('$num' in v) return Number(v.$num);
-  if ('$t' in v) { if (!towers[v.$t]) throw new Error('bad tower ref'); return towers[v.$t]; }
+  if ('$t' in v) { if (!Number.isInteger(v.$t) || v.$t < 0 || v.$t >= towers.length) throw new Error('bad tower ref'); return towers[v.$t]; }
   if ('$set' in v) return new Set(v.$set.map((x: unknown) => decodeState(x, towers)));
   if ('$map' in v) return new Map(v.$map.map(([k, x]: [unknown, unknown]) => [k, decodeState(x, towers)]));
-  return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, decodeState(x, towers)]));
+  return Object.fromEntries(Object.entries(v).map(([k, x]) => {
+    if (k === '__proto__' || k === 'constructor' || k === 'prototype') throw new Error('bad key');
+    return [k, decodeState(x, towers)];
+  }));
 }
 export interface Rules { cashMult: number; incomeMult: number; noSell: boolean; noPowers?: boolean; moabHpMult: number; winRound: number; auto: boolean; allowed?: (k: string) => boolean }
 export const STANDARD_RULES: Rules = { cashMult: 1, incomeMult: 1, noSell: false, moabHpMult: 1, winRound: Infinity, auto: false };
@@ -1175,7 +1178,12 @@ export class Sim {
       const towers = state.towers.map(() => ({})) as Tower[], decoded: Record<string, unknown> = {};
       state.towers.forEach((t: unknown, i: number) => Object.assign(towers[i], decodeState(t, towers)));
       for (const k of SAVE_FIELDS) if (k !== 'towers' && k in state) decoded[k] = decodeState(state[k], towers);
-      if (!Number.isFinite(decoded.cash) || !Number.isFinite(decoded.lives) || !Number.isFinite(decoded.round)) return false;
+      const arr = (k: string) => decoded[k] === undefined || Array.isArray(decoded[k]), h = decoded.hero as Hero | null | undefined;
+      if (!Number.isFinite(decoded.cash) || !Number.isFinite(decoded.lives) || !Number.isFinite(decoded.round) || !Number.isFinite(decoded.tick)
+        || !towers.every(t => TOWERS[t.type] && Number.isFinite(t.x) && Number.isFinite(t.y) && Array.isArray(t.tiers) && t.tiers.length === 3)
+        || !['roadItems', 'sentries', 'collectibles', 'powerUnits', 'powerTraps', 'activePowers'].every(arr)
+        || h != null && (typeof h !== 'object' || !HEROES[h.kind] || !h.stats || !Number.isFinite(h.x) || !Number.isFinite(h.y))) return false;
+      // ponytail: shapes are checked one level deep; bloon refs inside hero.pending restore as stale copies (harmless between rounds).
       Object.assign(this, decoded, { towers, bloons: [], darts: [], spawnQ: [], roundActive: false });
       this.rng = mulberry32((this.tick + this.nextId) >>> 0); // uncertain: RNG position is not saved; reseed deterministically
       return true;
