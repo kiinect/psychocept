@@ -5,6 +5,9 @@ import modeJson from '../data/wiki/modes.json';
 import { TOWERS, canUpgrade, resultingStats, type TowerKind } from './towers';
 import { type TowerStats, type Tiers } from './towers/types';
 import { endlessGroups } from './modes/endless';
+import { buyItem, castSpell, sellFigure } from './hero-extras';
+import { HEROES, type HeroKind } from './heroes';
+import { newHero, grantXP, roundHero, updateHero, activateHero, cycleHeroTarget, heroTowerWeapon, heroTowerFired, heroLeak, type Hero } from './hero-runtime';
 export { canUpgrade } from './towers';
 export const DT = 1 / 60;
 export interface Rect { x: number; y: number; width: number; height: number }
@@ -23,7 +26,7 @@ export interface SpawnGroup { type: string; n: number; gap: number; camo?: boole
 export const roundGroups = (r: number): SpawnGroup[] => (ROUNDS[r - 1]?.groups ?? endlessGroups(r, ROUNDS)).map(g => ({ ...g, n: g.count, gap: typeof SPACING[g.type] === 'number' ? SPACING[g.type] as number : 0.5 }));
 export interface GlueStatus { until: number; next: number; stats: TowerStats; layers: number }
 export interface DamageStatus { until: number; next: number; interval: number; damage: number; stats: TowerStats }
-export interface Bloon { burn?: DamageStatus; freezeLayers?: number; slowUntil?: number; icicle?: { until: number; next: number; stats: TowerStats }; shardStats?: TowerStats; frozenUntil?: number; stunnedUntil?: number; slow?: number; glue?: GlueStatus; brittleUntil?: number; brittle?: number; id: number; type: string; dist: number; hp: number; camo?: boolean; fortified?: boolean; regrow?: boolean; lane?: number; regrowMax?: string; regrowAt?: number; spd?: number }
+export interface Bloon { noChildren?: boolean; trojan?: boolean; cashMult?: number; burn?: DamageStatus; freezeLayers?: number; slowUntil?: number; icicle?: { until: number; next: number; stats: TowerStats }; shardStats?: TowerStats; frozenUntil?: number; stunnedUntil?: number; slow?: number; glue?: GlueStatus; brittleUntil?: number; brittle?: number; id: number; type: string; dist: number; hp: number; camo?: boolean; fortified?: boolean; regrow?: boolean; lane?: number; regrowMax?: string; regrowAt?: number; spd?: number }
 export const TARGETING = ['First', 'Last', 'Close', 'Strong'] as const;
 export type Targeting = typeof TARGETING[number];
 export interface Tower extends Pt, TowerStats { aimAngle: number; targetPoint: Pt; flight: Pt; rotorReady: number; type: TowerKind; tiers: Tiers; cd: number; cost: number; targeting: Targeting; shots: number; abilityReady: number; abilityUntil: number; abilityNext: number; secondaryReady: number; orbitReady: number; blitzRound: number; buffUntil: number }
@@ -53,6 +56,8 @@ export class Sim {
   cash: number; lives: number; round = 0; tick = 0; nextId = 1; rng = mulberry32(1);
   roundActive = false; won = false; rules: Rules = { ...STANDARD_RULES };
   lanes: Pt[][]; private lens: number[][] = []; private laneRR = 0;
+  hero: Hero | null = null;
+  private heroPlaced = false;
   private puddles: (Pt & { until: number; next: number; stats: TowerStats })[] = [];
   spawnQ: (Omit<Bloon, 'id' | 'hp' | 'dist'> & { at: number })[] = [];
   constructor(public path: Pt[], public difficulty: Difficulty = 'medium', public water: Rect[] = [], lanes?: Pt[][], public blocked: Circle[] = []) {
@@ -76,6 +81,12 @@ export class Sim {
     const t = (d - L[i - 1]) / (L[i] - L[i - 1] || 1), a = path[i - 1], b = path[i];
     return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
   }
+  towerPrice(type: TowerKind, cost: number, point: Pt, tier = 0) {
+    const h = this.hero;
+    const discount = h?.kind === 'rosalia' && h.level >= 6 && ['ace', 'heli'].includes(type) && Math.hypot(point.x - h.home.x, point.y - h.home.y) <= 60 ? 0.9
+      : h?.kind === 'silas' && h.level >= 13 && type === 'ice' && tier === 5 ? 0.75 : 1;
+    return this.price(cost * discount);
+  }
   canPlace(x: number, y: number, type: TowerKind = 'dart') {
     const r = TOWERS[type].footprint;
     if (!Number.isFinite(x) || !Number.isFinite(y) || x < r || y < r || x > 960 - r || y > 540 - r) return false;
@@ -83,6 +94,7 @@ export class Sim {
     const overlaps = this.water.some(w => Math.hypot(x - Math.max(w.x, Math.min(x, w.x + w.width)),
       y - Math.max(w.y, Math.min(y, w.y + w.height))) < r);
     if (TOWERS[type].waterOnly ? !contained : overlaps) return false;
+    if (this.hero && Math.hypot(this.hero.x - x, this.hero.y - y) < HEROES[this.hero.kind].footprint + r) return false;
     if (this.towers.some(t => Math.hypot(t.x - x, t.y - y) < TOWERS[t.type].footprint + r)) return false;
     if (this.blocked.some(o => Math.hypot(o.x - x, o.y - y) < o.r + r)) return false;
     return !this.lanes.some(path => path.slice(1).some((b, i) => {
@@ -91,9 +103,49 @@ export class Sim {
       return Math.hypot(x - a.x - along * dx, y - a.y - along * dy) < 20 + r;
     }));
   }
+  nearestTrack(p: Pt): Pt {
+    let best = this.path[0], distance = Infinity;
+    for (let i = 1; i < this.path.length; i++) {
+      const a = this.path[i - 1], b = this.path[i], dx = b.x - a.x, dy = b.y - a.y;
+      const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1)));
+      const q = { x: a.x + dx * t, y: a.y + dy * t }, d = Math.hypot(p.x - q.x, p.y - q.y);
+      if (d < distance) { best = q; distance = d; }
+    }
+    return { ...best };
+  }
+  canPlaceHero(x: number, y: number, kind: HeroKind, moving = false) {
+    if (!HEROES[kind] || this.gameOver || !moving && this.heroPlaced) return false;
+    const def = HEROES[kind], r = def.footprint;
+    if (!Number.isFinite(x) || !Number.isFinite(y) || x < r || y < r || x > 960 - r || y > 540 - r) return false;
+    const contained = this.water.some(w => x - r >= w.x && x + r <= w.x + w.width && y - r >= w.y && y + r <= w.y + w.height);
+    const overlaps = this.water.some(w => Math.hypot(x - Math.max(w.x, Math.min(x, w.x + w.width)), y - Math.max(w.y, Math.min(y, w.y + w.height))) < r);
+    if (def.waterOnly ? !contained : !def.amphibious && overlaps) return false;
+    if (this.towers.some(t => Math.hypot(t.x - x, t.y - y) < TOWERS[t.type].footprint + r)) return false;
+    const p = this.nearestTrack({ x, y });
+    return Math.hypot(p.x - x, p.y - y) >= 20 + r;
+  }
+  placeHero(x: number, y: number, kind: HeroKind) {
+    if (!this.canPlaceHero(x, y, kind) || this.cash < HEROES[kind].cost[this.difficulty]) return false;
+    const cost = HEROES[kind].cost[this.difficulty]; this.cash -= cost;
+    this.hero = newHero(kind, x, y, cost); this.heroPlaced = true; return true;
+  }
+  buyHeroItem(id: string, point?: Pt, towerIndex?: number) { return buyItem(this, id, point, towerIndex); }
+  castHeroSpell(id: string) { return castSpell(this, id); }
+  sellHeroFigure() { return sellFigure(this); }
+  grantHeroXP(amount: number) { return grantXP(this, amount); }
+  activateHero(id: string, point?: Pt, towerIndex?: number) { return activateHero(this, id, point, towerIndex); }
+  cycleHeroTargeting() { return cycleHeroTarget(this); }
+  heroHit(b: Bloon, stats: TowerStats, origin: Pt) { this.applyHit(b, this.source({ ...stats, ...origin })); }
+  heroBurst(p: Pt, radius: number, stats: TowerStats) { this.burst(p, this.source({ ...stats, ...p }), radius); }
+  heroDestroy(b: Bloon, cash = true) {
+    if (!this.bloons.includes(b)) return;
+    this.bloons.splice(this.bloons.indexOf(b), 1);
+    if (cash) this.cash += BLOONS[b.type].rbe * popCashMultiplier(this.round);
+    this.effect(this.posOf(b), 12, 'hero');
+  }
   // Low-level setup API remains compatible; interactive purchases use placeTower.
   addTower(x: number, y: number, type: TowerKind = 'dart') {
-    const def = TOWERS[type], cost = this.price(def.cost);
+    const def = TOWERS[type], cost = this.towerPrice(type, def.cost, { x, y });
     if (this.gameOver || this.cash < cost || this.rules.allowed && !this.rules.allowed(type) || !Number.isFinite(x) || !Number.isFinite(y)) return false;
     this.cash -= cost;
     this.towers.push({ ...def.base, type, x, y, aimAngle: -Math.PI / 2, targetPoint: { x, y: Math.max(0, y - 40) }, flight: { x, y }, rotorReady: 0, tiers: [0, 0, 0], cd: 0, cost, targeting: type === 'ice' || type === 'tack' ? 'Close' : 'First', shots: 0, abilityReady: 0, abilityUntil: 0, abilityNext: 0, secondaryReady: 0, orbitReady: 0, blitzRound: -1, buffUntil: 0 }); return true;
@@ -104,7 +156,7 @@ export class Sim {
   upgrade(towerIdx: number, path: number) {
     const t = this.towers[towerIdx];
     if (this.gameOver || !t || !canUpgrade(t.tiers, path)) return false;
-    const cost = this.price(TOWERS[t.type].paths[path][t.tiers[path]].cost);
+    const cost = this.towerPrice(t.type, TOWERS[t.type].paths[path][t.tiers[path]].cost, t, t.tiers[path] + 1);
     if (this.cash < cost) return false;
     this.cash -= cost; t.cost += cost; t.tiers[path]++;
     const hadAbility = t.ability;
@@ -235,14 +287,18 @@ export class Sim {
   private canHit(b: Bloon, d: TowerStats) {
     if ((b.camo || b.type === 'ddt') && !d.camo) return false;
     if (this.isMoab(b) && !d.moabTargetable) return false;
-    const immune = BLOONS[b.type].immunities;
-    if ((d.damageType === 'energy' || d.damageType === 'plasma') && b.type === 'purple') return false;
+    const h = this.hero;
+    const blackVulnerable = h?.kind === 'striker' && h.level >= 5 && (h.level >= 19 || (b.id + Math.floor(this.tick / 60)) % 2 === 0);
+    const whiteVulnerable = h?.kind === 'silas' && h.level >= 5 && (h.level >= 13 || (b.id + Math.floor(this.tick / 60)) % 2 === 0);
+    const immune = BLOONS[b.type].immunities.filter(immunity => !(blackVulnerable && immunity === 'explosion') && !(whiteVulnerable && ['freeze', 'cold(most ice)', 'cold'].includes(immunity)));
+    const purpleVulnerable = h?.kind === 'ezili' && (h.until.heartstopper ?? 0) > this.tick;
+    if ((d.damageType === 'energy' || d.damageType === 'plasma') && b.type === 'purple' && !purpleVulnerable) return false;
     const brittle = (b.brittleUntil ?? 0) > this.tick;
     if ((b.frozenUntil ?? 0) > this.tick && !d.frozen && !d.refreeze && !brittle) return false;
     if (d.damageType === 'cold' && immune.includes('freeze')) return false;
     if (d.damageType === 'cold' && immune.includes('cold(most ice)') && !d.lead && !brittle) return false;
     if ((d.damageType === 'sharp' || d.damageType === 'shatter') && immune.includes(d.damageType) && !d.lead && !brittle) return false;
-    return !immune.includes(d.damageType) || (d.damageType === 'sharp' || d.damageType === 'shatter') && (d.lead || brittle);
+    return purpleVulnerable && b.type === 'purple' || !immune.includes(d.damageType) || (d.damageType === 'sharp' || d.damageType === 'shatter') && (d.lead || brittle);
   }
   private effect(p: Pt, radius: number, kind: string) {
     this.effects.push({ ...p, radius, kind, life: 0.2 });
@@ -256,7 +312,7 @@ export class Sim {
     if (b.type !== 'bad') {
       const stun = moab ? d.moabStun : d.kind === 'glue' ? 0 : d.stun;
       if (stun) b.stunnedUntil = this.tick + stun * 60;
-      if (!moab && d.freezeDuration && !BLOONS[b.type].immunities.includes('freeze')) {
+      if (!moab && d.freezeDuration && (!BLOONS[b.type].immunities.includes('freeze') || this.hero?.kind === 'silas' && this.hero.level >= 13)) {
         b.freezeLayers = d.freezeLayers; b.frozenUntil = this.tick + d.freezeDuration * (b.type.includes('ceramic') && d.auraSlow === 1 ? 0.5 : 1) * 60;
       }
       if (moab && d.moabSlow < 1 && d.kind !== 'glue') b.slow = d.moabSlow;
@@ -338,8 +394,13 @@ export class Sim {
     if (!this.canHit(b, d)) return;
     if (amount < b.hp) { b.hp -= amount; return; }
     const remaining = amount - b.hp;
-    this.cash += BLOONS[b.type].popCash * popCashMultiplier(this.round) * this.rules.cashMult;
+    this.cash += BLOONS[b.type].popCash * popCashMultiplier(this.round) * this.rules.cashMult * (b.cashMult ?? 1);
     if (this.isMoab(b)) this.effect(this.posOf(b), b.type === 'moab' ? 24 : 36, 'blimp');
+    if (b.trojan) {
+      let layers = 0, type = b.type;
+      while (BLOONS[type].kids.length) { layers++; type = BLOONS[type].kids[0]; }
+      this.cash += (this.hero?.level ?? 0) >= 16 ? 3 + 2 * layers : 2 + layers;
+    }
     this.bloons.splice(this.bloons.indexOf(b), 1);
     if (b.shardStats && d.owner?.type !== 'sniper') this.shards(b, b.shardStats);
     if (!BLOONS[b.type].kids.length && b.glue?.stats.puddleDamage) {
@@ -356,8 +417,8 @@ export class Sim {
         }
       }
     }
-    for (const type of BLOONS[b.type].kids) {
-      const child = this.makeBloon(type, b.dist, b);
+    for (const type of b.noChildren ? [] : BLOONS[b.type].kids) {
+      const child = this.makeBloon(type, b.dist, b); child.cashMult = b.cashMult;
       if (b.glue && b.glue.layers > 1 && !this.isMoab(child)) child.glue = { ...b.glue, layers: b.glue.layers - 1 };
       if ((b.freezeLayers ?? 0) > 1 && !BLOONS[child.type].immunities.includes('freeze')) {
         child.freezeLayers = b.freezeLayers! - 1; child.frozenUntil = b.frozenUntil; child.slow = b.slow;
@@ -426,7 +487,13 @@ export class Sim {
     }
   }
   private spawn(s: Omit<Bloon, 'id' | 'hp' | 'dist'>) {
-    const b = this.makeBloon(s.type, 0, s); this.bloons.push(b);
+    const h = this.hero;
+    if (h?.kind === 'benjamin' && h.level >= 6) this.cash += h.level >= 12 ? 2 : 1;
+    let type = s.type;
+    if (h?.kind === 'benjamin' && (h.until.syphon ?? 0) > this.tick && !['bad', ...(h.level < 18 ? ['ddt'] : [])].includes(type)) type = BLOONS[type].kids[0] ?? type;
+    const b = this.makeBloon(type, 0, s);
+    if (h?.kind === 'benjamin' && (h.until.syphon ?? 0) > this.tick && type !== s.type) b.cashMult = h.level === 20 ? 3 : 2;
+    this.bloons.push(b);
     if (this.isMoab(b)) for (const t of this.towers) if (t.entryDamage) {
       this.applyHit(b, this.source(t, { damage: t.entryDamage, damageType: 'normal', camo: true, frozen: true, moabBonus: 0 }));
     }
@@ -485,6 +552,8 @@ export class Sim {
         if (up && this.tick >= b.regrowAt) { b.type = up; b.hp = BLOONS[up].hp; b.regrowAt = undefined; }
       }
       let slow = b.slow ?? 1;
+      const hero = this.hero;
+      if (hero?.kind === 'silas' && !['white', 'purple', 'zebra', 'bad'].includes(b.type) && Math.hypot(this.posOf(b).x - hero.x, this.posOf(b).y - hero.y) <= hero.stats.range) slow = Math.min(slow, this.isMoab(b) ? hero.stats.moabSlow : hero.stats.auraSlow);
       if (b.glue) slow = Math.min(slow, this.isMoab(b) ? b.glue.stats.moabSlow : b.glue.stats.slow);
       for (const t of this.towers) {
         if (t.auraSlow < 1 && this.canHit(b, t) && Math.hypot(this.posOf(b).x - t.x, this.posOf(b).y - t.y) <= t.range) slow = Math.min(slow, this.isMoab(b) ? t.moabSlow : t.auraSlow);
@@ -498,7 +567,10 @@ export class Sim {
           this.burst(blitz, this.source(blitz, { damageType: 'normal', camo: true, damage: 2000, pierce: 1e6 }), 2000);
           if (!this.bloons.includes(b)) continue;
         }
-        const def = BLOONS[b.type]; this.lives = Math.max(0, this.lives - ((b.fortified ? def.fortifiedRbe : def.rbe) - ((b.fortified ? def.fortifiedHp : def.hp) - b.hp)));
+        const def = BLOONS[b.type];
+        const leak = heroLeak(this, b, (b.fortified ? def.fortifiedRbe : def.rbe) - ((b.fortified ? def.fortifiedHp : def.hp) - b.hp));
+        if (leak < 0) continue;
+        this.lives = Math.max(0, this.lives - leak);
         for (const t of this.towers) if (t.type === 'sniper' && t.tiers[2] === 5 && this.tick >= t.abilityReady) {
           t.buffUntil = this.tick + 420; t.abilityReady = this.tick + 600;
         }
@@ -506,6 +578,7 @@ export class Sim {
       }
     }
     if (this.gameOver) { this.roundActive = false; return; }
+    updateHero(this);
     for (const t of this.towers) {
       this.moveAircraft(t);
       if (t.type === 'dartling') {
@@ -515,7 +588,7 @@ export class Sim {
         t.aimAngle += Math.max(-turn, Math.min(turn, delta));
       }
       const origin = t.type === 'ace' || t.type === 'heli' ? t.flight : t;
-      const weapon = { ...t, ...origin };
+      const weapon = { ...heroTowerWeapon(this, t), x: origin.x, y: origin.y };
       if (t.type === 'sub' && t.tiers[2] !== 5 && this.towers.some(ally => ally.type === 'sub' && ally.tiers[2] === 5 && Math.hypot(t.x - ally.x, t.y - ally.y) <= ally.range)) {
         weapon.damage *= 2; weapon.moabBonus *= 2; weapon.fortifiedBonus *= 2; weapon.pierce += 4;
       }
@@ -532,21 +605,23 @@ export class Sim {
         t.rotorReady = this.tick + 27;
         this.burst(origin, this.source(weapon, { damage: t.rotor, damageType: 'normal', pierce: 10, frozen: true }), 35);
       }
+      if (weapon.cooldown >= 1e8) { t.cd = Math.min(t.cd, DT); continue; }
       t.cd -= DT; if (t.cd > 0) continue;
       // Range intersects the bloon body (7 units), so short-range towers can reach from grass.
-      const detected = (b: Bloon) => !(b.camo || b.type === 'ddt') || t.camo || t.intel && this.towers.some(ally => ally.camo && Math.hypot(this.posOf(b).x - ally.x, this.posOf(b).y - ally.y) <= ally.range);
-      const targets = this.bloons.filter(b => detected(b) && (Math.hypot(this.posOf(b).x - origin.x, this.posOf(b).y - origin.y) <= t.range + 7 ||
+      const detected = (b: Bloon) => !(b.camo || b.type === 'ddt') || weapon.camo || t.intel && this.towers.some(ally => ally.camo && Math.hypot(this.posOf(b).x - ally.x, this.posOf(b).y - ally.y) <= ally.range);
+      const targets = this.bloons.filter(b => detected(b) && (Math.hypot(this.posOf(b).x - origin.x, this.posOf(b).y - origin.y) <= weapon.range + 7 ||
         t.intel && this.towers.some(ally => Math.hypot(this.posOf(b).x - ally.x, this.posOf(b).y - ally.y) <= ally.range && (!b.camo || ally.camo))));
       const distance = (b: Bloon) => Math.hypot(this.posOf(b).x - t.x, this.posOf(b).y - t.y);
       targets.sort((a, b) => t.targeting === 'Last' ? a.dist - b.dist : t.targeting === 'Close' ? distance(a) - distance(b) : t.targeting === 'Strong' ? BLOONS[b.type].rbe - BLOONS[a.type].rbe || b.dist - a.dist : b.dist - a.dist);
       const manual = t.type === 'mortar' || t.type === 'dartling';
       if (!targets.length && !manual && t.type !== 'ace') continue;
-      const p = manual ? t.targetPoint : targets.length ? this.posOf(targets[0]) : t.targetPoint; t.cd = t.cooldown / (this.tick < t.buffUntil ? t.type === 'sniper' ? 4 : 1.5 : 1)
+      const p = manual ? weapon.targetPoint : targets.length ? this.posOf(targets[0]) : t.targetPoint; t.cd = weapon.cooldown / (this.tick < t.buffUntil ? t.type === 'sniper' ? 4 : 1.5 : 1)
         * ((TOWERS[t.type].waterOnly || t.type === 'ace') && this.towers.some(ally => ally.type === 'buccaneer' && ally.tiers[0] === 5) ? 0.8 : 1)
         / (t.type === 'sniper' && t.tiers[2] === 5 ? 1 + Math.max(0, ...this.bloons.map(b => b.dist / this.pathLen)) : 1) / (this.tick < t.abilityUntil && t.ability?.kind === 'boost' ? t.ability.speed : 1); t.shots++;
       if (t.intel && targets[0] && detected(targets[0])) weapon.camo = true;
       const active = this.tick < t.abilityUntil && t.ability?.kind === 'boost';
       if (active && t.type === 'mortar') weapon.radius *= 1.15;
+      heroTowerFired(this, t);
       this.fire({ ...weapon, shots: t.shots, damage: weapon.damage + (active ? t.ability!.damage : 0) }, p);
       if (t.globalFreeze) {
         this.burst(t, this.source(t, { kind: 'ice', pierce: 1e6, freezeDuration: t.globalFreeze, damage: 1, ceramicBonus: 3, moabTargetable: false }), 2000);
@@ -612,6 +687,7 @@ export class Sim {
       if (detonated || d.pierce <= 0 || d.life <= 0) this.darts.splice(j, 1);
     }
     if (this.roundActive && !this.spawnQ.length && !this.bloons.length) {
+      roundHero(this);
       this.cash += (100 + this.round + this.towers.reduce((sum, t) => sum + t.income, 0)) * this.rules.incomeMult; this.roundActive = false; this.darts = [];
       if (this.round >= this.rules.winRound) this.won = true;
     } else if (this.rules.auto && this.roundActive && !this.spawnQ.length && this.round < this.rules.winRound) {

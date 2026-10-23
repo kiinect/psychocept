@@ -29,3 +29,9 @@ p { font-size: 14px; line-height: 1.5; margin: 0; }
   #shop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   header { padding: 12px; }
 }
+[aria-label="Hero controls"] { border-top: 1px solid #789375; margin-top: 1rem; padding-top: .5rem; }
+#hero-status { display: block; margin: .5rem 0; }
+#hero-effect { font-size: .85rem; line-height: 1.4; }
+#hero-details details { margin: .5rem 0; }
+#hero-details input { box-sizing: border-box; width: 100%; margin-bottom: .5rem; }
+#hero-abilities, #hero-extras { display: grid; gap: .4rem; }
