@@ -57,5 +57,6 @@ export function showScreen(root: HTMLElement, flow: Flow, send: (event: FlowEven
       const input = o.querySelector<HTMLInputElement>(`#${id}`)!; input.onchange = () => settings.change(key, input.checked);
     }
   }
-  o.querySelector<HTMLButtonElement>('button')?.focus();
+  if (flow.screen === 'splash') o.onclick = () => send({ type: 'start' });
+  o.querySelector<HTMLButtonElement>(flow.screen === 'hero' ? '[data-hero]' : 'button')?.focus();
 }

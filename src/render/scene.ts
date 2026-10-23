@@ -217,8 +217,8 @@ export class SceneAdapter {
     let i = 0;
     for (let j = 0; j < s.collectibles.length; j++) { const b = s.collectibles[j]; this.set(this.slot(this.props, i++, 2).sprite, 'proj/banana', b.x, b.y, 20); }
     for (let j = 0; j < s.roadItems.length; j++) {
-      const item = s.roadItems[j]; this.position(item.dist);
-      this.set(this.slot(this.props, i++, 2).sprite, item.kind === 'foam' ? 'fx/splat/0' : item.kind === 'trap' ? 'tower/engineer_monkey' : 'proj/spike', this.px, this.py, 20);
+      const item = s.roadItems[j]; const point = s.posAt(item.dist, (item as typeof item & { lane?: number }).lane);
+      this.set(this.slot(this.props, i++, 2).sprite, item.kind === 'foam' ? 'fx/splat/0' : item.kind === 'trap' ? 'tower/engineer_monkey' : 'proj/spike', point.x, point.y, 20);
     }
     for (let j = 0; j < s.sentries.length; j++) { const t = s.sentries[j]; this.set(this.slot(this.props, i++, 2).sprite, 'tower/engineer_monkey', t.x, t.y, 24); }
     if (s.hero) {

@@ -12,6 +12,7 @@ import { drawScene } from './maps/art';
 import { createGame } from './modes/modes';
 import { showScreen } from './screens/screens';
 import { initialFlow, transition, type FlowEvent } from './ui/flow';
+import { controlVisibility } from './ui/controls';
 import { priceBadge, upgradeState } from './ui/state';
 import { portrait } from './ui/icons';
 import { upgradeDescription } from './ui/upgrade';
@@ -38,10 +39,10 @@ root.innerHTML = `
     <div id="shop" aria-label="Tower shop"></div>
     <p id="hint" role="status">Buy a monkey, then choose a spot on the map.</p>
     <label for="tower-select">Select a tower</label><select id="tower-select"><option value="-1">No towers placed</option></select>
-    </div></aside><section id="inspector" aria-label="Upgrade and hero panel" hidden><button id="close-inspector" aria-label="Close upgrade panel">× Close</button><section id="details" hidden><div id="tower-portrait"></div><h2 id="tower-title">Dart Monkey</h2><output id="pops"></output>
-      <button id="aim" hidden>Set target on map</button><div id="target-point" hidden><label for="aim-x">Target X</label><input id="aim-x" type="number" min="0" max="960"><label for="aim-y">Target Y</label><input id="aim-y" type="number" min="0" max="540"><button id="apply-aim">Apply target coordinates</button></div><button id="target">Target: First</button><button id="ability" hidden>Activate ability</button><div id="upgrades"></div><button id="collect" hidden>Collect bank</button>
+    </div></aside><section id="inspector" aria-label="Upgrade and hero panel" hidden><button id="close-inspector" aria-label="Close upgrade panel">× Close</button><section id="details" hidden><div class="tower-summary"><div id="tower-portrait"></div><div><h2 id="tower-title">Dart Monkey</h2><output id="pops"></output></div></div>
+      <button id="aim" hidden>Set target on map</button><div id="target-point" hidden><label for="aim-x">Target X</label><input id="aim-x" type="number" min="0" max="960"><label for="aim-y">Target Y</label><input id="aim-y" type="number" min="0" max="540"><button id="apply-aim">Apply target coordinates</button></div><div class="targeting"><button id="target-prev" aria-label="Previous targeting mode">&lt;</button><button id="target">First</button><button id="target-next" aria-label="Next targeting mode">&gt;</button></div><button id="ability" hidden>Activate ability</button><div id="upgrades"></div><button id="collect" hidden>Collect bank</button>
       <div id="support-controls" hidden><label for="support-ally">Support target / beast to merge</label><select id="support-ally"></select><button id="support-target" hidden>Choose buff target</button><label for="merge-path" id="merge-label" hidden>Beast path</label><select id="merge-path" hidden><option value="0">Water beast</option><option value="1">Land beast</option><option value="2">Bird</option></select><button id="merge" hidden>Merge chosen beast into this handler</button></div>
-      <div id="paragon-controls" hidden><p id="paragon-info"></p><label for="paragon-investment">Extra paragon investment</label><input id="paragon-investment" type="number" min="0" step="1000" value="0"><button id="paragon">Create paragon</button></div><button id="sell">Sell</button>
+      <p id="paragon-info" hidden></p><div id="paragon-controls" hidden><label for="paragon-investment">Extra paragon investment</label><input id="paragon-investment" type="number" min="0" step="1000" value="0"><button id="paragon">Create paragon</button></div><button id="sell">Sell</button>
     </section>
     <div id="hero-host"></div></section><div class="round-controls"><button id="start" aria-label="Start round 1">▶</button><button id="speed">×1</button><button id="autoplay" aria-pressed="false">Auto: Off</button></div></main>`;
 const element = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -88,6 +89,8 @@ const upgradeButtons = [0, 1, 2].map(path => {
   upgrades.appendChild(button); return button;
 });
 const allySelect=element<HTMLSelectElement>('support-ally');
+element('merge-path').onchange = () => refresh();
+element('paragon-investment').oninput = () => refresh();
 element<HTMLButtonElement>('collect').addEventListener('click',()=>{sim.collect(selected);refresh();});
 element<HTMLButtonElement>('support-target').addEventListener('click',()=>{if(sim.setSupportTarget(selected,Number(allySelect.value)))hint.textContent='Buff target selected.';refresh();});
 element<HTMLButtonElement>('merge').addEventListener('click',()=>{hint.textContent=sim.mergeBeast(Number(allySelect.value),selected,Number(element<HTMLSelectElement>('merge-path').value))?'Beast power merged.':'Choose an unmerged handler with a beast on the same path.';refresh();});
@@ -120,6 +123,19 @@ for (const name of ['Primary', 'Military', 'Magic', 'Support', 'Hero']) {
 element('collapse').onclick = () => { const content = element('shop-content'); content.hidden = !content.hidden; root.classList.toggle('shop-collapsed', content.hidden); element('collapse').setAttribute('aria-expanded', String(!content.hidden)); element('collapse').textContent = content.hidden ? 'Shop ▸' : 'Shop ▾'; };
 element('close-inspector').onclick = () => { selected = -1; heroTools = false; refresh(); };
 target.addEventListener('click', () => { sim.cycleTargeting(selected); refresh(); });
+element('target-next').onclick = () => target.click();
+element('target-prev').onclick = () => {
+  const original = sim.towers[selected]?.targeting;
+  if (!original) return;
+  let previous = original;
+  for (let i = 0; i < 20; i++) {
+    sim.cycleTargeting(selected);
+    if (sim.towers[selected].targeting === original) break;
+    previous = sim.towers[selected].targeting;
+  }
+  sim.towers[selected].targeting = previous;
+  refresh();
+};
 sell.addEventListener('click', () => { if (sim.sell(selected)) selected = -1; refresh(); });
 towerSelect.addEventListener('change', () => { selected = Number(towerSelect.value); placing = null; aiming = false; heroTools = false; refresh(); });
 function newGame(map: string, mode: string) {
@@ -163,6 +179,7 @@ addEventListener('keydown', e => {
     refresh(); return;
   }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (flow.screen === 'splash' && (e.key === 'Enter' || e.code === 'Space')) { e.preventDefault(); send({ type: 'start' }); return; }
   // Keep keyboard focus inside the active overlay.
   if (flow.screen !== 'game') {
     if (e.key === 'Tab') {
@@ -251,7 +268,8 @@ function refresh() {
   const portraitKey = t.type;
   if (element('tower-portrait').dataset.kind !== portraitKey) { element('tower-portrait').innerHTML = portrait('tower', t.type, TOWERS[t.type].color); element('tower-portrait').dataset.kind = portraitKey; }
   element('pops').textContent = `Pops: ${Math.floor(t.paragonPops ?? 0).toLocaleString()}`;
-  aim.hidden = !sim.canSetTarget(t);
+  const controls = controlVisibility(sim, selected);
+  aim.hidden = !controls.aim;
   aim.textContent = t.type === 'super' ? 'Set Darkshift destination' : t.type === 'mermonkey' ? 'Place melody totem' : 'Set target on map';
   aim.disabled = sim.gameOver;
   aim.setAttribute('aria-pressed', String(aiming));
@@ -263,16 +281,25 @@ function refresh() {
   abilityButton.hidden = !t.ability;
   abilityButton.disabled = sim.gameOver || t.ability?.kind === 'stub' || sim.tick < t.abilityReady;
   abilityButton.textContent = t.ability?.kind === 'stub' ? 'Ability not implemented' : sim.tick < t.abilityReady ? `Ability · ${Math.ceil((t.abilityReady - sim.tick) / 60)}s` : 'Activate ability';
-  target.textContent = `Target: ${t.targeting}`; target.disabled = sim.gameOver;
+  target.textContent = t.targeting; target.disabled = sim.gameOver;
+  element<HTMLButtonElement>('target-prev').disabled = sim.gameOver;
+  element<HTMLButtonElement>('target-next').disabled = sim.gameOver;
   sell.textContent = `Sell · $${sim.sellValue(t)}`; sell.disabled = sim.gameOver || sim.rules.noSell;
-  const collect=element<HTMLButtonElement>('collect');collect.hidden=t.type!=='farm' && !(t.type==='engineer' && t.tiers[2]>=4);collect.textContent=t.type==='farm' && t.tiers[1]>=3?`Collect bank · $${(t.bank??0).toFixed(0)}`:t.type==='engineer'?'Collect trap':'Collect bananas';collect.disabled=sim.gameOver;
-  element<HTMLElement>('support-controls').hidden=t.type!=='beast' && !(t.type==='engineer' && (t.tiers[1]>=4 || t.degree));
-  const allies=sim.towers.map((a,i)=>a!==t && (t.type!=='beast' || a.type==='beast')?`<option value="${i}">${TOWERS[a.type].name} ${i+1} · ${a.tiers.join('-')}</option>`:'').join('');
-  if(allySelect.innerHTML!==allies){const value=allySelect.value;allySelect.innerHTML=allies;if([...allySelect.options].some(o=>o.value===value))allySelect.value=value;}
-  element<HTMLElement>('support-target').hidden=t.type!=='engineer';
-  for(const id of ['merge','merge-path','merge-label'])element<HTMLElement>(id).hidden=t.type!=='beast';
-  const paragon=PARAGONS[t.type];element<HTMLElement>('paragon-controls').hidden=!paragon || !!t.degree;
-  if(paragon){element<HTMLElement>('paragon-info').textContent=`${paragon.name}: requires all three tier 5 paths; absorbs all ${TOWERS[t.type].name} towers.`;const button=element<HTMLButtonElement>('paragon');button.textContent=`Create ${paragon.name} · $${sim.price(paragon.cost)}`;button.disabled=!sim.canMakeParagon(selected) || sim.cash<sim.price(paragon.cost)+Number(element<HTMLInputElement>('paragon-investment').value);}
+  const collect = element<HTMLButtonElement>('collect'); collect.hidden = !controls.collect;
+  collect.textContent = t.type === 'farm' && t.tiers[1] >= 3 ? `Collect bank · $${(t.bank ?? 0).toFixed(0)}` : t.type === 'engineer' ? 'Collect trap' : 'Collect bananas';
+  element('support-controls').hidden = !controls.support && !controls.merge;
+  const mergePath = element<HTMLSelectElement>('merge-path');
+  [...mergePath.options].forEach((option, path) => { option.disabled = !controls.mergePaths[path].length; });
+  if (mergePath.selectedOptions[0]?.disabled) mergePath.value = String(controls.mergePaths.findIndex(a => a.length));
+  const allyIndices = controls.support ? controls.supportAllies : controls.mergePaths[Number(mergePath.value)] ?? [];
+  const allies = allyIndices.map(i => `<option value="${i}">${TOWERS[sim.towers[i].type].name} ${i + 1} · ${sim.towers[i].tiers.join('-')}</option>`).join('');
+  if (allySelect.innerHTML !== allies) { const value = allySelect.value; allySelect.innerHTML = allies; if ([...allySelect.options].some(o => o.value === value)) allySelect.value = value; }
+  element('support-target').hidden = !controls.support;
+  for (const id of ['merge', 'merge-path', 'merge-label']) element(id).hidden = !controls.merge;
+  const paragon = PARAGONS[t.type]; element('paragon-controls').hidden = !controls.paragon;
+  element('paragon-info').hidden = !controls.paragonHint;
+  element('paragon-info').textContent = 'Paragon: needs 5-x-x, x-5-x, x-x-5';
+  if (paragon) { const button = element<HTMLButtonElement>('paragon'); button.textContent = `Create ${paragon.name} · $${sim.price(paragon.cost)}`; button.disabled = !controls.paragon || sim.cash < sim.price(paragon.cost) + Number(element<HTMLInputElement>('paragon-investment').value); }
   upgradeButtons.forEach((button, path) => {
     const next = TOWERS[t.type].paths[path][t.tiers[path]];
     const allowed = sim.canUpgradeTower(selected,path);

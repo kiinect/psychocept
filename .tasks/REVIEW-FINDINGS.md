@@ -11,3 +11,6 @@ Unverified by Opus yet; fix with a failing test first, then re-run the gate. Eac
 - src/sim.ts:1371 - Clearing all bloons before auto-start takes the preceding completion branch, stopping Apopalypse - also start the next round after completion when auto is enabled and winRound is unmet.
 - src/sim.ts:1249 - magicBuffs reapplies ordinary buffs to paragons despite effectiveStats rejecting them - skip hero and magic buffs for paragons.
 - src/sim.ts:829 - shopPrice excludes a lone village's own discount and misses Rosalia discounts without villages, disabling affordable purchases - calculate quotes at eligible placement points with the same pricing pipeline.
+
+## Status 2026-10-22 (Opus)
+All 10 findings FIXED on lane/fixes (sol re-reviewed: 10/10 fixed). Follow-ups done: foam lane fallback, Apopalypse endRound. Open: src/main.ts road-item render must use posAt(item.dist,item.lane) (fix at UI-lane merge).
