@@ -27,6 +27,9 @@ do $$ begin
   assert public.put_save(auth.uid(),'mpt.profile','{"xp":6}',2,false,'2026-10-23T00:00:01Z','2026-10-23T00:00:00Z'), 'owner update';
   assert not public.put_save(auth.uid(),'mpt.profile','{"xp":999}',2,false,'2026-10-23T00:00:02Z','2026-10-23T00:00:00Z'), 'stale upsert rejected';
   assert (select data->>'xp' from public.saves where user_id=auth.uid()) = '6', 'stale upsert left data intact';
+  assert public.put_save(auth.uid(),'mpt.run',null,1,false,now(),null), 'nullable slot payload';
+  assert (select data='null'::jsonb and not deleted from public.saves where user_id=auth.uid() and slot_key='mpt.run'), 'JSON null is distinct from deletion';
+  delete from public.saves where user_id=auth.uid() and slot_key='mpt.run';
 end $$;
 
 set local request.jwt.claim.sub = '22222222-2222-4222-8222-222222222222';

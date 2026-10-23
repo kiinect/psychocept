@@ -36,7 +36,7 @@ begin
     raise insufficient_privilege using message = 'Save owner does not match session';
   end if;
   insert into public.saves as existing (user_id, slot_key, data, version, deleted, updated_at)
-    values (p_user_id, p_slot_key, p_data, p_version, p_deleted, p_updated_at)
+    values (p_user_id, p_slot_key, case when p_deleted then null else coalesce(p_data, 'null'::jsonb) end, p_version, p_deleted, p_updated_at)
     on conflict (user_id, slot_key) do update
       set data = excluded.data, version = excluded.version, deleted = excluded.deleted, updated_at = excluded.updated_at
       where existing.updated_at = p_expected_at;
