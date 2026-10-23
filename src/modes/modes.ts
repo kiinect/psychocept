@@ -42,7 +42,8 @@ export function rulesFor(m: ModeDef): Rules {
   return r;
 }
 
-export function createGame(mapId: string, modeId: string): Sim {
+/** `knowledge`: unlocked Monkey Knowledge names (ignored in CHIMPS, which disables knowledge like the real game). */
+export function createGame(mapId: string, modeId: string, knowledge: readonly string[] = []): Sim {
   const map = MAPS[mapId] ?? MAPS.monkey_meadow, m = modeById(modeId);
   const lanes = map.lanes.map(l => m.reverse ? [...l].reverse() : l);
   const sim = new Sim(lanes[0], m.difficulty, [], lanes, []);
@@ -52,5 +53,7 @@ export function createGame(mapId: string, modeId: string): Sim {
   sim.round = m.startRound - 1;
   if (m.cash !== undefined) sim.cash = m.cash;
   if (m.lives !== undefined) sim.lives = m.lives;
+  if (!m.chimps) sim.knowledge = new Set(knowledge);
+  if (sim.knowledge.has('More Cash') && m.cash === undefined) sim.cash += 200;
   return sim;
 }

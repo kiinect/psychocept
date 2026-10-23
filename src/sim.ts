@@ -7,8 +7,9 @@ import { TOWERS, canUpgrade, resultingStats, type TowerKind } from './towers';
 import { type TowerStats, type Tiers } from './towers/types';
 import { endlessGroups } from './modes/endless';
 import { POWER_BY_ID } from './meta/powers';
+import { POWER_KNOWLEDGE, freeTower, knowledgeCooldown, knowledgeCost, knowledgeHero, knowledgeWeapon, sellRate } from './knowledge';
 import { buyItem, castSpell, sellFigure } from './hero-extras';
-import { HEROES, type HeroKind } from './heroes';
+import { HEROES, heroLevelXP, type HeroKind } from './heroes';
 import { newHero, grantXP, roundHero, updateHero, activateHero, cycleHeroTarget, heroTowerWeapon, heroTowerFired, heroLeak, type Hero } from './hero-runtime';
 export { canUpgrade } from './towers';
 export const DT = 1 / 60;
@@ -76,7 +77,7 @@ export interface PowerTrap { id: string; lane: number; dist: number; left: numbe
 export interface PowerUnit extends Pt { id: string; r: number; range: number; untilRound: number }
 /** Between-rounds state a run save keeps (bloons, projectiles and timed zones are mid-round only). */
 const SAVE_FIELDS = ['cash', 'lives', 'round', 'tick', 'nextId', 'won', 'laneRR', 'towers', 'hero', 'heroPlaced', 'roadItems', 'sentries',
-  'collectibles', 'powerUnits', 'powerTraps', 'activePowers', 'thrive'] as const;
+  'collectibles', 'powerUnits', 'powerTraps', 'activePowers', 'thrive', 'purchased', 'freeTowerUsed'] as const;
 /** JSON-safe encoding: tower references become {$t:index}, Sets/Maps/Infinity get tags, so links (merges, brew sources, owners) survive. */
 function encodeState(v: unknown, towers: unknown[], top = false): unknown {
   if (typeof v === 'number' && !Number.isFinite(v)) return { $num: String(v) };
@@ -160,6 +161,10 @@ export class Sim {
   spawnQ: (Omit<Bloon, 'id' | 'hp' | 'dist'> & { at: number })[] = [];
   /** Play-area bounds; createGame sets the real map's size (BTD6 units, e.g. 300x230). Test sims keep 960x540. */
   width = 960; height = 540;
+  /** Unlocked Monkey Knowledge names in effect this game (empty = off; CHIMPS never gets any). */
+  knowledge = new Set<string>();
+  /** Tower kinds bought this game (first-purchase knowledge discounts) and whether the one free knowledge tower was used. */
+  purchased = new Set<TowerKind>(); freeTowerUsed = false;
   /** Real-map polygons (BTD6 layouts). Empty for test sims, which use water rects, blocked circles and the lane buffer. */
   private _polys: { track: Pt[][]; water: Pt[][]; land: Pt[][]; blocked: Pt[][] } = { track: [], water: [], land: [], blocked: [] };
   /** water/land/blocked polygons, smallest first: where they nest, the smallest containing polygon decides the ground. */
@@ -190,8 +195,8 @@ export class Sim {
     return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
   }
   // One pipeline: hero discount x village discount (point given) x difficulty price().
-  towerPrice(type: TowerKind, cost: number, point?: Pt, tier = 0) {
-    const h = this.hero;
+  towerPrice(type: TowerKind, cost: number, point?: Pt, tier = 0, path = -1) {
+    const h = this.hero; cost = knowledgeCost(this, type, cost, tier, path);
     const discount = h?.kind === 'rosalia' && h.level >= 6 && ['ace', 'heli'].includes(type) && !!point && Math.hypot(point.x - h.home.x, point.y - h.home.y) <= 60 ? 0.9
       : h?.kind === 'silas' && h.level >= 13 && type === 'ice' && tier === 5 ? 0.75 : 1;
     return this.price(cost * discount * (point && tier <= 3 ? 1 - this.discount(point) : 1));
@@ -259,9 +264,12 @@ export class Sim {
     return this.offTrack(x, y, r);
   }
   placeHero(x: number, y: number, kind: HeroKind) {
-    if (!this.canPlaceHero(x, y, kind) || this.cash < HEROES[kind].cost[this.difficulty]) return false;
-    const cost = HEROES[kind].cost[this.difficulty]; this.cash -= cost;
-    this.hero = newHero(kind, x, y, cost); this.heroPlaced = true; return true;
+    const cost = Math.round(HEROES[kind].cost[this.difficulty] * (this.knowledge.has('Hero Favors') ? 0.9 : 1));
+    if (!this.canPlaceHero(x, y, kind) || this.cash < cost) return false;
+    this.cash -= cost;
+    this.hero = newHero(kind, x, y, cost); knowledgeHero(this, this.hero.stats); this.heroPlaced = true;
+    if (this.knowledge.has('Empowered Heroes')) while (this.hero.level < 3) this.grantHeroXP(heroLevelXP(kind, this.hero.level + 1) - this.hero.xp + 1e-6);
+    return true;
   }
   buyHeroItem(id: string, point?: Pt, towerIndex?: number) { return buyItem(this, id, point, towerIndex); }
   castHeroSpell(id: string) { return castSpell(this, id); }
@@ -279,9 +287,10 @@ export class Sim {
   }
   // Low-level setup API remains compatible; interactive purchases use placeTower.
   addTower(x: number, y: number, type: TowerKind = 'dart') {
-    const def = TOWERS[type], cost = type === 'dart' && this.freeDartSource() ? 0 : this.towerPrice(type, def.cost, { x, y });
+    const def = TOWERS[type], free = freeTower(this, type), cost = free || type === 'dart' && this.freeDartSource() ? 0 : this.towerPrice(type, def.cost, { x, y });
     if (this.gameOver || this.cash < cost || this.rules.allowed && !this.rules.allowed(type) || !Number.isFinite(x) || !Number.isFinite(y)) return false;
-    if(type === 'dart' && cost === 0) this.freeDartSource()!.freeDarts!--;
+    if (free) this.freeTowerUsed = true; else if (type === 'dart' && cost === 0) this.freeDartSource()!.freeDarts!--;
+    this.purchased.add(type);
     this.cash -= cost;
     this.towers.push({ ...def.base, type, x, y, aimAngle: -Math.PI / 2, targetPoint: { x, y: Math.max(0, y - 40) }, flight: { x, y }, rotorReady: 0, tiers: [0, 0, 0], cd: 0, cost, targeting: type === 'ice' || type === 'tack' ? 'Close' : 'First', shots: 0, abilityReady: 0, abilityUntil: 0, abilityNext: 0, secondaryReady: 0, orbitReady: 0, blitzRound: -1, buffUntil: 0, purchaseLives: this.lives }); return true;
   }
@@ -378,8 +387,9 @@ export class Sim {
       // The single activate entry point deploys the Marine and collects ready crates.
       // uncertain: crate flight/collection is instantaneous in this headless ability API.
       if (this.tick >= (t.magicNext.crate ?? (a.kind === 'marine' ? t.abilityReady : 0))) {
-        this.earnIncome(a.damage);
-        this.lives += t.tiers[1] === 5 ? 25 : 10;
+        const charged = this.knowledge.has('Charged Chinooks') ? 1.25 : 1;
+        this.earnIncome(a.damage * charged);
+        this.lives += Math.round((t.tiers[1] === 5 ? 25 : 10) * charged);
         t.magicNext.crate = this.tick + 90 * 60;
       }
       if (a.kind === 'marine') {
@@ -426,8 +436,8 @@ export class Sim {
     const energizer = this.towers.some(ally => ally.type === 'sub' && ally.tiers[0] === 5);
     const reactor = this.towers.some(ally => ally.type === 'sub' && ally.tiers[0] >= 4);
     const cooldownMult = energizer ? TOWERS[t.type].waterOnly ? 0.6 : 0.8 : reactor && TOWERS[t.type].waterOnly ? 0.85 : 1;
-    t.abilityReady = this.tick + a.cooldown * cooldownMult * this.villageAbilityMult(t) * 60;
-    t.abilityUntil = this.tick + a.duration * 60; t.abilityNext = this.tick;
+    t.abilityReady = this.tick + knowledgeCooldown(this, t, a.cooldown) * cooldownMult * this.villageAbilityMult(t) * 60;
+    t.abilityUntil = this.tick + (a.duration + (a.kind === 'arms' && this.knowledge.has('To ARMS!') ? 3 : 0)) * 60; t.abilityNext = this.tick;
     if (a.kind === 'snow' && t.tiers[1] === 5) {
       for (const ally of this.towers) if (ally.type === 'ice') ally.buffUntil = this.tick + 600;
     }
@@ -817,7 +827,7 @@ export class Sim {
       if(c>=2 && this.magicDue(t,'acidPool',t.cooldown*5)) {
         const p=target?this.posOf(target):this.posAt(Math.min(this.pathLen,Math.max(0,t.x)));
         // uncertain: use closest horizontal path distance when no target is available.
-        this.zones.push({...p,until:this.tick+6.95*60,next:this.tick,interval:1,radius:10,hit:new Set(),stats:{...weapon,damage:1,pierce:5}});
+        this.zones.push({...p,until:this.tick+(6.95+(this.knowledge.has('Acid Stability')?5:0))*60,next:this.tick,interval:1,radius:10,hit:new Set(),stats:{...weapon,damage:1,pierce:5}});
       }
       if(c>=4 && this.magicDue(t,'gold',2)) for(const bloon of targets.slice(0,15))if(bloon.type!=='bad')bloon.goldUntil=this.tick+840;
       if(c===5 && this.magicDue(t,'shrink',10)) {
@@ -995,10 +1005,10 @@ export class Sim {
   private freeDartSource() { return this.towers.find(t=>t.type==='village' && (t.freeDarts??0)>0); }
   private discount(p:Pt) {
     const villages=this.villages(p);
-    return villages.some(v=>v.tiers[2]>=1)?0.1+Math.min(3,villages.filter(v=>v.tiers[2]>=2).length)*0.05:0;
+    return villages.some(v=>v.tiers[2]>=1)?0.1+(this.knowledge.has('Insider Trades')?0.02:0)+Math.min(3,villages.filter(v=>v.tiers[2]>=2).length)*0.05:0;
   }
   shopPrice(type:TowerKind) {
-    if(type==='dart' && this.freeDartSource())return 0;
+    if(type==='dart' && this.freeDartSource() || freeTower(this,type))return 0;
     // Copies, not the village objects: villages(p) skips p itself, which hid a lone village's own discount.
     const points=[...this.towers.filter(t=>t.type==='village').map(v=>({x:v.x,y:v.y})),...(this.hero?.kind==='rosalia'?[{...this.hero.home}]:[])];
     return Math.min(this.towerPrice(type,TOWERS[type].cost),...points.map(p=>this.towerPrice(type,TOWERS[type].cost,p)));
@@ -1010,9 +1020,9 @@ export class Sim {
     if(t.type==='village' && path===2 && t.tiers[2]===4)return this.opolisFarms(t).length*5000;
     const tier=t.tiers[path]+1, villages=this.villages(t);
     if(this.primary(t) && villages.some(v=>v.tiers[0]>=4 && tier<=(v.tiers[0]===5?2:1)))return 0;
-    return this.towerPrice(t.type,TOWERS[t.type].paths[path][tier-1].cost,t,tier);
+    return this.towerPrice(t.type,TOWERS[t.type].paths[path][tier-1].cost,t,tier,path);
   }
-  sellValue(t:Tower) {return Math.floor(t.cost*(t.type==='farm' && t.tiers[2]>=2?80:70)/100);}
+  sellValue(t:Tower) {return Math.floor(t.cost*((t.type==='farm' && t.tiers[2]>=2?80:70)+sellRate(this,t))/100);}
   private supportUpgradeAllowed(t:Tower,path:number) {
     if(t.type==='village' && path===2 && t.tiers[2]===4)return this.opolisFarms(t).length>0;
     if(t.type!=='beast')return true;
@@ -1045,7 +1055,7 @@ export class Sim {
       if(this.towers.some(a=>a.type==='ninja' && a.degree))weapon.camo=true;
       return weapon;
     }
-    if(villages.some(v=>v.tiers[2]>=3))weapon.popCashBonus=0.5;
+    if(villages.some(v=>v.tiers[2]>=3))weapon.popCashBonus=this.knowledge.has('Inland Revenue Streams')?0.6:0.5;
     if(villages.length)weapon.range*=1.1;
     if(villages.some(v=>v.tiers[0]>=2))weapon.cooldown*=0.85;
     if(villages.some(v=>v.tiers[1]>=2) || this.towers.some(a=>a.type==='ninja' && a.degree))weapon.camo=true;
@@ -1070,6 +1080,7 @@ export class Sim {
         weapon.cooldown*=1-ratio*0.3439;
       }
     }
+    knowledgeWeapon(this,t,weapon);
     return weapon;
   }
   powerNeedsPoint(id:string) { const k=POWER_BY_ID[id]?.kind; return k==='trap' || k==='tower'; }
@@ -1095,6 +1106,7 @@ export class Sim {
   /** Apply a power's sim effect. The caller (UI) owns the inventory and decrements it only when this returns true. */
   usePower(id:string,point?:Pt,upgraded=false) {
     if(!this.canUsePower(id,point))return false;
+    upgraded ||= this.knowledge.has(POWER_KNOWLEDGE[id] ?? '');
     const fx=POWER_BY_ID[id].fx,secs=(n:number)=>this.tick+n*60;
     if(id==='super_monkey_storm')for(const b of [...this.bloons])if(this.bloons.includes(b))this.powerHit(b,upgraded?fx.damageUpgraded:fx.damage);
     if(id==='monkey_boost' || id==='time_stop')this.activePowers.push({id,until:secs(upgraded?fx.durationUpgraded:fx.duration)});
@@ -1169,7 +1181,7 @@ export class Sim {
   private credit(amount:number,thrive=true) {
     if(thrive && this.round<=this.thrive.untilRound)amount*=this.thrive.mult;
     // uncertain: the loan prose omits repayment fraction; half of subsequent income repays debt.
-    let repayment=amount*0.5;
+    let repayment=amount*(this.knowledge.has('Backroom Deals')?0.4:0.5);
     for(const t of this.towers)if((t.debt??0)>0){const paid=Math.min(t.debt!,repayment);t.debt!-=paid;repayment-=paid;amount-=paid;}
     this.cash+=amount;
   }
@@ -1183,10 +1195,11 @@ export class Sim {
       const [a,b,c]=t.tiers;
       if(b>=3)income=225+(a===1?100:a===2?200:0);
       else if(c>=3)income=(16+a*2)*(c>=4?70:20)*(b>=2?1.25:1)+(c===5?4000:0);
-      else income=[80,120,160,320,1500,6000][a]*(b>=2?1.25:1);
+      else income=[80,120,160,320,1500,6000][a]*(b>=2?this.knowledge.has('More Valuable Bananas')?1.3:1.25:1);
       if(a===4 && this.towers.some(f=>f.type==='farm' && f.tiers[0]===5))income*=1.25;
     }
     if(t.type==='buccaneer' && t.tiers[2]>=3)income*=1+Math.min(1,this.towers.filter(f=>f.type==='farm' && f.tiers[2]>=4).length*0.1);
+    if(t.type==='buccaneer' && t.tiers[2]>=3 && this.knowledge.has('Trade Agreements'))income+=20;
     if(this.villages(t).some(v=>v.tiers[2]>=4))income*=1.2;
     if(t.type==='farm')income/= (1-(t.ultra??0)*0.04)*((t.overclockUntil??0)>this.tick?0.6:1);
     return income;
@@ -1195,11 +1208,12 @@ export class Sim {
     const suppress=this.towers.some(t=>t.degree && t.type==='druid' && t.abilityUntil>this.tick);
     for(const t of this.towers) {
       if(t.type==='farm' && t.tiers[1]>=3) {
-        const cap=t.tiers[1]>=4?10000:7000;
+        const cap=(t.tiers[1]>=4?10000:7000)+(this.knowledge.has('Bigger Banks')?2500:0);
         t.bank=Math.min(cap,((t.bank??0)+(suppress?0:this.roundIncome(t)))*1.15);
         if(t.tiers[2]>=2 && t.bank>=cap)this.collect(this.towers.indexOf(t));
       } else if(!suppress)this.earnIncome(Math.max(0,this.roundIncome(t)-(t.type==='farm'?(t.farmAccounted??0):0)));
       if(t.type==='farm' && t.tiers[2]===5)this.lives+=15;
+      else if(t.type==='farm' && t.tiers[2]>=3 && this.knowledge.has('Healthy Bananas'))this.lives+=t.tiers[2]===4?3:1;
       if(t.type==='village' && t.tiers[2]>=4)t.freeDarts=(t.freeDarts??0)+1;
       if(t.type==='engineer' && t.degree)t.cooldown/=1.3;
       if(t.type==='druid' && t.degree)this.lives++;
@@ -1255,7 +1269,7 @@ export class Sim {
     const kind=t.ability?.kind;
     if(kind==='loan') {
       if(!this.roundActive || this.tick-this.roundStartTick>180*60 || (t.roundUses??0)>=2 || (t.debt??0)>0)return false;
-      t.roundUses=(t.roundUses??0)+1;const cash=9000*(this.villages(t).some(v=>v.tiers[2]>=4)?1.2:1);
+      t.roundUses=(t.roundUses??0)+1;const cash=(9000+(this.knowledge.has('Backroom Deals')?1000:0))*(this.villages(t).some(v=>v.tiers[2]>=4)?1.2:1);
       this.credit(cash,false);if(t.tiers[1]===4)t.debt=cash;
     }
     if(kind==='arms') {
@@ -1373,10 +1387,10 @@ export class Sim {
           const near=this.nearTrack(t,weapon.range,l);dist=distances.find(d=>near.includes(d))??near[0];
           if(dist!==undefined){lane=l;break;}
         }
-        if(dist!==undefined)this.roadItem(t,{...weapon,damage:0,pierce:b===5?24:b===4?14:10,camo:true,stripCamo:true,stripRegrow:true,damageType:'normal'},dist,'foam',10,0,lane);
+        if(dist!==undefined)this.roadItem(t,{...weapon,damage:0,pierce:(b===5?24:b===4?14:10)+(this.knowledge.has('Thicker Foams')?3:0),camo:true,stripCamo:true,stripRegrow:true,damageType:'normal'},dist,'foam',10,0,lane);
       }
       if(c>=4 && !this.roadItems.some(i=>i.owner===t && i.kind==='trap') && this.magicDue(t,'trap',c===5?4.6:a>=2?4.3:5)) {
-        const lane=this.nearestLane(t),near=this.nearTrack(t,weapon.range,lane);if(near.length)this.roadItem(t,{...weapon,damage:0,damageType:'normal',lead:true,frozen:true,pierce:c===5?10000:500},near[Math.floor(near.length/2)],'trap',Infinity,0,lane);
+        const lane=this.nearestLane(t),near=this.nearTrack(t,weapon.range,lane);if(near.length)this.roadItem(t,{...weapon,damage:0,damageType:'normal',lead:true,frozen:true,pierce:c===5?10000:this.knowledge.has('Big Traps')?530:500},near[Math.floor(near.length/2)],'trap',Infinity,0,lane);
       }
     }
     if(t.type==='beast') {

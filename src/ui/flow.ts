@@ -3,12 +3,12 @@ import { MODES, modeById } from '../modes/modes';
 import { HEROES, type HeroKind } from '../heroes';
 import type { Difficulty } from '../sim';
 
-export type Screen = 'splash' | 'menu' | 'maps' | 'difficulty' | 'modes' | 'hero' | 'heroes' | 'powers' | 'game' | 'pause' | 'settings' | 'victory' | 'defeat';
+export type Screen = 'splash' | 'menu' | 'maps' | 'difficulty' | 'modes' | 'hero' | 'heroes' | 'powers' | 'knowledge' | 'game' | 'pause' | 'settings' | 'victory' | 'defeat';
 export interface Flow {
   screen: Screen; map: string; mode: string; difficulty: Difficulty; hero: HeroKind;
   settingsBack: 'menu' | 'pause';
 }
-export type FlowEvent = { type: 'start' | 'play' | 'heroes' | 'settings' | 'back' | 'pause' | 'resume' | 'restart' | 'home' | 'victory' | 'defeat' | 'continue' | 'powers' | 'loadRun' }
+export type FlowEvent = { type: 'start' | 'play' | 'heroes' | 'settings' | 'back' | 'pause' | 'resume' | 'restart' | 'home' | 'victory' | 'defeat' | 'continue' | 'powers' | 'knowledge' | 'loadRun' }
   | { type: 'map' | 'mode'; id: string } | { type: 'difficulty'; id: Difficulty } | { type: 'hero'; id: HeroKind };
 export function initialFlow(search: string): Flow {
   const q = new URLSearchParams(search), mode = modeById(q.get('mode') ?? 'medium');
@@ -22,6 +22,7 @@ export function transition(s: Flow, e: FlowEvent): Flow {
     case 'play': return s.screen === 'menu' ? go('maps') : s;
     case 'loadRun': return s.screen === 'menu' ? go('game') : s;
     case 'powers': return s.screen === 'menu' ? go('powers') : s;
+    case 'knowledge': return s.screen === 'menu' ? go('knowledge') : s;
     case 'heroes': return s.screen === 'menu' ? go('heroes') : s;
     case 'map': return s.screen === 'maps' && MAPS[e.id] ? { ...s, map: e.id, screen: 'difficulty' } : s;
     case 'difficulty': return s.screen === 'difficulty' && ['easy', 'medium', 'hard', 'impoppable'].includes(e.id) ? { ...s, difficulty: e.id, screen: 'modes' } : s;
@@ -35,7 +36,7 @@ export function transition(s: Flow, e: FlowEvent): Flow {
     case 'home': return go('menu');
     case 'victory': case 'defeat': return s.screen === 'game' ? go(e.type) : s;
     case 'back': {
-      const back: Record<Screen, Screen> = { splash: 'splash', menu: 'splash', maps: 'menu', difficulty: 'maps', modes: 'difficulty', hero: 'modes', heroes: 'menu', powers: 'menu', game: 'pause', pause: 'game', settings: s.settingsBack, victory: 'menu', defeat: 'menu' };
+      const back: Record<Screen, Screen> = { splash: 'splash', menu: 'splash', maps: 'menu', difficulty: 'maps', modes: 'difficulty', hero: 'modes', heroes: 'menu', powers: 'menu', knowledge: 'menu', game: 'pause', pause: 'game', settings: s.settingsBack, victory: 'menu', defeat: 'menu' };
       return go(back[s.screen]);
     }
   }
