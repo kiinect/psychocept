@@ -33,5 +33,8 @@ Live backend configured on project `eqkujaglstzcmhwezvmq`: migration
 `20261023044858_bloons_cloud_saves`, public publishable key in ignored `.env.local`,
 live RLS assertions passed with fixtures rolled back, and anonymous Data API access
 denied with SQL code `42501` (HTTP 401). The configured build and tsc pass.
-Auth redirect allow-list verification, peer review, and deployment approval remain
-pending. Work remains on `lane/supabase` until review.
+Published with owner approval to `https://psychocept.org` as version 1.1.0 (tag
+`v1.1.0`, source `ee98a70`, Pages `b417be8`). Live version, bundle, menu and
+account form verified with no JavaScript page errors. Source is pushed as draft
+PR #1. Auth redirect allow-list / real email confirmation verification and source
+peer review remain pending. Work remains on `lane/supabase` until review.
