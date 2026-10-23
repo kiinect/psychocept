@@ -1,8 +1,8 @@
 // World units and seconds. Tier entries are resulting stats, not incremental patches.
 export type AttackKind = 'projectile' | 'boomerang' | 'bomb' | 'tack' | 'ice' | 'glue' | 'ring';
-export type DamageType = 'sharp' | 'explosion' | 'cold' | 'fire' | 'normal' | 'shatter' | 'acid';
+export type DamageType = 'sharp' | 'explosion' | 'cold' | 'fire' | 'normal' | 'shatter' | 'acid' | 'energy' | 'plasma';
 export interface Ability {
-  kind: 'boost' | 'missile' | 'blades' | 'snow' | 'glue';
+  kind: 'boost' | 'missile' | 'blades' | 'snow' | 'glue' | 'cash' | 'strike' | 'hook' | 'blast' | 'awe' | 'stub';
   cooldown: number; initial: number; duration: number;
   damage: number; speed: number; count: number; pierce: number;
 }
@@ -12,6 +12,9 @@ export function ability(kind: Ability['kind'], cooldown: number, initial: number
 }
 export type Tiers = [number, number, number];
 export interface TowerStats {
+  accuracy: number; impactSpread: number; rotationSpeed: number;
+  homing: boolean; intel: boolean; radial: boolean; pursuit: boolean; moveSpeed: number; rotor: number;
+  camoBonus: number; burnDamage: number; burnMoab: number; burnInterval: number; burnDuration: number; defortify: boolean; income: number; entryDamage: number;
   ability: Ability | null; secondaryCooldown: number; heavyPierce: number; heavyDamage: number;
   heavyRadius: number; heavyBurn: number; meteor: number; globalFreeze: number;
   shards: number; shardDamage: number; shardPierce: number; soak: number;
@@ -31,6 +34,9 @@ export interface TowerStats {
 }
 
 export const DEFAULT_STATS: TowerStats = {
+  accuracy: 0, impactSpread: 0, rotationSpeed: 0,
+  homing: false, intel: false, radial: false, pursuit: false, moveSpeed: 0, rotor: 0, camoBonus: 0,
+  burnDamage: 0, burnMoab: 0, burnInterval: 1, burnDuration: 0, defortify: false, income: 0, entryDamage: 0,
   ability: null, secondaryCooldown: 0, heavyPierce: 0, heavyDamage: 0, heavyRadius: 0,
   heavyBurn: 0, meteor: 0, globalFreeze: 0, shards: 0, shardDamage: 0, shardPierce: 0,
   soak: 0, icicles: false, impale: false, freezeLayers: 0,
@@ -48,7 +54,7 @@ export const DEFAULT_STATS: TowerStats = {
 };
 export interface TowerTier { name: string; cost: number; stats: Readonly<TowerStats> }
 export interface TowerDefinition {
-  name: string; cost: number; footprint: number; color: number;
+  waterOnly?: boolean; name: string; cost: number; footprint: number; color: number;
   base: Readonly<TowerStats>; paths: readonly (readonly TowerTier[])[];
   stats?: (tiers: Tiers) => TowerStats;
 }

@@ -1,3 +1,7 @@
 .re/
 node_modules/
 dist/
+.claude/
+.tasks/*.log
+.tasks/*.out
+.tasks/STOPPED

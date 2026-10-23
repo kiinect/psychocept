@@ -6,6 +6,7 @@ import { TOWERS, canUpgrade, resultingStats, type TowerKind } from './towers';
 import { type TowerStats, type Tiers } from './towers/types';
 export { canUpgrade } from './towers';
 export const DT = 1 / 60;
+export interface Rect { x: number; y: number; width: number; height: number }
 export interface Pt { x: number; y: number }
 export interface BloonDef { hp: number; speed: number; rbe: number; kids: string[]; immunities: string[]; fortifiedHp: number; fortifiedRbe: number; popCash: number; fortifiable: boolean }
 export const BLOONS: Record<string, BloonDef> = {};
@@ -24,7 +25,7 @@ export interface DamageStatus { until: number; next: number; interval: number; d
 export interface Bloon { burn?: DamageStatus; freezeLayers?: number; slowUntil?: number; icicle?: { until: number; next: number; stats: TowerStats }; shardStats?: TowerStats; frozenUntil?: number; stunnedUntil?: number; slow?: number; glue?: GlueStatus; brittleUntil?: number; brittle?: number; id: number; type: string; dist: number; hp: number; camo?: boolean; fortified?: boolean; regrow?: boolean }
 export const TARGETING = ['First', 'Last', 'Close', 'Strong'] as const;
 export type Targeting = typeof TARGETING[number];
-export interface Tower extends Pt, TowerStats { type: TowerKind; tiers: Tiers; cd: number; cost: number; targeting: Targeting; shots: number; abilityReady: number; abilityUntil: number; abilityNext: number; secondaryReady: number; orbitReady: number; blitzRound: number; buffUntil: number }
+export interface Tower extends Pt, TowerStats { aimAngle: number; targetPoint: Pt; flight: Pt; rotorReady: number; type: TowerKind; tiers: Tiers; cd: number; cost: number; targeting: Targeting; shots: number; abilityReady: number; abilityUntil: number; abilityNext: number; secondaryReady: number; orbitReady: number; blitzRound: number; buffUntil: number }
 export interface Dart extends Pt, TowerStats {
   vx: number; vy: number; life: number; hit: Set<number>;
   heavy?: boolean; owner?: Tower; age?: number; lastHit?: Map<number, number>; target?: Pt;
@@ -46,7 +47,7 @@ export class Sim {
   private puddles: (Pt & { until: number; next: number; stats: TowerStats })[] = [];
   spawnQ: (Omit<Bloon, 'id' | 'hp' | 'dist'> & { at: number })[] = [];
   private len: number[] = [];
-  constructor(public path: Pt[], public difficulty: Difficulty = 'medium') {
+  constructor(public path: Pt[], public difficulty: Difficulty = 'medium', public water: Rect[] = []) {
     const mode = modeJson.data.difficulties[difficulty];
     this.cash = 'starting_cash' in mode ? mode.starting_cash : 650; this.lives = mode.lives;
     this.round = 'start_round' in mode ? mode.start_round - 1 : 0;
@@ -64,6 +65,10 @@ export class Sim {
   canPlace(x: number, y: number, type: TowerKind = 'dart') {
     const r = TOWERS[type].footprint;
     if (!Number.isFinite(x) || !Number.isFinite(y) || x < r || y < r || x > 960 - r || y > 540 - r) return false;
+    const contained = this.water.some(w => x - r >= w.x && x + r <= w.x + w.width && y - r >= w.y && y + r <= w.y + w.height);
+    const overlaps = this.water.some(w => Math.hypot(x - Math.max(w.x, Math.min(x, w.x + w.width)),
+      y - Math.max(w.y, Math.min(y, w.y + w.height))) < r);
+    if (TOWERS[type].waterOnly ? !contained : overlaps) return false;
     if (this.towers.some(t => Math.hypot(t.x - x, t.y - y) < TOWERS[t.type].footprint + r)) return false;
     return !this.path.slice(1).some((b, i) => {
       const a = this.path[i], dx = b.x - a.x, dy = b.y - a.y;
@@ -76,7 +81,7 @@ export class Sim {
     const def = TOWERS[type], cost = this.price(def.cost);
     if (this.gameOver || this.cash < cost || !Number.isFinite(x) || !Number.isFinite(y)) return false;
     this.cash -= cost;
-    this.towers.push({ ...def.base, type, x, y, tiers: [0, 0, 0], cd: 0, cost, targeting: type === 'ice' || type === 'tack' ? 'Close' : 'First', shots: 0, abilityReady: 0, abilityUntil: 0, abilityNext: 0, secondaryReady: 0, orbitReady: 0, blitzRound: -1, buffUntil: 0 }); return true;
+    this.towers.push({ ...def.base, type, x, y, aimAngle: -Math.PI / 2, targetPoint: { x, y: Math.max(0, y - 40) }, flight: { x, y }, rotorReady: 0, tiers: [0, 0, 0], cd: 0, cost, targeting: type === 'ice' || type === 'tack' ? 'Close' : 'First', shots: 0, abilityReady: 0, abilityUntil: 0, abilityNext: 0, secondaryReady: 0, orbitReady: 0, blitzRound: -1, buffUntil: 0 }); return true;
   }
   placeTower(x: number, y: number, type: TowerKind) {
     return this.canPlace(x, y, type) && this.addTower(x, y, type);
@@ -92,9 +97,43 @@ export class Sim {
     if (t.ability && !hadAbility) t.abilityReady = this.tick + t.ability.initial * 60;
     return true;
   }
+  setTarget(towerIdx: number, p: Pt) {
+    const t = this.towers[towerIdx];
+    if (this.gameOver || !t || !['mortar', 'heli', 'dartling', 'ace'].includes(t.type) ||
+      !Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.x > 960 || p.y < 0 || p.y > 540) return false;
+    t.targetPoint = { ...p }; return true;
+  }
   activate(towerIdx: number) {
     const t = this.towers[towerIdx], a = t?.ability;
     if (this.gameOver || !t || !a || this.tick < t.abilityReady) return false;
+    if (a.kind === 'stub') return false;
+    if (a.kind === 'cash') this.cash += a.damage;
+    if (a.kind === 'blast') {
+      this.burst({ x: 480, y: 270 }, this.source(t, { damage: a.damage, damageType: 'normal', camo: true,
+        frozen: true, pierce: a.count, moabBonus: 0, ceramicBonus: 0, fortifiedBonus: 0, leadBonus: 0, camoBonus: t.tiers[1] === 5 ? a.damage : 0, stun: a.duration, moabStun: a.duration }), 2000);
+    }
+    if (a.kind === 'strike') {
+      const target = [...this.bloons].sort((a, b) => BLOONS[b.type].rbe - BLOONS[a.type].rbe)[0];
+      if (!target) return false;
+      const p = this.posAt(target.dist);
+      this.applyHit(target, this.source(t, { damage: a.damage, damageType: 'normal', camo: true, frozen: true, moabBonus: 0 }));
+      this.burst(p, this.source(t, { damage: a.pierce, damageType: 'normal', camo: true, frozen: true, pierce: a.count }), 65);
+    }
+    if (a.kind === 'hook') {
+      let hooks = a.count, used = false;
+      const targets = this.bloons.filter(b => ['moab', 'bfb', 'ddt', ...(a.count > 1 ? ['zomg'] : [])].includes(b.type) && (!b.camo || t.camo))
+        .sort((a, b) => BLOONS[b.type].rbe - BLOONS[a.type].rbe);
+      for (const b of targets) {
+        const cost = b.type === 'zomg' ? 3 : 1;
+        if (cost > hooks) continue;
+        hooks -= cost; used = true;
+        this.bloons.splice(this.bloons.indexOf(b), 1);
+        this.effect(this.posAt(b.dist), 20, 'hook');
+        // uncertain: use RBE for total hooked layer cash; pop income tax still applies.
+        this.cash += BLOONS[b.type].rbe * popCashMultiplier(this.round) * (a.count > 1 ? 2 : 1);
+      }
+      if (!used) return false;
+    }
     if (a.kind === 'missile') {
       const target = this.bloons.filter(b => this.isMoab(b) && (!(b.camo || b.type === 'ddt') || t.camo))
         .sort((a, b) => BLOONS[b.type].rbe - BLOONS[a.type].rbe)[0];
@@ -102,7 +141,10 @@ export class Sim {
       this.applyHit(target, this.source(t, { damage: a.damage, damageType: 'normal', moabBonus: 0 }));
       this.effect(this.posAt(target.dist), 16, 'bomb');
     }
-    t.abilityReady = this.tick + a.cooldown * 60;
+    const energizer = this.towers.some(ally => ally.type === 'sub' && ally.tiers[0] === 5);
+    const reactor = this.towers.some(ally => ally.type === 'sub' && ally.tiers[0] >= 4);
+    const cooldownMult = energizer ? TOWERS[t.type].waterOnly ? 0.6 : 0.8 : reactor && TOWERS[t.type].waterOnly ? 0.85 : 1;
+    t.abilityReady = this.tick + a.cooldown * cooldownMult * 60;
     t.abilityUntil = this.tick + a.duration * 60; t.abilityNext = this.tick;
     if (a.kind === 'snow' && t.tiers[1] === 5) {
       for (const ally of this.towers) if (ally.type === 'ice') ally.buffUntil = this.tick + 600;
@@ -132,6 +174,11 @@ export class Sim {
     if (!t.ability || this.tick >= t.abilityUntil || this.tick < t.abilityNext) return;
     if (t.ability.kind === 'glue' && t.tiers[1] === 5) {
       this.globalAbility(t); t.abilityNext = this.tick + 60;
+    }
+    if (t.ability.kind === 'awe') {
+      this.burst({ x: 480, y: 270 }, this.source(t, { damage: t.ability.damage, damageType: 'normal',
+        camo: true, frozen: true, pierce: 1e6, moabBonus: 0, ceramicBonus: 0, fortifiedBonus: 0, leadBonus: 0, stun: 1.1, moabStun: 1.1 }), 2000);
+      t.abilityNext = this.tick + 60;
     }
     if (t.ability.kind === 'blades') {
       const a = t.ability;
@@ -168,6 +215,7 @@ export class Sim {
     if ((b.camo || b.type === 'ddt') && !d.camo) return false;
     if (this.isMoab(b) && !d.moabTargetable) return false;
     const immune = BLOONS[b.type].immunities;
+    if ((d.damageType === 'energy' || d.damageType === 'plasma') && b.type === 'purple') return false;
     const brittle = (b.brittleUntil ?? 0) > this.tick;
     if ((b.frozenUntil ?? 0) > this.tick && !d.frozen && !d.refreeze && !brittle) return false;
     if (d.damageType === 'cold' && immune.includes('freeze')) return false;
@@ -199,6 +247,12 @@ export class Sim {
       b.slowUntil = this.tick + d.freezeDuration * 60;
     }
     if (d.icicles && this.rng() < 0.25) b.icicle = { until: this.tick + d.freezeDuration * 60, next: this.tick + 12, stats: { ...d } };
+    if (d.defortify && b.fortified && (['lead', 'ceramic', 'moab', 'bfb'].includes(b.type) || d.burnMoab >= 100 && b.type === 'ddt')) {
+      b.fortified = false; b.hp = Math.min(b.hp, BLOONS[b.type].hp);
+    }
+    if (d.burnDamage) b.burn = { until: this.tick + d.burnDuration * 60,
+      next: b.burn?.next ?? this.tick + d.burnInterval * 60, interval: d.burnInterval * 60,
+      damage: d.burnDamage + (moab ? d.burnMoab : 0), stats: { ...d, damageType: 'fire', frozen: true } };
     if (d.shards) b.shardStats = { ...d };
     if (d.orbit && moab && !b.burn) {
       b.burn = { until: this.tick + 600, next: this.tick + 60, interval: 60, damage: 100, stats: { ...d, damageType: 'normal', frozen: true } };
@@ -209,7 +263,7 @@ export class Sim {
     }
     const amount = d.damage + (moab ? d.moabBonus : 0) + (b.type.includes('ceramic') ? d.ceramicBonus : 0) +
       (b.fortified ? d.fortifiedBonus : 0) + (b.type === 'lead' ? d.leadBonus : 0) +
-      vulnerability;
+      vulnerability + (b.camo ? d.camoBonus : 0);
     if (amount > 0) this.damage(b, amount, { ...d, frozen: true });
   }
   private burst(p: Pt, d: Dart, radius: number) {
@@ -224,12 +278,33 @@ export class Sim {
     }
   }
   private fire(t: Tower, p: Pt) {
+    if (t.type === 'sniper') {
+      let point = p;
+      const hit = new Set<number>();
+      for (let n = 0; n < t.pierce; n++) {
+        const b = this.bloons.find(b => !hit.has(b.id) && this.canHit(b, t) && Math.hypot(this.posAt(b.dist).x - point.x, this.posAt(b.dist).y - point.y) < (n ? t.bounceRange : 1));
+        if (!b) break;
+        point = this.posAt(b.dist); hit.add(b.id);
+        this.applyHit(b, { ...this.source(t), owner: t }); this.effect(point, 3, 'sniper');
+        if (t.shards) this.shards(b, { ...t, shards: 5 });
+        if (!t.bounceRange) break;
+      }
+      return;
+    }
+    if (t.type === 'mortar') {
+      // uncertain: mortar flight time is unspecified; resolve impact immediately with seeded scatter.
+      const angle = this.rng() * Math.PI * 2, distance = Math.sqrt(this.rng()) * t.impactSpread;
+      p = { x: p.x + Math.cos(angle) * distance, y: p.y + Math.sin(angle) * distance };
+      this.burst(p, this.source(t), t.radius);
+      if (t.puddleDamage) this.puddles.push({ ...p, until: this.tick + 270, next: this.tick, stats: { ...t } });
+      return;
+    }
     if (t.kind === 'ice' || t.kind === 'ring') {
       this.burst(t, { ...t, vx: 0, vy: 0, life: 0, hit: new Set() }, t.range); return;
     }
-    const angle = Math.atan2(p.y - t.y, p.x - t.x);
+    const angle = t.type === 'dartling' ? t.aimAngle : Math.atan2(p.y - t.y, p.x - t.x);
     for (let n = 0; n < t.projectiles; n++) {
-      const aim = t.kind === 'tack' ? n * Math.PI * 2 / t.projectiles : angle + (n - (t.projectiles - 1) / 2) * t.spread * Math.PI / 180;
+      const aim = t.kind === 'tack' || t.radial ? n * Math.PI * 2 / t.projectiles : angle + (n - (t.projectiles - 1) / 2) * t.spread * Math.PI / 180 + (t.accuracy ? (this.rng() - 0.5) * t.accuracy * Math.PI / 180 : 0);
       const offset = t.projectiles === 2 ? (n === 0 ? -3 : 3) : 0;
       this.darts.push({ ...t, x: t.x - Math.sin(angle) * offset, y: t.y + Math.cos(angle) * offset,
         damage: t.critEvery && t.shots % t.critEvery === 0 ? t.critDamage : t.damage,
@@ -244,7 +319,7 @@ export class Sim {
     const remaining = amount - b.hp;
     this.cash += BLOONS[b.type].popCash * popCashMultiplier(this.round);
     this.bloons.splice(this.bloons.indexOf(b), 1);
-    if (b.shardStats) this.shards(b, b.shardStats);
+    if (b.shardStats && d.owner?.type !== 'sniper') this.shards(b, b.shardStats);
     if (!BLOONS[b.type].kids.length && b.glue?.stats.puddleDamage) {
       const p = this.posAt(b.dist);
       this.puddles.push({ ...p, until: this.tick + 7.7 * 60, next: this.tick, stats: b.glue.stats });
@@ -289,7 +364,14 @@ export class Sim {
       (t.meteor || Math.hypot(this.posAt(b.dist).x - t.x, this.posAt(b.dist).y - t.y) <= t.range));
     if (!target) return;
     t.secondaryReady = this.tick + t.secondaryCooldown * 60;
-    if (t.meteor) {
+    if (t.meteor && ['sub', 'ace', 'heli', 'buccaneer'].includes(t.type)) {
+      // uncertain: consolidate auxiliary missiles/aircraft into one periodic blast;
+      // omitted projectile travel and separate weapon targeting use the shared target above.
+      const normal = t.type === 'ace' && t.tiers[0] === 5;
+      this.burst(this.posAt(target.dist), this.source(t, { kind: 'bomb', damage: t.meteor,
+        damageType: normal ? 'normal' : 'explosion', pierce: 40, moabBonus: 0, ceramicBonus: 0,
+        radius: 0, shards: 0, rotor: 0 }), 35);
+    } else if (t.meteor) {
       this.applyHit(target, this.source(t, { kind: 'projectile', damageType: 'normal', damage: t.meteor, moabBonus: 0 }));
       // uncertain: meteor blast radius/pierce are unspecified; use 30 units and 30 targets.
       this.burst(this.posAt(target.dist), this.source(t, { damage: 5, damageType: 'explosion', pierce: 30 }), 30);
@@ -321,6 +403,27 @@ export class Sim {
       }
     }
   }
+  private spawn(s: Omit<Bloon, 'id' | 'hp' | 'dist'>) {
+    const b = this.makeBloon(s.type, 0, s); this.bloons.push(b);
+    if (this.isMoab(b)) for (const t of this.towers) if (t.entryDamage) {
+      this.applyHit(b, this.source(t, { damage: t.entryDamage, damageType: 'normal', camo: true, frozen: true, moabBonus: 0 }));
+    }
+  }
+  private moveAircraft(t: Tower) {
+    if (t.type === 'ace') {
+      // uncertain: default orbit radius is absent; use the documented Centered Path radius.
+      const center = t.tiers[2] >= 2 ? t.targetPoint : t;
+      const angle = this.tick * DT * t.moveSpeed / 90;
+      t.flight = { x: Math.max(0, Math.min(960, center.x + Math.cos(angle) * 90)),
+        y: Math.max(0, Math.min(540, center.y + Math.sin(angle) * 90)) };
+    } else if (t.type === 'heli') {
+      const first = [...this.bloons].sort((a, b) => b.dist - a.dist)[0];
+      const p = t.pursuit && first ? this.posAt(first.dist) : t.targetPoint;
+      const dx = p.x - t.flight.x, dy = p.y - t.flight.y, distance = Math.hypot(dx, dy);
+      const amount = Math.min(distance, t.moveSpeed * DT);
+      if (distance) { t.flight.x += dx / distance * amount; t.flight.y += dy / distance * amount; }
+    }
+  }
   step() {
     if (this.gameOver) return;
     this.tick++;
@@ -330,7 +433,7 @@ export class Sim {
       p.next = this.tick + 6;
       this.burst(p, this.source({ ...p.stats, ...p }, { kind: 'projectile', damage: p.stats.puddleDamage, pierce: 3 }), 12);
     }
-    this.spawnQ = this.spawnQ.filter(s => s.at > this.tick ? true : (this.bloons.push(this.makeBloon(s.type, 0, s)), false));
+    this.spawnQ = this.spawnQ.filter(s => s.at > this.tick ? true : (this.spawn(s), false));
     for (const b of [...this.bloons]) {
       if (!this.bloons.includes(b)) continue;
       if (b.slowUntil !== undefined && b.slowUntil <= this.tick) { b.slow = undefined; b.slowUntil = undefined; }
@@ -369,21 +472,55 @@ export class Sim {
           if (!this.bloons.includes(b)) continue;
         }
         const def = BLOONS[b.type]; this.lives = Math.max(0, this.lives - ((b.fortified ? def.fortifiedRbe : def.rbe) - ((b.fortified ? def.fortifiedHp : def.hp) - b.hp)));
+        for (const t of this.towers) if (t.type === 'sniper' && t.tiers[2] === 5 && this.tick >= t.abilityReady) {
+          t.buffUntil = this.tick + 420; t.abilityReady = this.tick + 600;
+        }
         this.bloons.splice(this.bloons.indexOf(b), 1);
       }
     }
     if (this.gameOver) { this.roundActive = false; return; }
     for (const t of this.towers) {
-      this.runAbility(t); this.secondary(t);
+      this.moveAircraft(t);
+      if (t.type === 'dartling') {
+        const desired = Math.atan2(t.targetPoint.y - t.y, t.targetPoint.x - t.x);
+        const delta = Math.atan2(Math.sin(desired - t.aimAngle), Math.cos(desired - t.aimAngle));
+        const turn = t.rotationSpeed * Math.PI / 180 * DT;
+        t.aimAngle += Math.max(-turn, Math.min(turn, delta));
+      }
+      const origin = t.type === 'ace' || t.type === 'heli' ? t.flight : t;
+      const weapon = { ...t, ...origin };
+      if (t.type === 'sub' && t.tiers[2] !== 5 && this.towers.some(ally => ally.type === 'sub' && ally.tiers[2] === 5 && Math.hypot(t.x - ally.x, t.y - ally.y) <= ally.range)) {
+        weapon.damage *= 2; weapon.moabBonus *= 2; weapon.fortifiedBonus *= 2; weapon.pierce += 4;
+      }
+      if (t.type === 'buccaneer' && t.tiers[2] >= 3) weapon.damage *= this.cash >= 50000 && t.tiers[2] >= 4 ? 3 : this.cash >= 10000 ? 2 : 1;
+      this.runAbility(t); this.secondary(weapon);
+      if (t.type === 'sub' && t.tiers[0] >= 3 && this.tick >= weapon.orbitReady) {
+        weapon.orbitReady = this.tick + 81;
+        this.burst(origin, this.source(weapon, { damage: 0, moabBonus: 0, ceramicBonus: 0,
+          damageType: 'normal', strip: true, camo: true, pierce: 100 }), t.range);
+      }
+      // Secondary timer state belongs to the stationary placement, not the transient weapon origin.
+      t.secondaryReady = weapon.secondaryReady; t.orbitReady = weapon.orbitReady;
+      if (t.rotor && this.tick >= t.rotorReady) {
+        t.rotorReady = this.tick + 27;
+        this.burst(origin, this.source(weapon, { damage: t.rotor, damageType: 'normal', pierce: 10, frozen: true }), 35);
+      }
       t.cd -= DT; if (t.cd > 0) continue;
       // Range intersects the bloon body (7 units), so short-range towers can reach from grass.
-      const targets = this.bloons.filter(b => (!b.camo || t.camo) && (b.type !== 'ddt' || t.camo) && Math.hypot(this.posAt(b.dist).x - t.x, this.posAt(b.dist).y - t.y) <= t.range + 7);
+      const detected = (b: Bloon) => !(b.camo || b.type === 'ddt') || t.camo || t.intel && this.towers.some(ally => ally.camo && Math.hypot(this.posAt(b.dist).x - ally.x, this.posAt(b.dist).y - ally.y) <= ally.range);
+      const targets = this.bloons.filter(b => detected(b) && (Math.hypot(this.posAt(b.dist).x - origin.x, this.posAt(b.dist).y - origin.y) <= t.range + 7 ||
+        t.intel && this.towers.some(ally => Math.hypot(this.posAt(b.dist).x - ally.x, this.posAt(b.dist).y - ally.y) <= ally.range && (!b.camo || ally.camo))));
       const distance = (b: Bloon) => Math.hypot(this.posAt(b.dist).x - t.x, this.posAt(b.dist).y - t.y);
       targets.sort((a, b) => t.targeting === 'Last' ? a.dist - b.dist : t.targeting === 'Close' ? distance(a) - distance(b) : t.targeting === 'Strong' ? BLOONS[b.type].rbe - BLOONS[a.type].rbe || b.dist - a.dist : b.dist - a.dist);
-      if (!targets.length) continue;
-      const p = this.posAt(targets[0].dist); t.cd = t.cooldown / (this.tick < t.buffUntil ? 1.5 : 1) / (this.tick < t.abilityUntil && t.ability?.kind === 'boost' ? t.ability.speed : 1); t.shots++;
+      const manual = t.type === 'mortar' || t.type === 'dartling';
+      if (!targets.length && !manual && t.type !== 'ace') continue;
+      const p = manual ? t.targetPoint : targets.length ? this.posAt(targets[0].dist) : t.targetPoint; t.cd = t.cooldown / (this.tick < t.buffUntil ? t.type === 'sniper' ? 4 : 1.5 : 1)
+        * ((TOWERS[t.type].waterOnly || t.type === 'ace') && this.towers.some(ally => ally.type === 'buccaneer' && ally.tiers[0] === 5) ? 0.8 : 1)
+        / (t.type === 'sniper' && t.tiers[2] === 5 ? 1 + Math.max(0, ...this.bloons.map(b => b.dist / this.pathLen)) : 1) / (this.tick < t.abilityUntil && t.ability?.kind === 'boost' ? t.ability.speed : 1); t.shots++;
+      if (t.intel && targets[0] && detected(targets[0])) weapon.camo = true;
       const active = this.tick < t.abilityUntil && t.ability?.kind === 'boost';
-      this.fire(active ? { ...t, damage: t.damage + t.ability!.damage } : t, p);
+      if (active && t.type === 'mortar') weapon.radius *= 1.15;
+      this.fire({ ...weapon, shots: t.shots, damage: weapon.damage + (active ? t.ability!.damage : 0) }, p);
       if (t.globalFreeze) {
         this.burst(t, this.source(t, { kind: 'ice', pierce: 1e6, freezeDuration: t.globalFreeze, damage: 1, ceramicBonus: 3, moabTargetable: false }), 2000);
       }
@@ -391,6 +528,13 @@ export class Sim {
     for (let j = this.darts.length - 1; j >= 0; j--) {
       const d = this.darts[j]; d.age = (d.age ?? 0) + DT;
       const previous = { x: d.x, y: d.y };
+      if (d.homing) {
+        const target = this.bloons.find(b => !d.hit.has(b.id) && this.canHit(b, d));
+        if (target) {
+          const p = this.posAt(target.dist), angle = Math.atan2(p.y - d.y, p.x - d.x);
+          d.vx = Math.cos(angle) * d.projectileSpeed; d.vy = Math.sin(angle) * d.projectileSpeed;
+        }
+      }
       if (d.kind === 'boomerang' && d.owner) {
         // The returning leg homes to its origin; per-target timers allow repeated Kylie hits.
         const returning = d.age > Math.min(d.lifespan / 2, d.range / d.projectileSpeed);
@@ -441,7 +585,7 @@ export class Sim {
       if (detonated || d.pierce <= 0 || d.life <= 0) this.darts.splice(j, 1);
     }
     if (this.roundActive && !this.spawnQ.length && !this.bloons.length) {
-      this.cash += 100 + this.round; this.roundActive = false; this.darts = [];
+      this.cash += 100 + this.round + this.towers.reduce((sum, t) => sum + t.income, 0); this.roundActive = false; this.darts = [];
     }
   }
 }

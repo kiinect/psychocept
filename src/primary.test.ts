@@ -3,7 +3,7 @@ import { Sim, BLOONS } from './sim';
 import { TOWERS } from './towers';
 
 test('all 90 Primary upgrades are purchasable and attack', () => {
-  for (const type of Object.keys(TOWERS) as (keyof typeof TOWERS)[]) {
+  for (const type of ['dart', 'boomerang', 'bomb', 'tack', 'ice', 'glue'] as const) {
     for (let path = 0; path < 3; path++) for (let tier = 1; tier <= 5; tier++) {
       const s = new Sim([{ x: 0, y: 100 }, { x: 960, y: 100 }]);
       s.cash = 1e7; expect(s.addTower(100, 115, type)).toBe(true);
