@@ -53,7 +53,7 @@ describe('screen flow', () => {
 
 describe('shop and upgrade states without a DOM', () => {
   it('disables unaffordable prices and distinguishes a closed shop', () => {
-    expect(priceBadge(100, 99)).toEqual({ disabled: true, unaffordable: true, label: '$100 · Need $1' });
+    expect(priceBadge(100, 99)).toEqual({ disabled: true, unaffordable: true, label: '$100', need: 'Need $1' });
     expect(priceBadge(100, 100).disabled).toBe(false);
     expect(priceBadge(100, 100, true)).toMatchObject({ disabled: true, unaffordable: false });
   });

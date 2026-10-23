@@ -11,6 +11,15 @@ import type { Flow, FlowEvent } from '../ui/flow';
 import { renderKnowledge, type KnowledgeActions } from './knowledge';
 import { KNOWLEDGE, TREES, type KnowledgeTree } from '../knowledge';
 import type { Difficulty } from '../sim';
+import type { LobbyState } from '../net/session';
+
+/** What the co-op screens need from main's Session (kept as a plain view so screens stay DOM-only). */
+export interface CoopView {
+  name: string; code: string; status: 'idle' | 'connecting' | 'lobby' | 'game' | 'closed'; error: string; host: boolean; myId: string;
+  lobby: LobbyState; canStart: boolean; ready: boolean;
+  setName(n: string): void; create(): void; join(code: string): void; leave(): void; setReady(r: boolean): void;
+  configure(c: Partial<Omit<LobbyState, 'players'>>): void; start(): void;
+}
 
 export const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 export const closeOverlay = (root: HTMLElement) => root.querySelector('#overlay')?.remove();
@@ -32,6 +41,7 @@ export interface ScreenMeta {
   profile: Profile; settings: Settings; hasRun: boolean; rewards?: Rewards;
   supported: Set<string>; buy: (id: string) => void; knowledge: KnowledgeActions;
   change: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
+  coop: CoopView;
 }
 const MAPS_PER_PAGE = 6;
 
@@ -54,7 +64,7 @@ export function showScreen(root: HTMLElement, flow: Flow, send: (event: FlowEven
         <button class="side-btn" data-action="settings" aria-label="Settings">⚙</button>
         <div class="menu-stage">${portrait('hero', hero.name, hero.color)}</div>
         ${meta.hasRun ? `<button class="continue-banner" data-action="loadRun"><span>💾</span><b>Continue saved game?</b></button>` : ''}
-        <nav class="menu-row" aria-label="Main menu">${round('heroes', '⭐', 'Heroes')}${round('knowledge', '📘', 'Knowledge')}${round('play', '▶', 'Play', 'play-big')}${round('powers', '⚡', 'Powers')}${round('settings', '⚙', 'Settings')}</nav>`; break;
+        <nav class="menu-row" aria-label="Main menu">${round('heroes', '⭐', 'Heroes')}${round('knowledge', '📘', 'Knowledge')}${round('play', '▶', 'Play', 'play-big')}${round('social', '🤝', 'Co-op')}${round('powers', '⚡', 'Powers')}${round('settings', '⚙', 'Settings')}</nav>`; break;
     }
     case 'maps': {
       const tier = view.tier && TIERS.includes(view.tier) ? view.tier : MAPS[flow.map].tier; view.tier = tier;
@@ -99,6 +109,29 @@ export function showScreen(root: HTMLElement, flow: Flow, send: (event: FlowEven
         <article class="power-detail"><h2>${esc(pick.name)}</h2><p>${esc(pick.text)}</p><p class="owned">You have: ${p.powers[pick.id] ?? 0}</p>
         <button class="big play" data-buy="${pick.id}" ${!meta.supported.has(pick.id) || p.mm < powerPrice(p, pick.id) ? 'disabled' : ''}>${meta.supported.has(pick.id) ? `Add for ${powerPrice(p, pick.id).toLocaleString()}` : 'Not available yet'}</button></article></div>`; break;
     }
+    case 'social': {
+      const c = meta.coop;
+      html = `${back}${plank('Play Social')}<div class="social"><label class="coop-name">Your name <input id="coop-name" maxlength="16" value="${esc(c.name)}"></label>
+        <section class="social-box"><h2>Co-op</h2><div class="social-row">${round('', '🐵', 'Create match').replace('data-action=""', 'id="coop-create"')}
+          <form id="coop-join" class="join"><label for="coop-code">Join with a code</label><input id="coop-code" maxlength="6" autocomplete="off" placeholder="ABC123" pattern="[A-Za-z2-9]{6}" required><button class="play">Join match</button></form></div>
+          <p class="coop-status" role="status">${c.status === 'connecting' ? 'Connecting…' : esc(c.error)}</p></section></div>`; break;
+    }
+    case 'lobby': {
+      const c = meta.coop, L = c.lobby, m = MAPS[L.map], mode = MODES.find(x => x.id === L.mode)!, diff = mode.difficulty;
+      const modes = MODES.filter(x => x.difficulty === diff || x.sandbox), maps = Object.values(MAPS);
+      const slot = (i: number) => { const pl = L.players[i]; return `<li class="slot p${i + 1}"><span class="pn">P${i + 1}</span>${pl ? `<b>${esc(pl.name)}${pl.id === c.myId ? ' (you)' : ''}</b><span class="rdy ${pl.ready ? 'on' : ''}">${pl.ready ? 'Ready' : 'Not ready'}</span>` : '<i>Waiting for player…</i>'}</li>`; };
+      html = `<button class="back-btn" id="coop-leave" aria-label="Leave match">↩</button><div class="lobby"><div class="lobby-card">
+        <div class="lobby-map"><strong>${esc(m.name)}</strong>${sceneSvg(m)}${c.host ? '<div class="map-arrows"><button class="pg" id="map-prev" aria-label="Previous map">◀</button><button class="pg" id="map-next" aria-label="Next map">▶</button></div>' : ''}</div>
+        <div class="lobby-cfg"><h2 class="mode-band">${esc(mode.sandbox ? 'Sandbox' : mode.id === diff ? 'Standard' : mode.name)}</h2>
+          <label>Difficulty <select id="coop-diff" ${c.host ? '' : 'disabled'}>${(['easy', 'medium', 'hard', 'impoppable'] as const).map(d => `<option value="${d}" ${d === diff ? 'selected' : ''}>${DIFF[d].name}</option>`).join('')}</select></label>
+          <label>Game mode <select id="coop-mode" ${c.host ? '' : 'disabled'}>${modes.map(x => `<option value="${x.id}" ${x.id === L.mode ? 'selected' : ''}>${esc(x.sandbox ? 'Sandbox' : x.id === diff ? 'Standard' : x.name)}</option>`).join('')}</select></label>
+          <label class="switch"><span>Map split</span><input id="coop-split" type="checkbox" role="switch" ${L.split ? 'checked' : ''} ${c.host ? '' : 'disabled'}></label>
+          <div class="code-row"><span>Code</span><output id="coop-code-out">${esc(c.code)}</output><button id="coop-copy" aria-label="Copy code">⧉</button></div></div></div>
+        <ol class="slots">${[0, 1, 2, 3].map(slot).join('')}</ol>
+        <p class="coop-status" role="status">${esc(c.error || (c.host ? (c.canStart ? 'Everyone is ready.' : 'Waiting for players to be ready…') : 'Waiting for the host to start…'))}</p>
+        <div class="lobby-actions">${c.host ? `<button class="big play" id="coop-start" ${c.canStart ? '' : 'disabled'}>Start!</button>` : `<button class="big play" id="coop-ready" aria-pressed="${c.ready}">${c.ready ? 'Not ready' : 'Ready!'}</button>`}</div></div>`;
+      void maps; break;
+    }
     case 'pause':
       html = `<div class="pause-box">${plank('Pause')}<div class="pause-panel"><h2>${esc(DIFF[flow.difficulty]?.name ?? '')} · Round ${roundNo}</h2>${settingsFields(meta.settings)}<div id="audio-settings"></div></div>
         <nav class="pause-row">${round('home', '🏠', 'Home')}${round('restart', '↻', 'Restart')}${round('resume', '➜', 'Continue', 'go')}</nav></div>`; break;
@@ -138,6 +171,7 @@ export function showScreen(root: HTMLElement, flow: Flow, send: (event: FlowEven
       const input = o.querySelector<HTMLInputElement>(`#${id}`); if (input) input.onchange = () => meta.change(key, input.checked);
     }
   }
+  if (flow.screen === 'social' || flow.screen === 'lobby') bindCoop(o, meta.coop);
   if (flow.screen === 'splash') o.onclick = () => send({ type: 'start' });
   o.querySelector<HTMLButtonElement>(flow.screen === 'hero' ? '[data-hero]' : flow.screen === 'menu' ? '.play-big' : 'button:not(.back-btn)')?.focus();
 }
@@ -145,4 +179,21 @@ export function showScreen(root: HTMLElement, flow: Flow, send: (event: FlowEven
 function settingsFields(s: Settings) {
   const sw = (id: string, label: string, on: boolean) => `<label class="switch"><span>${label}</span><input id="${id}" type="checkbox" role="switch" ${on ? 'checked' : ''}></label>`;
   return `<div class="switches">${sw('default-autoplay', 'Auto start', s.autoplay)}${sw('fast-forward', 'Fast forward default', s.fastForward)}${sw('show-range', 'Show tower range', s.showRange)}${sw('reduce-motion', 'Reduce motion', s.reducedMotion)}</div>`;
+}
+
+function bindCoop(o: HTMLElement, c: CoopView) {
+  const $ = <T extends HTMLElement>(sel: string) => o.querySelector<T>(sel);
+  const name = $<HTMLInputElement>('#coop-name'); if (name) name.onchange = () => c.setName(name.value.trim() || 'Monkey');
+  $<HTMLButtonElement>('#coop-create')?.addEventListener('click', () => c.create());
+  $<HTMLFormElement>('#coop-join')?.addEventListener('submit', e => { e.preventDefault(); c.join($<HTMLInputElement>('#coop-code')!.value.trim().toUpperCase()); });
+  $<HTMLButtonElement>('#coop-leave')?.addEventListener('click', () => c.leave());
+  $<HTMLButtonElement>('#coop-start')?.addEventListener('click', () => c.start());
+  $<HTMLButtonElement>('#coop-ready')?.addEventListener('click', () => c.setReady(!c.ready));
+  $<HTMLButtonElement>('#coop-copy')?.addEventListener('click', () => { void navigator.clipboard?.writeText(c.code); });
+  const ids = Object.keys(MAPS), cur = ids.indexOf(c.lobby.map);
+  $<HTMLButtonElement>('#map-prev')?.addEventListener('click', () => c.configure({ map: ids[(cur + ids.length - 1) % ids.length] }));
+  $<HTMLButtonElement>('#map-next')?.addEventListener('click', () => c.configure({ map: ids[(cur + 1) % ids.length] }));
+  const diff = $<HTMLSelectElement>('#coop-diff'); if (diff) diff.onchange = () => c.configure({ mode: diff.value });
+  const mode = $<HTMLSelectElement>('#coop-mode'); if (mode) mode.onchange = () => c.configure({ mode: mode.value });
+  const split = $<HTMLInputElement>('#coop-split'); if (split) split.onchange = () => c.configure({ split: split.checked });
 }

@@ -30,7 +30,7 @@ export function grantXP(s: Sim, amount: number) {
 }
 export function roundHero(s: Sim) {
   const h = s.hero; if (!h) return;
-  s.earnIncome(h.stats.income);
+  s.payTo(0, () => s.earnIncome(h.stats.income)); // co-op: the hero belongs to player 1
   if (h.kind === 'benjamin' && h.level >= 4) {
     const full = s.difficulty === 'easy' ? 200 : s.difficulty === 'medium' ? 150 : s.difficulty === 'hard' ? 100 : 1;
     if (s.difficulty !== 'impoppable') s.lives = Math.max(s.lives, Math.min(full + (h.level >= 14 ? 100 : 0), s.lives + (h.level >= 14 ? 10 : 5)));

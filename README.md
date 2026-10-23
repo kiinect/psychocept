@@ -53,3 +53,14 @@ requests at runtime.
 ## License
 
 Code: ISC. See provenance note above for data and assets.
+
+## Co-op (2–4 players)
+Main menu → Co-op → Create match (share the 6-letter code) or Join match. The host's browser runs the clock; every player runs the same deterministic simulation and actions are scheduled on the same tick (`src/net/`). Each player has their own cash, can only change their own monkeys, and (with map split) builds in their own zone. Lives are shared.
+
+Players find each other through a tiny Cloudflare Worker relay in `relay/` (one Durable Object per room; free plan is enough):
+```
+cd relay && npm install
+npx wrangler login      # once, opens the browser
+npx wrangler deploy     # prints https://mpt-relay.<account>.workers.dev
+```
+Then set the GitHub repo variable `VITE_RELAY_URL` to `wss://mpt-relay.<account>.workers.dev` (Settings → Secrets and variables → Actions → Variables) and re-run the Pages workflow. Local dev: `cd relay && npx wrangler dev` (the game defaults to `ws://localhost:8787` in dev).
