@@ -51,14 +51,20 @@ export function moabHpMult(round: number) {
   for (const [to, k] of steps) { if (round <= from) break; m += (Math.min(round, to) - from) * k; from = to; }
   return m;
 }
-/** From round 81 ordinary bloons release a single child; MOAB-class keep their full payload. */
-export const kidsAt = (type: string, round: number) => round > 80 && !MOAB_CLASS.includes(type) ? BLOONS[type].kids.slice(0, 1) : BLOONS[type].kids;
+/** From round 81 ordinary bloons release a single child (the last listed, so Zebras drop White); MOAB-class keep their full payload. */
+export const kidsAt = (type: string, round: number) => round > 80 && !MOAB_CLASS.includes(type) ? BLOONS[type].kids.slice(-1) : BLOONS[type].kids;
+/** Spawn HP of one layer: fortified, MOAB-class freeplay ramp (times the mode's moabHpMult), r81+ super ceramics. Shared by makeBloon and bloonRbe. */
+export function bloonHp(type: string, fortified: boolean, round: number, modeMoabMult = 1) {
+  const d = BLOONS[type], f = fortified && d.fortifiable;
+  if (MOAB_CLASS.includes(type)) return (f ? d.fortifiedHp : d.hp) * modeMoabMult * moabHpMult(round);
+  if (type === 'ceramic' && round > 80) return f ? 120 : 60;
+  return f ? d.fortifiedHp : d.hp;
+}
+/** Super ceramics pay $87 so a single-child chain still totals the 95 pops of a full ceramic. */
+export const layerPopCash = (type: string, round: number) => type === 'ceramic' && round > 80 ? 87 : BLOONS[type].popCash;
 /** Layer-by-layer RBE with the sim's own HP rules (fortified is inherited by children, as in makeBloon). */
 export function bloonRbe(type: string, fortified: boolean, round: number): number {
-  const d = BLOONS[type], f = fortified && d.fortifiable;
-  let hp = f ? d.fortifiedHp : d.hp;
-  if (MOAB_CLASS.includes(type)) hp *= moabHpMult(round); else if (type === 'ceramic' && round > 80) hp = f ? 120 : 60;
-  return hp + kidsAt(type, round).reduce((a, k) => a + bloonRbe(k, fortified, round), 0);
+  return bloonHp(type, fortified, round) + kidsAt(type, round).reduce((a, k) => a + bloonRbe(k, fortified, round), 0);
 }
 export interface Rules { cashMult: number; incomeMult: number; noSell: boolean; moabHpMult: number; winRound: number; auto: boolean; allowed?: (k: string) => boolean }
 export const STANDARD_RULES: Rules = { cashMult: 1, incomeMult: 1, noSell: false, moabHpMult: 1, winRound: Infinity, auto: false };
@@ -387,11 +393,9 @@ export class Sim {
   private makeBloon(type: string, dist: number, flags: Pick<Bloon, 'camo' | 'fortified' | 'regrow' | 'lane' | 'regrowMax'>): Bloon {
     const def = BLOONS[type];
     const fortified = Boolean(flags.fortified && def.fortifiable);
-    let hp = fortified ? def.fortifiedHp : def.hp, spd = 1;
-    const moab = this.isMoab({ type } as Bloon), late = Math.max(0, this.round - 80);
-    // uncertain: the speed ramp is hand-tuned; HP ramp is moabHpMult (matches wiki RBE).
-    if (moab) { hp *= this.rules.moabHpMult * moabHpMult(this.round); spd = 1 + Math.min(late, 60) * 0.005; }
-    else if (type === 'ceramic' && late > 0) hp = fortified ? 120 : 60; // r81+ "super ceramic"
+    const hp = bloonHp(type, fortified, this.round, this.rules.moabHpMult);
+    // uncertain: the MOAB speed ramp is hand-tuned (HP ramp matches wiki RBE).
+    const spd = this.isMoab({ type } as Bloon) ? 1 + Math.min(Math.max(0, this.round - 80), 60) * 0.005 : 1;
     return { id: this.nextId++, type, dist, hp, fortified, regrow: flags.regrow, camo: flags.camo || type === 'ddt', lane: flags.lane, spd,
       regrowMax: flags.regrow ? flags.regrowMax ?? type : undefined };
   }
@@ -524,7 +528,7 @@ export class Sim {
     if(d.owner) {const owner=this.towers.find(t=>t.type===d.owner!.type && t.x===d.owner!.x && t.y===d.owner!.y);if(owner)owner.paragonPops=(owner.paragonPops??0)+Math.min(amount,b.hp);}
     if (amount < b.hp) { b.hp -= amount; return; }
     const remaining = amount - b.hp;
-    this.credit(BLOONS[b.type].popCash * popCashMultiplier(this.round) * this.rules.cashMult * (b.cashMult ?? 1) * (((b.goldUntil ?? 0) > this.tick ? 2 : 1) + d.popCashBonus));
+    this.credit(layerPopCash(b.type, this.round) * popCashMultiplier(this.round) * this.rules.cashMult * (b.cashMult ?? 1) * (((b.goldUntil ?? 0) > this.tick ? 2 : 1) + d.popCashBonus));
     if (this.isMoab(b)) this.effect(this.posOf(b), b.type === 'moab' ? 24 : 36, 'blimp');
     for(const t of this.towers) if(t.type==='wizard' && t.tiers[2]>=4 && Math.hypot(this.posOf(b).x-t.x,this.posOf(b).y-t.y)<=t.range)
       t.graveyard=Math.min(t.tiers[2]===5?3000:500,(t.graveyard ?? 0)+1);
