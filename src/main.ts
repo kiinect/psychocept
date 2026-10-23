@@ -1,20 +1,22 @@
 import { Application, Graphics } from 'pixi.js';
-import { Sim, DT, roundGroups, type Difficulty } from './sim';
+import { DT, roundGroups } from './sim';
 import { canUpgrade, TOWERS, type TowerKind } from './towers';
 import { fitWorld, worldPoint } from './viewport';
 import './style.css';
-import { DEFAULT_MAP } from './map';
+import { MAPS } from './maps/maps';
+import { drawScene } from './maps/art';
+import { createGame, modeById } from './modes/modes';
+import { closeOverlay, showEnd, showMapSelect, showModeSelect } from './screens/screens';
 
-const { path, water } = DEFAULT_MAP;
-let sim = new Sim(path, 'medium', water);
+const q = new URLSearchParams(location.search);
+let mapId = q.get('map') ?? 'monkey_meadow', modeId = q.get('mode') ?? 'medium', ended = false;
+let sim = createGame(mapId, modeId);
 let selected = -1, placing: TowerKind | null = null, speed = 1, aiming = false;
 const root = document.getElementById('app')!;
 root.innerHTML = `
-  <header><h1>Monkey Pop TD</h1><output id="hud" aria-label="Game status"></output></header>
+  <header><h1>Monkey Pop TD</h1><output id="hud" aria-label="Game status"></output><button id="menu" style="width:auto">Maps</button></header>
   <main><section id="field" aria-label="Tower defense map"></section>
   <aside aria-label="Tower controls">
-    <label for="difficulty">Difficulty</label>
-    <select id="difficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option><option value="impoppable">Impoppable</option></select>
     <div id="shop" aria-label="Tower shop"></div>
     <p id="hint" role="status">Buy a monkey, then choose a spot on the map.</p>
     <label for="tower-select">Select a tower</label><select id="tower-select"><option value="-1">No towers placed</option></select>
@@ -39,7 +41,6 @@ const shopButtons = (Object.keys(TOWERS) as TowerKind[]).map(type => {
 });
 const start = element<HTMLButtonElement>('start');
 const towerSelect = element<HTMLSelectElement>('tower-select');
-const difficulty = element<HTMLSelectElement>('difficulty');
 const details = element<HTMLElement>('details');
 const target = element<HTMLButtonElement>('target');
 const abilityButton = element<HTMLButtonElement>('ability');
@@ -67,7 +68,7 @@ const app = new Application();
 await app.init({ width: 960, height: 540, background: '#182b21', antialias: true });
 field.appendChild(app.canvas);
 app.canvas.setAttribute('aria-label', 'Map: buy a monkey and click to place it; use Select a tower to manage monkeys');
-const g = new Graphics(); app.stage.addChild(g);
+const bg = new Graphics(), g = new Graphics(); app.stage.addChild(bg, g);
 function resizeMap() {
   const width = Math.max(1, field.clientWidth), height = Math.max(1, field.clientHeight);
   app.renderer.resize(width, height);
@@ -84,9 +85,12 @@ element<HTMLButtonElement>('speed').addEventListener('click', e => {
 target.addEventListener('click', () => { sim.cycleTargeting(selected); refresh(); });
 sell.addEventListener('click', () => { if (sim.sell(selected)) selected = -1; refresh(); });
 towerSelect.addEventListener('change', () => { selected = Number(towerSelect.value); placing = null; aiming = false; refresh(); });
-difficulty.addEventListener('change', () => {
-  sim = new Sim(path, difficulty.value as Difficulty, water); selected = -1; placing = null; aiming = false; acc = 0; refresh();
-});
+function newGame(map: string, mode: string) {
+  mapId = map; modeId = mode; sim = createGame(map, mode); drawScene(bg, MAPS[map]);
+  selected = -1; placing = null; aiming = false; acc = 0; ended = false; closeOverlay(root); refresh();
+}
+const toMaps = () => showMapSelect(root, id => showModeSelect(root, id, mode => newGame(id, mode), toMaps));
+element<HTMLButtonElement>('menu').addEventListener('click', toMaps);
 addEventListener('keydown', e => {
   if (e.key === 'Escape') { placing = null; aiming = false; refresh(); }
   if (e.code === 'Space' && (e.target === document.body || e.target === app.canvas)) { e.preventDefault(); beginRound(); }
@@ -109,16 +113,17 @@ app.canvas.addEventListener('pointerdown', e => {
   refresh();
 });
 let lastOptions = '', lastAim = '';
+drawScene(bg, MAPS[mapId] ?? MAPS.monkey_meadow);
 function refresh() {
-  hud.textContent = `$${sim.cash.toFixed(0)} · Lives ${sim.lives} · Round ${sim.round}${sim.gameOver ? ' · Game over' : ''}`;
+  hud.textContent = `${MAPS[mapId].name} · ${modeById(modeId).name} · $${sim.cash.toFixed(0)} · Lives ${sim.lives} · Round ${sim.round}${Number.isFinite(sim.rules.winRound) ? '/' + sim.rules.winRound : ''}${sim.gameOver ? ' · Game over' : sim.won ? ' · Victory' : ''}`;
   shopButtons.forEach(({ type, button }) => {
     button.textContent = `${placing === type ? 'Cancel' : TOWERS[type].name} · $${sim.price(TOWERS[type].cost)}`;
+    button.hidden = !!sim.rules.allowed && !sim.rules.allowed(type);
     button.disabled = sim.gameOver || (placing !== type && sim.cash < sim.price(TOWERS[type].cost));
     button.setAttribute('aria-pressed', String(placing === type));
   });
   field.classList.toggle('placing', placing !== null || aiming);
-  difficulty.disabled = sim.roundActive || sim.towers.length > 0 || sim.round > (sim.difficulty === 'impoppable' ? 5 : 0);
-  start.disabled = sim.roundActive || sim.gameOver || !roundGroups(sim.round + 1).length;
+  start.disabled = sim.roundActive || sim.gameOver || !roundGroups(sim.round + 1).length || sim.won && sim.round >= sim.rules.winRound;
   start.textContent = sim.gameOver ? 'Game over' : sim.roundActive ? `Round ${sim.round} running` : `Start round ${sim.round + 1}`;
   const options = sim.towers.map((t, i) => `<option value="${i}">${TOWERS[t.type].name} ${i + 1} · ${t.tiers.join('-')}</option>`).join('');
   if (options !== lastOptions) { towerSelect.innerHTML = '<option value="-1">Select a tower</option>' + options; lastOptions = options; }
@@ -149,19 +154,24 @@ function refresh() {
 const COL: Record<string, number> = { red: 0xee3333, blue: 0x3399ff, green: 0x33cc33, yellow: 0xeeee33, pink: 0xff88bb, black: 0x222222, white: 0xeeeeee, purple: 0x9933cc, lead: 0x888899, zebra: 0xcccccc, rainbow: 0xff9900, ceramic: 0xbb8855, moab: 0x3366cc };
 let acc = 0;
 refresh();
+if (!q.has('map')) toMaps();
 app.ticker.add(t => {
   acc = Math.min(acc + Math.min(t.deltaMS / 1000, 0.25) * speed, 0.75);
   while (acc >= DT) { sim.step(); acc -= DT; }
-  g.clear().rect(0, 0, 960, 540).fill(0x4a8f3c).poly(path.flatMap(p => [p.x, p.y]), false).stroke({ width: 40, color: 0xc9a66b });
+  g.clear();
   const chosen = sim.towers[selected];
-  for (const w of water) g.rect(w.x, w.y, w.width, w.height).fill(0x388fc1).stroke({ color: 0x92d3ee, width: 2 });
+  if (!ended && (sim.gameOver || sim.won)) {
+    ended = true; const won = sim.won && !sim.gameOver;
+    showEnd(root, won, sim.round, { again: () => newGame(mapId, modeId), menu: toMaps,
+      cont: won ? () => { sim.rules.winRound = Infinity; sim.won = false; ended = false; closeOverlay(root); } : undefined });
+  }
   if (chosen && ['mortar', 'heli', 'dartling', 'ace'].includes(chosen.type)) {
     const p = chosen.targetPoint; g.circle(p.x, p.y, 8).stroke({ color: 0xffdf66, width: 2 });
     g.moveTo(p.x - 12, p.y).lineTo(p.x + 12, p.y).moveTo(p.x, p.y - 12).lineTo(p.x, p.y + 12).stroke({ color: 0xffdf66, width: 1 });
   }
   if (chosen && chosen.range < 1000) g.circle(chosen.x, chosen.y, chosen.range).fill({ color: 0xffffff, alpha: 0.12 }).stroke({ color: 0xffffff, alpha: 0.7, width: 1 });
   for (const b of sim.bloons) {
-    const p = sim.posAt(b.dist); g.ellipse(p.x, p.y, 7, 9).fill(COL[b.type] ?? 0x888888);
+    const p = sim.posOf(b); g.ellipse(p.x, p.y, 7, 9).fill(COL[b.type] ?? 0x888888);
     if ((b.frozenUntil ?? 0) > sim.tick) g.ellipse(p.x, p.y, 8, 10).stroke({ color: 0xbbf4ff, width: 2 });
     if (b.glue) g.circle(p.x, p.y + 4, 5).fill({ color: 0xeed34e, alpha: 0.7 });
     if (b.camo) g.circle(p.x - 2, p.y - 2, 3).fill(0x33552b);
