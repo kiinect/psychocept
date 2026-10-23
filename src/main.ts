@@ -1,5 +1,7 @@
 import { PARAGONS } from './towers/paragons';
 import { Application, Graphics } from 'pixi.js';
+import { buildTextures } from './art';
+import { createSpriteScene } from './render/pixi-scene';
 import { DT, roundGroups } from './sim';
 import { TOWERS, type TowerKind } from './towers';
 import { fitWorld, worldPoint } from './viewport';
@@ -94,7 +96,9 @@ const app = new Application();
 await app.init({ width: 960, height: 540, background: '#182b21', antialias: true });
 field.appendChild(app.canvas);
 app.canvas.setAttribute('aria-label', 'Map: buy a monkey and click to place it; use Select a tower to manage monkeys');
-const bg = new Graphics(), g = new Graphics(); app.stage.addChild(bg, g);
+const bg = new Graphics(), g = new Graphics();
+const { container: entities, adapter: scene } = createSpriteScene(buildTextures(app.renderer));
+app.stage.addChild(bg, entities, g);
 function resizeMap() {
   const width = Math.max(1, field.clientWidth), height = Math.max(1, field.clientHeight);
   app.renderer.resize(width, height);
@@ -119,7 +123,7 @@ target.addEventListener('click', () => { sim.cycleTargeting(selected); refresh()
 sell.addEventListener('click', () => { if (sim.sell(selected)) selected = -1; refresh(); });
 towerSelect.addEventListener('change', () => { selected = Number(towerSelect.value); placing = null; aiming = false; heroTools = false; refresh(); });
 function newGame(map: string, mode: string) {
-  mapId = map; modeId = mode; sim = createGame(map, mode); drawScene(bg, MAPS[map]);
+  mapId = map; modeId = mode; scene.reset(); sim = createGame(map, mode); drawScene(bg, MAPS[map]);
   placingHero = null; heroUI.cancel(); selected = -1; placing = null; aiming = false; acc = 0; ended = false; pointer = null; heroTools = false;
   element<HTMLSelectElement>('hero-select').value = flow.hero;
   refresh();
@@ -282,7 +286,6 @@ function refresh() {
 
   });
 }
-const COL: Record<string, number> = { red: 0xee3333, blue: 0x3399ff, green: 0x33cc33, yellow: 0xeeee33, pink: 0xff88bb, black: 0x222222, white: 0xeeeeee, purple: 0x9933cc, lead: 0x888899, zebra: 0xcccccc, rainbow: 0xff9900, ceramic: 0xbb8855, moab: 0x3366cc };
 let acc = 0;
 refresh();
 root.classList.toggle('reduced-motion', reducedMotion);
@@ -303,41 +306,12 @@ app.ticker.add(t => {
     const p = chosen.targetPoint; g.circle(p.x, p.y, 8).stroke({ color: 0xffdf66, width: 2 });
     g.moveTo(p.x - 12, p.y).lineTo(p.x + 12, p.y).moveTo(p.x, p.y - 12).lineTo(p.x, p.y + 12).stroke({ color: 0xffdf66, width: 1 });
   }
-  if (showRange && chosen && sim.effectiveStats(chosen).range < 1000) g.circle(chosen.x, chosen.y, sim.effectiveStats(chosen).range).fill({ color: 0xffffff, alpha: 0.12 }).stroke({ color: 0xffffff, alpha: 0.7, width: 1 });
+  scene.update(sim, t.deltaMS / 1000, selected, showRange && chosen ? sim.effectiveStats(chosen).range : 0, !reducedMotion);
   if (pointer && (placing || placingHero)) {
     const valid = placing ? sim.canPlace(pointer.x, pointer.y, placing) && sim.cash >= sim.shopPrice(placing) : sim.canPlaceHero(pointer.x, pointer.y, placingHero!) && sim.cash >= HEROES[placingHero!].cost[sim.difficulty];
     const range = placing ? TOWERS[placing].base.range : heroStats(placingHero!, 1).range;
-    const color = valid ? 0x9affb0 : 0xff3d46;
-    g.circle(pointer.x, pointer.y, Math.min(range, 1000)).fill({ color, alpha: 0.15 }).stroke({ color, width: 2 });
-    g.circle(pointer.x, pointer.y, 13).fill({ color, alpha: 0.65 }).stroke({ color: 0x152b32, width: 3 });
+    scene.placement(placing ? 'tower' : 'hero', placing ?? placingHero!, pointer, range, valid);
   }
-  for (const b of sim.bloons) {
-    const p = sim.posOf(b); g.ellipse(p.x, p.y, 7, 9).fill(COL[b.type] ?? 0x888888);
-    if ((b.frozenUntil ?? 0) > sim.tick) g.ellipse(p.x, p.y, 8, 10).stroke({ color: 0xbbf4ff, width: 2 });
-    if (b.glue) g.circle(p.x, p.y + 4, 5).fill({ color: 0xeed34e, alpha: 0.7 });
-    if (b.camo) g.circle(p.x - 2, p.y - 2, 3).fill(0x33552b);
-    if (b.fortified) g.circle(p.x, p.y, 9).stroke({ color: 0x66432b, width: 2 });
-  }
-  for (const tower of sim.towers) {
-    const t = tower.type === 'ace' || tower.type === 'heli' ? { ...tower, ...tower.flight } : tower;
-    if (t !== tower) g.rect(tower.x - 10, tower.y - 10, 20, 20).fill(0x596253);
-    g.circle(t.x - 10, t.y, 5).circle(t.x + 10, t.y, 5).fill(0x674020);
-    g.circle(t.x, t.y, 12).fill(TOWERS[t.type].color).circle(t.x, t.y + 3, 7).fill(0xe2b67b);
-    g.circle(t.x - 4, t.y - 2, 2).circle(t.x + 4, t.y - 2, 2).fill(0x201a16);
-    if (tower === chosen) g.circle(t.x, t.y, 16).stroke({ width: 2, color: 0xffdf66 });
-  }
-  if (sim.hero) {
-    const h = sim.hero;
-    g.poly([h.x, h.y - 13, h.x + 12, h.y, h.x, h.y + 13, h.x - 12, h.y], true).fill(HEROES[h.kind].color).stroke({ color: 0xffdf66, width: 2 });
-    g.circle(h.x - 4, h.y - 1, 2).circle(h.x + 4, h.y - 1, 2).fill(0x172b21);
-    for (const asset of h.assets) if (!asset.tower) g.rect(asset.x - 4, asset.y - 4, 8, 8).fill(0xeed34e);
-    for (const zone of h.zones) g.circle(zone.point.x, zone.point.y, 9).stroke({ color: 0x9ef2cc, width: 2 });
-  }
-  for(const banana of sim.collectibles)g.ellipse(banana.x,banana.y,6,3).fill(0xffdf55).stroke({color:0x765714,width:1});
-  for(const item of sim.roadItems){const p=sim.posAt(item.dist);g.rect(p.x-4,p.y-4,8,8).fill(item.kind==='foam'?0xeaf5f4:item.kind==='trap'?0xa66b32:0xc6d1db);}
-  for(const sentry of sim.sentries)g.rect(sentry.x-5,sentry.y-5,10,10).fill(0xd3b463).stroke({color:0x302a20,width:2});
-  for(const tower of sim.towers)if(tower.degree)g.circle(tower.x,tower.y,15).stroke({color:0xd990ff,width:3});
-  for (const d of sim.darts) g.circle(d.x, d.y, d.kind === 'bomb' || d.kind === 'boomerang' || d.bounce ? 5 : 2).fill(d.kind === 'glue' ? 0xeed34e : d.kind === 'bomb' ? 0x222222 : 0xffffff);
-  for (const e of sim.effects) g.circle(e.x, e.y, e.radius).stroke({ color: e.kind === 'ice' ? 0xbbeeff : 0xffdd77, width: 2, alpha: e.life / 0.2 });
+  else scene.placement('tower', 'dart', null, 0, false);
   refresh();
 });
