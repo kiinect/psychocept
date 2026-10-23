@@ -7,7 +7,7 @@ import { TOWERS, type TowerKind } from './towers';
 import { fitWorld, worldPoint } from './viewport';
 import './style.css';
 import { initAudio } from './audio';
-import { MAPS } from './maps/maps';
+import { MAPS, TIERS } from './maps/maps';
 import { drawScene } from './maps/art';
 import { createGame } from './modes/modes';
 import { showScreen } from './screens/screens';
@@ -17,13 +17,22 @@ import { priceBadge, upgradeState } from './ui/state';
 import { portrait } from './ui/icons';
 import { upgradeDescription } from './ui/upgrade';
 import { CATEGORY } from './modes/modes';
-import { settingsSlot } from './meta';
+import { settingsSlot, profileSlot, runSlot, snapshotSim, restoreSim, purchasePower, usePower, POWERS, POWER_BY_ID, slot, type Settings } from './meta';
+import { gameRewards, powerButtonState, supportedPowers, type Rewards } from './ui/meta';
+import { modeById } from './modes/modes';
 import { heroControls } from './hero-ui';
 import { HEROES, heroStats, type HeroKind } from './heroes';
 
 let flow = initialFlow(location.search);
 let mapId = flow.map, modeId = flow.mode, ended = false;
-const savedSettings = settingsSlot().load();
+const profileStore = profileSlot(), settingsStore = settingsSlot(), runStore = runSlot();
+let profile = profileStore.load(), savedSettings = settingsStore.load();
+const supported = supportedPowers(POWERS.map(p => p.id));
+interface RunContext { mode: string; hero: HeroKind; savedAt: number; rewardedRound: number; recorded: boolean }
+const contextStore = slot<RunContext | null>('mpt.run.ui', [], () => null, r => r && typeof r.mode === 'string' && HEROES[r.hero as HeroKind] && Number.isFinite(r.savedAt) && Number.isFinite(r.rewardedRound) && typeof r.recorded === 'boolean' ? r : null);
+let rewardedRound = modeById(modeId).startRound - 1, recorded = false;
+let rewards: Rewards | undefined;
+let placingPower: string | null = null;
 let showRange = savedSettings.showRange, reducedMotion = savedSettings.reducedMotion;
 let autoplay = savedSettings.autoplay, category = 'Primary', heroTools = false;
 let pointer: { x: number; y: number } | null = null;
@@ -33,10 +42,10 @@ let placingHero: HeroKind | null = null;
 if (savedSettings.fastForward) speed = 3;
 const root = document.getElementById('app')!;
 root.innerHTML = `
-  <header><div class="resources"><output id="lives" aria-label="Lives"></output><output id="cash" aria-label="Cash"></output></div><output id="hud" aria-label="Round"></output><button id="settings" aria-label="Settings">⚙</button><button id="menu" aria-label="Pause game">Ⅱ</button></header>
+  <header><div class="resources"><output id="lives" aria-label="Lives"></output><output id="cash" aria-label="Cash"></output></div><output id="active-powers" aria-label="Active powers"></output><output id="hud" aria-label="Round"></output><button id="settings" aria-label="Settings">⚙</button><button id="menu" aria-label="Pause game">Ⅱ</button></header>
   <main><section id="field" aria-label="Tower defense map"></section>
   <aside aria-label="Tower shop"><button id="collapse" aria-expanded="true">Shop ▾</button><div id="shop-content"><nav id="categories" aria-label="Tower categories"></nav>
-    <div id="shop" aria-label="Tower shop"></div>
+    <div id="shop" aria-label="Tower shop"></div><div id="powers" class="power-list" hidden></div><p id="powers-empty" hidden>No powers owned. Buy powers from the main menu.</p>
     <p id="hint" role="status">Buy a monkey, then choose a spot on the map.</p>
     <label for="tower-select">Select a tower</label><select id="tower-select"><option value="-1">No towers placed</option></select>
     </div></aside><section id="inspector" aria-label="Upgrade and hero panel" hidden><button id="close-inspector" aria-label="Close upgrade panel">× Close</button><section id="details" hidden><div class="tower-summary"><div id="tower-portrait"></div><div><h2 id="tower-title">Dart Monkey</h2><output id="pops"></output></div></div>
@@ -53,7 +62,7 @@ const shop = element<HTMLElement>('shop');
 const shopButtons = (Object.keys(TOWERS) as TowerKind[]).map(type => {
   const button = document.createElement('button');
   button.addEventListener('click', () => {
-    placingHero = null; heroUI.cancel(); aiming = false; heroTools = false; selected = -1; placing = placing === type ? null : type;
+    placingPower = null; placingHero = null; heroUI.cancel(); aiming = false; heroTools = false; selected = -1; placing = placing === type ? null : type;
     hint.textContent = placing ? `Click on ${TOWERS[type].waterOnly ? 'water' : 'grass'} to place your ${TOWERS[type].name}. Escape cancels.` : 'Placement cancelled.';
     refresh();
   });
@@ -61,7 +70,7 @@ const shopButtons = (Object.keys(TOWERS) as TowerKind[]).map(type => {
   shop.appendChild(button); return { type, button, key: '' };
 });
 const heroUI = heroControls(element<HTMLElement>('hero-host'), () => sim, () => selected, kind => {
-  placingHero = kind; placing = null; aiming = false; if (kind) { heroTools = false; selected = -1; } refresh();
+  placingPower = null; placingHero = kind; placing = null; aiming = false; if (kind) { heroTools = false; selected = -1; } refresh();
 }, message => { hint.textContent = message; });
 const start = element<HTMLButtonElement>('start');
 const towerSelect = element<HTMLSelectElement>('tower-select');
@@ -72,7 +81,7 @@ abilityButton.addEventListener('click', () => { sim.activate(selected); refresh(
 const aim = element<HTMLButtonElement>('aim');
 const aimX = element<HTMLInputElement>('aim-x'), aimY = element<HTMLInputElement>('aim-y');
 aim.addEventListener('click', () => {
-  placing = null; aiming = !aiming;
+  placingPower = null; placing = null; aiming = !aiming;
   hint.textContent = aiming ? 'Click the map to set the target, or enter coordinates below. Escape cancels.' : 'Target selection cancelled.';
   refresh();
 });
@@ -115,9 +124,9 @@ start.addEventListener('click', beginRound);
 function cycleSpeed() { speed = speed % 3 + 1; element<HTMLButtonElement>('speed').textContent = `×${speed}`; }
 element<HTMLButtonElement>('speed').addEventListener('click', cycleSpeed);
 element<HTMLButtonElement>('autoplay').addEventListener('click', () => { autoplay = !autoplay; refresh(); });
-for (const name of ['Primary', 'Military', 'Magic', 'Support', 'Hero']) {
+for (const name of ['Primary', 'Military', 'Magic', 'Support', 'Hero', 'Powers']) {
   const b = document.createElement('button'); b.textContent = name;
-  b.onclick = () => { category = name; heroTools = name === 'Hero'; refresh(); };
+  b.onclick = () => { placingPower = null; category = name; heroTools = name === 'Hero'; refresh(); };
   element('categories').appendChild(b);
 }
 element('collapse').onclick = () => { const content = element('shop-content'); content.hidden = !content.hidden; root.classList.toggle('shop-collapsed', content.hidden); element('collapse').setAttribute('aria-expanded', String(!content.hidden)); element('collapse').textContent = content.hidden ? 'Shop ▸' : 'Shop ▾'; };
@@ -137,8 +146,12 @@ element('target-prev').onclick = () => {
   refresh();
 };
 sell.addEventListener('click', () => { if (sim.sell(selected)) selected = -1; refresh(); });
-towerSelect.addEventListener('change', () => { selected = Number(towerSelect.value); placing = null; aiming = false; heroTools = false; refresh(); });
+towerSelect.addEventListener('change', () => { selected = Number(towerSelect.value); placingPower = null; placing = null; aiming = false; heroTools = false; refresh(); });
 function newGame(map: string, mode: string) {
+  runStore.clear(); contextStore.clear();
+  rewards = undefined; recorded = false; rewardedRound = modeById(mode).startRound - 1;
+  speed = savedSettings.fastForward ? 3 : 1; autoplay = savedSettings.autoplay;
+  placingPower = null;
   mapId = map; modeId = mode; scene.reset(); sim = createGame(map, mode); drawScene(bg, MAPS[map]);
   placingHero = null; heroUI.cancel(); selected = -1; placing = null; aiming = false; acc = 0; ended = false; pointer = null; heroTools = false;
   element<HTMLSelectElement>('hero-select').value = flow.hero;
@@ -148,22 +161,76 @@ function newGame(map: string, mode: string) {
 initAudio(sim);
 const audioPanel = root.querySelector<HTMLElement>('aside fieldset') ?? undefined;
 audioPanel?.remove();
+// Reuse audio's public DOM controls without changing the audio lane.
+function syncAudio() {
+  for (const [label, value, key] of [['Sound effects volume', savedSettings.volume, 'volume'], ['Music volume', savedSettings.music, 'music']] as const) {
+    const input = audioPanel?.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
+    if (!input) continue;
+    input.value = String(Math.round(value * 100)); input.dispatchEvent(new Event('input'));
+    input.oninput = () => changeSetting(key, Number(input.value) / 100);
+  }
+}
+function changeSetting<K extends keyof Settings>(key: K, value: Settings[K]) {
+  savedSettings = { ...savedSettings, [key]: value }; settingsStore.save(savedSettings);
+  showRange = savedSettings.showRange; reducedMotion = savedSettings.reducedMotion;
+  root.classList.toggle('reduced-motion', reducedMotion);
+}
+syncAudio();
 function renderScreen() {
-  showScreen(root, flow, send, sim.round, { range: showRange, motion: reducedMotion, change: (key, value) => {
-    if (key === 'range') showRange = value; else reducedMotion = value;
-    root.classList.toggle('reduced-motion', reducedMotion);
-  } }, audioPanel);
+  showScreen(root, flow, send, sim.round, {
+    profile, settings: savedSettings, hasRun: !!runStore.load(), rewards, supported,
+    change: changeSetting,
+    buy: id => { if (!supported.has(id)) return; profile = purchasePower(profile, id); profileStore.save(profile); renderScreen(); },
+  }, audioPanel);
   root.querySelector<HTMLElement>('main')!.inert = flow.screen !== 'game';
   root.querySelector<HTMLElement>('header')!.inert = flow.screen !== 'game';
   if (flow.screen === 'game') start.focus();
 }
+function consumePower(id: string, point?: { x: number; y: number }) {
+  if (!(profile.powers[id] > 0) || !sim.usePower(id, point)) return false;
+  profile = usePower(profile, id)!; profileStore.save(profile);
+  placingPower = null; hint.textContent = `${POWER_BY_ID[id].name} used.`; return true;
+}
+const powerButtons = POWERS.map(p => {
+  const button = document.createElement('button');
+  button.onclick = () => {
+    placing = null; placingHero = null; heroUI.cancel(); aiming = false; selected = -1;
+    if (sim.powerNeedsPoint(p.id)) { placingPower = p.id; hint.textContent = `Place ${p.name} on the ${p.kind === 'trap' ? 'track' : 'map'}. Escape cancels.`; }
+    else consumePower(p.id);
+    refresh();
+  };
+  element('powers').append(button); return { p, button };
+});
+function saveRun(completedRound = sim.round) {
+  if (sim.gameOver || sim.won) return;
+  const snapshot = snapshotSim(sim, mapId, Date.now());
+  snapshot.round = completedRound;
+  runStore.save(snapshot);
+  contextStore.save({ mode: modeId, hero: flow.hero, savedAt: snapshot.savedAt, rewardedRound, recorded });
+}
+function loadRun() {
+  const snapshot = runStore.load(), context = contextStore.load();
+  if (!snapshot || !MAPS[snapshot.map]) return false;
+  const matching = context?.savedAt === snapshot.savedAt ? context : null;
+  const mode = matching?.mode ?? snapshot.difficulty;
+  const restored = createGame(snapshot.map, mode);
+  if (!restoreSim(restored, snapshot)) { hint.textContent = 'Saved run could not be restored.'; return false; }
+  scene.reset(); sim = restored; mapId = snapshot.map; modeId = mode;
+  flow = { ...flow, map: mapId, mode, difficulty: sim.difficulty, hero: matching?.hero ?? flow.hero };
+  rewardedRound = matching?.rewardedRound ?? modeById(mode).startRound - 1; recorded = matching?.recorded ?? false;
+  ended = false; rewards = undefined; selected = -1; heroTools = false; pointer = null; acc = 0;
+  speed = savedSettings.fastForward ? 3 : 1; autoplay = savedSettings.autoplay;
+  element<HTMLSelectElement>('hero-select').value = flow.hero;
+  drawScene(bg, MAPS[mapId]); return true;
+}
 function send(event: FlowEvent) {
+  if (event.type === 'loadRun' && (flow.screen !== 'menu' || !loadRun())) return;
   const before = flow;
   flow = transition(flow, event);
   if (flow === before) return;
   if (event.type === 'restart' || event.type === 'hero') newGame(flow.map, flow.mode);
   if (event.type === 'continue') { sim.rules.winRound = Infinity; sim.won = false; ended = false; }
-  if (flow.screen !== 'game') { placing = null; placingHero = null; aiming = false; heroUI.cancel(); acc = 0; }
+  if (flow.screen !== 'game') { placingPower = null; placing = null; placingHero = null; aiming = false; heroUI.cancel(); acc = 0; }
   renderScreen(); refresh();
 }
 element<HTMLButtonElement>('menu').addEventListener('click', () => send({ type: 'pause' }));
@@ -173,7 +240,7 @@ addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     e.preventDefault();
     if (flow.screen !== 'game') { send({ type: 'back' }); return; }
-    if (placing || placingHero || aiming) { placingHero = null; heroUI.cancel(); placing = null; aiming = false; pointer = null; }
+    if (placingPower || placing || placingHero || aiming) { placingPower = null; placingHero = null; heroUI.cancel(); placing = null; aiming = false; pointer = null; }
     else if (selected >= 0 || heroTools) { selected = -1; heroTools = false; }
     else send({ type: 'pause' });
     refresh(); return;
@@ -213,6 +280,10 @@ app.canvas.addEventListener('pointerdown', e => {
   app.canvas.focus();
   const { x, y } = mapPointer(e);
   if (x < 0 || y < 0 || x > 960 || y > 540) return;
+  if (placingPower) {
+    if (!consumePower(placingPower, { x, y })) hint.textContent = 'Choose a valid power location. No power consumed.';
+    refresh(); return;
+  }
   if (aiming) {
     if (sim.setTarget(selected, { x, y })) { aiming = false; hint.textContent = 'Target point updated.'; }
     refresh(); return;
@@ -235,6 +306,18 @@ let lastOptions: string | null = null, lastAim = '';
 drawScene(bg, MAPS[mapId] ?? MAPS.monkey_meadow);
 function refresh() {
   heroUI.refresh();
+  element('powers').hidden = category !== 'Powers';
+  element('shop').hidden = category === 'Powers';
+  element('powers-empty').hidden = category !== 'Powers' || POWERS.some(p => (profile.powers[p.id] ?? 0) > 0);
+  powerButtons.forEach(({ p, button }) => {
+    const count = profile.powers[p.id] ?? 0;
+    const state = powerButtonState(count, supported.has(p.id), sim.gameOver || !!sim.rules.noPowers);
+    button.hidden = count < 1;
+    button.disabled = state.disabled;
+    button.textContent = `${p.name} ×${count}${state.reason ? ' · ' + state.reason : ''}`;
+    button.setAttribute('aria-pressed', String(placingPower === p.id));
+  });
+  element('active-powers').textContent = sim.activePowers.map(p => `${POWER_BY_ID[p.id]?.name ?? p.id}${Number.isFinite(p.until) ? ` ${Math.ceil((p.until - sim.tick) / 60)}s` : ''}`).join(' · ');
   hud.textContent = `Round ${sim.round}/${Number.isFinite(sim.rules.winRound) ? sim.rules.winRound : '∞'}`;
   element('lives').textContent = `♥ ${sim.lives.toLocaleString()}`;
   element('cash').textContent = `$ ${Math.floor(sim.cash).toLocaleString()}`;
@@ -255,7 +338,7 @@ function refresh() {
     button.classList.toggle('unaffordable', state.unaffordable);
     button.setAttribute('aria-pressed', String(placing === type));
   });
-  field.classList.toggle('placing', placing !== null || placingHero !== null || aiming);
+  field.classList.toggle('placing', placingPower !== null || placing !== null || placingHero !== null || aiming);
   start.disabled = sim.gameOver || !sim.roundActive && !roundGroups(sim.round + 1).length || sim.won && sim.round >= sim.rules.winRound;
   start.textContent = sim.gameOver ? '■' : sim.roundActive ? '»' : '▶';
   start.setAttribute('aria-label', sim.roundActive ? 'Fast forward round' : `Start round ${sim.round + 1}`);
@@ -321,12 +404,22 @@ app.ticker.add(t => {
   if (flow.screen !== 'game') return;
   if (autoplay && !sim.roundActive && !sim.gameOver && !sim.won) beginRound();
   acc = Math.min(acc + Math.min(t.deltaMS / 1000, 0.25) * speed, 0.75);
-  while (acc >= DT) { sim.step(); acc -= DT; }
+  while (acc >= DT) {
+    const active = sim.roundActive, round = sim.round;
+    sim.step(); acc -= DT;
+    if (active && !sim.gameOver && (!sim.roundActive || sim.round > round)) saveRun(round);
+    if (sim.gameOver || sim.won) break;
+  }
   initAudio(sim);
   g.clear();
   const chosen = sim.towers[selected];
   if (!ended && (sim.gameOver || sim.won)) {
     ended = true; const won = sim.won && !sim.gameOver;
+    const completedRound = won || !sim.roundActive && !sim.gameOver ? sim.round : sim.round - 1;
+    rewards = gameRewards(profile, { map: mapId, difficulty: sim.difficulty, mapDifficulty: Math.max(0, TIERS.indexOf(MAPS[mapId].tier)), won, recorded, startRound: rewardedRound + 1, completedRound, hero: HEROES[sim.hero?.kind ?? flow.hero].name, pops: sim.towers.reduce((n, t) => n + (t.paragonPops ?? 0), 0) });
+    profile = rewards.profile; profileStore.save(profile);
+    rewardedRound = completedRound; recorded = true;
+    runStore.clear(); contextStore.clear();
     send({ type: won ? 'victory' : 'defeat' });
   }
   if (chosen && sim.canSetTarget(chosen)) {
@@ -334,10 +427,13 @@ app.ticker.add(t => {
     g.moveTo(p.x - 12, p.y).lineTo(p.x + 12, p.y).moveTo(p.x, p.y - 12).lineTo(p.x, p.y + 12).stroke({ color: 0xffdf66, width: 1 });
   }
   scene.update(sim, t.deltaMS / 1000, selected, showRange && chosen ? sim.effectiveStats(chosen).range : 0, !reducedMotion);
+  if (pointer && placingPower) {
+    g.circle(pointer.x, pointer.y, 14).stroke({ color: sim.canUsePower(placingPower, pointer) ? 0x66ff88 : 0xff5544, width: 3 });
+  }
   if (pointer && (placing || placingHero)) {
     const valid = placing ? sim.canPlace(pointer.x, pointer.y, placing) && sim.cash >= sim.shopPrice(placing) : sim.canPlaceHero(pointer.x, pointer.y, placingHero!) && sim.cash >= HEROES[placingHero!].cost[sim.difficulty];
     const range = placing ? TOWERS[placing].base.range : heroStats(placingHero!, 1).range;
-    scene.placement(placing ? 'tower' : 'hero', placing ?? placingHero!, pointer, range, valid);
+    scene.placement(placing ? 'tower' : 'hero', placing ?? placingHero!, pointer, showRange ? range : 0, valid);
   }
   else scene.placement('tower', 'dart', null, 0, false);
   refresh();
