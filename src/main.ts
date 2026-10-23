@@ -60,7 +60,7 @@ const sell = element<HTMLButtonElement>('sell');
 const upgrades = element<HTMLElement>('upgrades');
 const upgradeButtons = [0, 1, 2].map(path => {
   const button = document.createElement('button');
-  button.addEventListener('click', () => { sim.upgrade(selected, path); refresh(); });
+  button.addEventListener('click', () => { const tower = sim.towers[selected]; sim.upgrade(selected, path); selected = sim.towers.indexOf(tower); refresh(); });
   upgrades.appendChild(button); return button;
 });
 const app = new Application();
@@ -126,7 +126,8 @@ function refresh() {
   const t = sim.towers[selected]; details.hidden = !t;
   if (!t) return;
   element<HTMLElement>('tower-title').textContent = `${TOWERS[t.type].name} · ${t.tiers.join('-')}`;
-  aim.hidden = !['mortar', 'heli', 'dartling', 'ace'].includes(t.type);
+  aim.hidden = !sim.canSetTarget(t);
+  aim.textContent = t.type === 'super' ? 'Set Darkshift destination' : t.type === 'mermonkey' ? 'Place melody totem' : 'Set target on map';
   aim.disabled = sim.gameOver;
   aim.setAttribute('aria-pressed', String(aiming));
   element<HTMLElement>('target-point').hidden = aim.hidden;
@@ -155,7 +156,7 @@ app.ticker.add(t => {
   g.clear().rect(0, 0, 960, 540).fill(0x4a8f3c).poly(path.flatMap(p => [p.x, p.y]), false).stroke({ width: 40, color: 0xc9a66b });
   const chosen = sim.towers[selected];
   for (const w of water) g.rect(w.x, w.y, w.width, w.height).fill(0x388fc1).stroke({ color: 0x92d3ee, width: 2 });
-  if (chosen && ['mortar', 'heli', 'dartling', 'ace'].includes(chosen.type)) {
+  if (chosen && sim.canSetTarget(chosen)) {
     const p = chosen.targetPoint; g.circle(p.x, p.y, 8).stroke({ color: 0xffdf66, width: 2 });
     g.moveTo(p.x - 12, p.y).lineTo(p.x + 12, p.y).moveTo(p.x, p.y - 12).lineTo(p.x, p.y + 12).stroke({ color: 0xffdf66, width: 1 });
   }
