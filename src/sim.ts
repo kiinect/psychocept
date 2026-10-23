@@ -122,6 +122,13 @@ function edgeDist(p: Pt, poly: Pt[]) {
 }
 /** Circle (p, r) overlaps / lies fully inside a polygon. */
 export const touchesPoly = (p: Pt, r: number, poly: Pt[]) => inPoly(p, poly) || edgeDist(p, poly) < r;
+export type Ground = 'water' | 'land' | 'blocked';
+const polyArea = (q: Pt[]) => Math.abs(q.reduce((a, v, i) => { const w = q[(i + 1) % q.length]; return a + v.x * w.y - w.x * v.y; }, 0)) / 2;
+/** Area polygons smallest first (index = position in its own list): where they nest, the smallest containing one decides. */
+export function nestedAreas(p: { water: Pt[][]; land: Pt[][]; blocked: Pt[][] }) {
+  return (['water', 'land', 'blocked'] as const).flatMap(kind => p[kind].map((poly, index) => ({ kind, poly, index, a: polyArea(poly) })))
+    .sort((x, y) => x.a - y.a).map(({ kind, poly, index }) => ({ kind, poly, index }));
+}
 export interface Rules { cashMult: number; incomeMult: number; noSell: boolean; noPowers?: boolean; moabHpMult: number; winRound: number; auto: boolean; allowed?: (k: string) => boolean }
 export const STANDARD_RULES: Rules = { cashMult: 1, incomeMult: 1, noSell: false, moabHpMult: 1, winRound: Infinity, auto: false };
 // regrow restores along single-child chains only (blue->red etc.), reverse-derived from bloons.json.
@@ -156,16 +163,11 @@ export class Sim {
   /** Real-map polygons (BTD6 layouts). Empty for test sims, which use water rects, blocked circles and the lane buffer. */
   private _polys: { track: Pt[][]; water: Pt[][]; land: Pt[][]; blocked: Pt[][] } = { track: [], water: [], land: [], blocked: [] };
   /** water/land/blocked polygons, smallest first: where they nest, the smallest containing polygon decides the ground. */
-  private areas: { kind: 'water' | 'land' | 'blocked'; poly: Pt[] }[] = [];
+  private areas: { kind: Ground; poly: Pt[]; index: number }[] = [];
   get polys() { return this._polys; }
-  set polys(p: { track: Pt[][]; water: Pt[][]; land: Pt[][]; blocked: Pt[][] }) {
-    this._polys = p;
-    const area = (q: Pt[]) => Math.abs(q.reduce((a, v, i) => { const w = q[(i + 1) % q.length]; return a + v.x * w.y - w.x * v.y; }, 0)) / 2;
-    this.areas = (['water', 'land', 'blocked'] as const).flatMap(kind => p[kind].map(poly => ({ kind, poly, a: area(poly) })))
-      .sort((x, y) => x.a - y.a).map(({ kind, poly }) => ({ kind, poly }));
-  }
+  set polys(p: { track: Pt[][]; water: Pt[][]; land: Pt[][]; blocked: Pt[][] }) { this._polys = p; this.areas = nestedAreas(p); }
   /** Ground under a point on a real map: the smallest containing area polygon, else plain land. */
-  groundAt(p: Pt): 'water' | 'land' | 'blocked' { return this.areas.find(a => inPoly(p, a.poly))?.kind ?? 'land'; }
+  groundAt(p: Pt): Ground { return this.areas.find(a => inPoly(p, a.poly))?.kind ?? 'land'; }
   constructor(public path: Pt[], public difficulty: Difficulty = 'medium', public water: Rect[] = [], lanes?: Pt[][], public blocked: Circle[] = []) {
     this.lanes = lanes ?? [path];
     const mode = modeJson.data.difficulties[difficulty];

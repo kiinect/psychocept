@@ -1,5 +1,5 @@
 import { PARAGONS } from './towers/paragons';
-import { Application, Graphics } from 'pixi.js';
+import { Application, Container, Graphics } from 'pixi.js';
 import { buildTextures } from './art';
 import { createSpriteScene } from './render/pixi-scene';
 import { DT, roundGroups } from './sim';
@@ -49,7 +49,7 @@ root.innerHTML = `
     <p id="hint" role="status">Buy a monkey, then choose a spot on the map.</p>
     <label for="tower-select">Select a tower</label><select id="tower-select"><option value="-1">No towers placed</option></select>
     </div></aside><section id="inspector" aria-label="Upgrade and hero panel" hidden><button id="close-inspector" aria-label="Close upgrade panel">× Close</button><section id="details" hidden><div class="tower-summary"><div id="tower-portrait"></div><div><h2 id="tower-title">Dart Monkey</h2><output id="pops"></output></div></div>
-      <button id="aim" hidden>Set target on map</button><div id="target-point" hidden><label for="aim-x">Target X</label><input id="aim-x" type="number" min="0" max="960"><label for="aim-y">Target Y</label><input id="aim-y" type="number" min="0" max="540"><button id="apply-aim">Apply target coordinates</button></div><div class="targeting"><button id="target-prev" aria-label="Previous targeting mode">&lt;</button><button id="target">First</button><button id="target-next" aria-label="Next targeting mode">&gt;</button></div><button id="ability" hidden>Activate ability</button><div id="upgrades"></div><button id="collect" hidden>Collect bank</button>
+      <button id="aim" hidden>Set target on map</button><div id="target-point" hidden><label for="aim-x">Target X</label><input id="aim-x" type="number" min="0" max="300"><label for="aim-y">Target Y</label><input id="aim-y" type="number" min="0" max="230"><button id="apply-aim">Apply target coordinates</button></div><div class="targeting"><button id="target-prev" aria-label="Previous targeting mode">&lt;</button><button id="target">First</button><button id="target-next" aria-label="Next targeting mode">&gt;</button></div><button id="ability" hidden>Activate ability</button><div id="upgrades"></div><button id="collect" hidden>Collect bank</button>
       <div id="support-controls" hidden><label for="support-ally">Support target / beast to merge</label><select id="support-ally"></select><button id="support-target" hidden>Choose buff target</button><label for="merge-path" id="merge-label" hidden>Beast path</label><select id="merge-path" hidden><option value="0">Water beast</option><option value="1">Land beast</option><option value="2">Bird</option></select><button id="merge" hidden>Merge chosen beast into this handler</button></div>
       <p id="paragon-info" hidden></p><div id="paragon-controls" hidden><label for="paragon-investment">Extra paragon investment</label><input id="paragon-investment" type="number" min="0" step="1000" value="0"><button id="paragon">Create paragon</button></div><button id="sell">Sell</button>
     </section>
@@ -88,7 +88,7 @@ aim.addEventListener('click', () => {
 element<HTMLButtonElement>('apply-aim').addEventListener('click', () => {
   if (sim.setTarget(selected, { x: aimX.valueAsNumber, y: aimY.valueAsNumber })) {
     aiming = false; hint.textContent = 'Target point updated.'; refresh();
-  } else hint.textContent = 'Use coordinates within the map: X 0–960, Y 0–540.';
+  } else hint.textContent = `Use coordinates within the map: X 0–${sim.width}, Y 0–${sim.height}.`;
 });
 const sell = element<HTMLButtonElement>('sell');
 const upgrades = element<HTMLElement>('upgrades');
@@ -108,13 +108,13 @@ const app = new Application();
 await app.init({ width: 960, height: 540, background: '#182b21', antialias: true });
 field.appendChild(app.canvas);
 app.canvas.setAttribute('aria-label', 'Map: buy a monkey and click to place it; use Select a tower to manage monkeys');
-const bg = new Graphics(), g = new Graphics();
+const bg = new Container(), g = new Graphics();
 const { container: entities, adapter: scene } = createSpriteScene(buildTextures(app.renderer));
 app.stage.addChild(bg, entities, g);
 function resizeMap() {
   const width = Math.max(1, field.clientWidth), height = Math.max(1, field.clientHeight);
   app.renderer.resize(width, height);
-  const fit = fitWorld(width, height);
+  const fit = fitWorld(width, height, sim.width, sim.height);
   app.stage.scale.set(fit.scale); app.stage.position.set(fit.x, fit.y);
 }
 new ResizeObserver(resizeMap).observe(field);
@@ -152,7 +152,7 @@ function newGame(map: string, mode: string) {
   rewards = undefined; recorded = false; rewardedRound = modeById(mode).startRound - 1;
   speed = savedSettings.fastForward ? 3 : 1; autoplay = savedSettings.autoplay;
   placingPower = null;
-  mapId = map; modeId = mode; scene.reset(); sim = createGame(map, mode); drawScene(bg, MAPS[map]);
+  mapId = map; modeId = mode; scene.reset(); sim = createGame(map, mode); drawScene(bg, MAPS[map]); resizeMap();
   placingHero = null; heroUI.cancel(); selected = -1; placing = null; aiming = false; acc = 0; ended = false; pointer = null; heroTools = false;
   element<HTMLSelectElement>('hero-select').value = flow.hero;
   refresh();
@@ -270,7 +270,7 @@ addEventListener('keydown', e => {
 });
 function mapPointer(e: PointerEvent) {
   const rect = app.canvas.getBoundingClientRect();
-  return worldPoint((e.clientX - rect.left) * app.screen.width / rect.width, (e.clientY - rect.top) * app.screen.height / rect.height, app.screen.width, app.screen.height);
+  return worldPoint((e.clientX - rect.left) * app.screen.width / rect.width, (e.clientY - rect.top) * app.screen.height / rect.height, app.screen.width, app.screen.height, sim.width, sim.height);
 }
 app.canvas.tabIndex = 0;
 app.canvas.addEventListener('pointermove', e => { pointer = mapPointer(e); });
@@ -279,7 +279,7 @@ app.canvas.addEventListener('pointerdown', e => {
   if (flow.screen !== 'game') return;
   app.canvas.focus();
   const { x, y } = mapPointer(e);
-  if (x < 0 || y < 0 || x > 960 || y > 540) return;
+  if (x < 0 || y < 0 || x > sim.width || y > sim.height) return;
   if (placingPower) {
     if (!consumePower(placingPower, { x, y })) hint.textContent = 'Choose a valid power location. No power consumed.';
     refresh(); return;
@@ -328,7 +328,7 @@ function refresh() {
   element('categories').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.textContent === category)));
   element('hero-host').hidden = !heroTools;
   element('inspector').hidden = selected < 0 && !heroTools;
-  element('inspector').classList.toggle('dock-right', (sim.towers[selected]?.x ?? 960) < 480);
+  element('inspector').classList.toggle('dock-right', (sim.towers[selected]?.x ?? sim.width) < sim.width / 2);
   shopButtons.forEach(card => {
     const { type, button } = card, state = priceBadge(sim.shopPrice(type), sim.cash, sim.gameOver);
     const key = `${state.label}:${placing === type}`;

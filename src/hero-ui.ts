@@ -8,8 +8,8 @@ export function heroControls(parent: HTMLElement, getSim: () => Sim, getTower: (
     <button id="hero-place">Place hero</button><output id="hero-status" aria-live="polite"></output>
     <div id="hero-details" hidden><p id="hero-level"></p><p id="hero-effect"></p><button id="hero-target">Target: First</button>
     <details><summary>Ability and item target</summary><p>Enter map coordinates. Tower items and Blood Sacrifice use the selected tower.</p>
-    <label for="hero-x">Target X</label><input id="hero-x" type="number" min="0" max="960" value="480">
-    <label for="hero-y">Target Y</label><input id="hero-y" type="number" min="0" max="540" value="270"></details>
+    <label for="hero-x">Target X</label><input id="hero-x" type="number" min="0" max="300" value="150">
+    <label for="hero-y">Target Y</label><input id="hero-y" type="number" min="0" max="230" value="115"></details>
     <div id="hero-abilities" aria-label="Hero abilities"></div><div id="hero-extras" aria-label="Shop and spellbook"></div></div>`;
   parent.appendChild(panel);
   const el = <T extends HTMLElement>(id: string) => panel.querySelector<T>(`#${id}`)!;
