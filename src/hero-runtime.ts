@@ -28,7 +28,7 @@ export function grantXP(s: Sim, amount: number) {
 }
 export function roundHero(s: Sim) {
   const h = s.hero; if (!h) return;
-  s.cash += h.stats.income;
+  s.earnIncome(h.stats.income);
   if (h.kind === 'benjamin' && h.level >= 4) {
     const full = s.difficulty === 'easy' ? 200 : s.difficulty === 'medium' ? 150 : s.difficulty === 'hard' ? 100 : 1;
     if (s.difficulty !== 'impoppable') s.lives = Math.max(s.lives, Math.min(full + (h.level >= 14 ? 100 : 0), s.lives + (h.level >= 14 ? 10 : 5)));
@@ -124,7 +124,7 @@ export function activateHero(s: Sim, id: string, point?: Pt, towerIndex?: number
   return true;
 }
 export function heroTowerWeapon(s: Sim, tower: Tower, base: Tower = tower): Tower {
-  const h = s.hero; if (!h) return base;
+  const h = s.hero; if (!h || tower.degree) return base; // paragons reject hero buffs
   const t = { ...base }, l = h.level, near = Math.hypot(t.x - h.x, t.y - h.y) <= h.stats.range;
   if (h.kind === 'etienne' && l >= 8) t.camo = true;
   if (h.kind === 'striker') {
@@ -198,7 +198,7 @@ export function updateHero(s: Sim) {
     } else if (z.id === 'mine') {
       if (targets.some(moab)) { blast(s, h, z.point, a.radius, { ...normal(a), stun: l === 20 ? 10 : 5, moabStun: l === 20 ? 10 : 5 }); z.remaining = 0; }
     } else if (z.id === 'trees') {
-      for (const b of targets) if (BLOONS[b.type].rbe <= z.remaining && b.type !== 'bad') { z.remaining -= BLOONS[b.type].rbe; s.cash += BLOONS[b.type].rbe * 2; s.heroDestroy(b, false); }
+      for (const b of targets) if (BLOONS[b.type].rbe <= z.remaining && b.type !== 'bad') { z.remaining -= BLOONS[b.type].rbe; s.payoutWhole(b, 2); s.heroDestroy(b, false); }
     } else if (z.id === 'kinetic') {
       const b = s.bloons.find(moab); if (b) { h.pending.push({ at: s.tick + 600, bloon: b, damage: a.damage, destroy: false, kind: 'kinetic', initialHP: b.hp }); z.remaining = 0; }
     } else {
