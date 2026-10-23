@@ -1,6 +1,7 @@
 // Original cartoon map art as a flat shape list, rendered by PixiJS (game) and SVG (map-select thumbnails).
-import type { Graphics } from 'pixi.js';
+import { Texture, type Graphics } from 'pixi.js';
 import type { MapDef } from './maps';
+import { mapCanvas } from './paint';
 
 export type Shape =
   | { t: 'rect'; x: number; y: number; w: number; h: number; fill: number; rx?: number; stroke?: number; sw?: number; a?: number }
@@ -33,8 +34,16 @@ export function scene(map: MapDef): Shape[] {
   return s;
 }
 
+const tex = new Map<string, Texture>(), thumbs = new Map<string, string>();
+
+/** Painted background (cached texture, rendered once per map); falls back to the flat shape list without a DOM. */
 export function drawScene(g: Graphics, map: MapDef) {
   g.clear();
+  const cv = mapCanvas(map);
+  if (cv) {
+    let t = tex.get(map.id); if (!t) tex.set(map.id, t = Texture.from(cv));
+    g.rect(0, 0, 960, 540).fill({ texture: t }); return;
+  }
   for (const s of scene(map)) {
     if (s.t === 'rect') { (s.rx ? g.roundRect(s.x, s.y, s.w, s.h, s.rx) : g.rect(s.x, s.y, s.w, s.h)).fill({ color: s.fill, alpha: s.a ?? 1 }); }
     else if (s.t === 'circle') g.circle(s.x, s.y, s.r).fill({ color: s.fill, alpha: s.a ?? 1 });
@@ -44,6 +53,11 @@ export function drawScene(g: Graphics, map: MapDef) {
 }
 
 export function sceneSvg(map: MapDef): string {
+  const cv = mapCanvas(map, 0.5);
+  if (cv) {
+    let u = thumbs.get(map.id); if (!u) thumbs.set(map.id, u = cv.toDataURL('image/jpeg', 0.82));
+    return `<svg viewBox="0 0 960 540" aria-hidden="true"><image href="${u}" width="960" height="540"/></svg>`;
+  }
   const body = scene(map).map(s => {
     const o = 'a' in s && s.a !== undefined ? ` opacity="${s.a}"` : '';
     if (s.t === 'rect') return `<rect x="${s.x}" y="${s.y}" width="${s.w}" height="${s.h}" rx="${s.rx ?? 0}" fill="${hex(s.fill)}"${o}/>`;
