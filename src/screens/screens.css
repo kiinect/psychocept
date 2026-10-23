@@ -1,10 +1,30 @@
-.overlay { position: fixed; inset: 0; z-index: 10; overflow: auto; padding: 20px; background: #182b21f2; }
-.overlay h3 { margin: 18px 0 8px; color: #ffdf66; }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
-.card { display: flex; flex-direction: column; gap: 4px; padding: 8px; }
-.card svg { width: 100%; height: auto; border-radius: 4px; }
-.card small { opacity: 0.8; }
-.back { width: auto; margin-bottom: 12px; }
-.end { max-width: 360px; margin: 18vh auto 0; padding: 24px; border-radius: 10px; background: #233c2c; border: 3px solid #ffdf66; display: flex; flex-direction: column; gap: 10px; text-align: center; }
-.end.lose { border-color: #e0584a; }
-.end button { text-align: center; }
+.overlay { position: fixed; inset: 0; z-index: 10; overflow: auto; padding: clamp(12px, 3vw, 40px); background: radial-gradient(ellipse at 50% 0%, #3e96ba, #164667 70%); display: flex; align-items: safe center; justify-content: center; }
+.screen-panel { width: min(1100px, 100%); padding: clamp(16px, 3vw, 32px); border: 5px solid var(--ink); border-radius: 24px; background: repeating-linear-gradient(2deg, #fff1 0 2px, transparent 2px 14px), linear-gradient(#a8733d, #76461f); box-shadow: inset 0 4px #f8d39966, 0 12px 0 #102b3b66; animation: pop-in .2s ease-out; }
+.screen-panel h1 { margin: 8px 0 20px; }
+.screen-panel > p { margin: 12px 0; }
+.back { margin-bottom: 8px; }
+.big { font-size: 28px; font-weight: 900; min-height: 72px; }
+.play { background: linear-gradient(#98d750, #3b8430); color: #fffde6; }
+.menu-actions { display: flex; flex-direction: column; gap: 12px; width: min(350px, 100%); margin: 24px auto 8px; }
+.screen-splash, .screen-menu, .screen-pause, .screen-victory, .screen-defeat { text-align: center; }
+.screen-splash .screen-panel, .screen-menu .screen-panel, .screen-pause .screen-panel, .screen-victory .screen-panel, .screen-defeat .screen-panel { max-width: 660px; }
+.screen-panel .back { display: block; }
+.splash-art { display: flex; justify-content: center; gap: 16px; margin: 20px 0; }
+.splash-art .portrait { width: clamp(60px, 13vw, 120px); height: clamp(60px, 13vw, 120px); }
+.eyebrow { letter-spacing: .18em; color: #ffe5a5; }
+.profile { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; border: 3px solid var(--ink); border-radius: 30px; background: #164b6d; padding: 12px; color: #ffe8a4; }
+.tier-tabs { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+.tier-tabs button { flex: 1; }
+.carousel { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 12px 4px 20px; }
+.map-card, .hero-card { flex: 0 0 clamp(210px, 27vw, 310px); scroll-snap-align: start; border: 4px solid var(--ink); border-radius: 16px; background: linear-gradient(#348abd, #19496c); padding: 8px; display: flex; flex-direction: column; gap: 10px; text-align: center; }
+.map-card svg { width: 100%; height: auto; border-radius: 8px; }
+.map-card strong { font-size: 20px; }
+.hero-card .portrait { width: 112px; height: 112px; align-self: center; }
+.hero-card p { font-weight: 500; }
+.hero-card button { margin-top: auto; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 20px; }
+.cards button { min-height: 130px; display: flex; flex-direction: column; justify-content: center; gap: 12px; text-align: center; }
+.cards strong { font-size: 23px; }
+.setting { display: flex; align-items: center; gap: 12px; font-size: 16px; }
+.result strong { display: block; font-size: 56px; color: var(--gold); }
+@media (max-width: 900px) and (orientation: landscape) { .overlay { align-items: flex-start; } .screen-panel { padding: 16px; } .screen-panel h1 { font-size: 28px; margin-bottom: 12px; } .menu-actions { margin-top: 12px; gap: 8px; } .big { min-height: 52px; font-size: 24px; } }

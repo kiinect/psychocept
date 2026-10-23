@@ -7,31 +7,41 @@ import './style.css';
 import { initAudio } from './audio';
 import { MAPS } from './maps/maps';
 import { drawScene } from './maps/art';
-import { createGame, modeById } from './modes/modes';
-import { closeOverlay, showEnd, showMapSelect, showModeSelect } from './screens/screens';
+import { createGame } from './modes/modes';
+import { showScreen } from './screens/screens';
+import { initialFlow, transition, type FlowEvent } from './ui/flow';
+import { priceBadge, upgradeState } from './ui/state';
+import { portrait } from './ui/icons';
+import { upgradeDescription } from './ui/upgrade';
+import { CATEGORY } from './modes/modes';
+import { settingsSlot } from './meta';
 import { heroControls } from './hero-ui';
-import { HEROES, type HeroKind } from './heroes';
+import { HEROES, heroStats, type HeroKind } from './heroes';
 
-const q = new URLSearchParams(location.search);
-let mapId = q.get('map') ?? 'monkey_meadow', modeId = q.get('mode') ?? 'medium', ended = false;
+let flow = initialFlow(location.search);
+let mapId = flow.map, modeId = flow.mode, ended = false;
+const savedSettings = settingsSlot().load();
+let showRange = savedSettings.showRange, reducedMotion = savedSettings.reducedMotion;
+let autoplay = savedSettings.autoplay, category = 'Primary', heroTools = false;
+let pointer: { x: number; y: number } | null = null;
 let sim = createGame(mapId, modeId);
 let selected = -1, placing: TowerKind | null = null, speed = 1, aiming = false;
 let placingHero: HeroKind | null = null;
+if (savedSettings.fastForward) speed = 3;
 const root = document.getElementById('app')!;
 root.innerHTML = `
-  <header><h1>Monkey Pop TD</h1><output id="hud" aria-label="Game status"></output><button id="menu" style="width:auto">Maps</button></header>
+  <header><div class="resources"><output id="lives" aria-label="Lives"></output><output id="cash" aria-label="Cash"></output></div><output id="hud" aria-label="Round"></output><button id="settings" aria-label="Settings">⚙</button><button id="menu" aria-label="Pause game">Ⅱ</button></header>
   <main><section id="field" aria-label="Tower defense map"></section>
-  <aside aria-label="Tower controls">
+  <aside aria-label="Tower shop"><button id="collapse" aria-expanded="true">Shop ▾</button><div id="shop-content"><nav id="categories" aria-label="Tower categories"></nav>
     <div id="shop" aria-label="Tower shop"></div>
     <p id="hint" role="status">Buy a monkey, then choose a spot on the map.</p>
     <label for="tower-select">Select a tower</label><select id="tower-select"><option value="-1">No towers placed</option></select>
-    <section id="details" hidden><h2 id="tower-title">Dart Monkey</h2>
+    </div></aside><section id="inspector" aria-label="Upgrade and hero panel" hidden><button id="close-inspector" aria-label="Close upgrade panel">× Close</button><section id="details" hidden><div id="tower-portrait"></div><h2 id="tower-title">Dart Monkey</h2><output id="pops"></output>
       <button id="aim" hidden>Set target on map</button><div id="target-point" hidden><label for="aim-x">Target X</label><input id="aim-x" type="number" min="0" max="960"><label for="aim-y">Target Y</label><input id="aim-y" type="number" min="0" max="540"><button id="apply-aim">Apply target coordinates</button></div><button id="target">Target: First</button><button id="ability" hidden>Activate ability</button><div id="upgrades"></div><button id="collect" hidden>Collect bank</button>
       <div id="support-controls" hidden><label for="support-ally">Support target / beast to merge</label><select id="support-ally"></select><button id="support-target" hidden>Choose buff target</button><label for="merge-path" id="merge-label" hidden>Beast path</label><select id="merge-path" hidden><option value="0">Water beast</option><option value="1">Land beast</option><option value="2">Bird</option></select><button id="merge" hidden>Merge chosen beast into this handler</button></div>
       <div id="paragon-controls" hidden><p id="paragon-info"></p><label for="paragon-investment">Extra paragon investment</label><input id="paragon-investment" type="number" min="0" step="1000" value="0"><button id="paragon">Create paragon</button></div><button id="sell">Sell</button>
     </section>
-    <div class="round-controls"><button id="start">Start round 1</button><button id="speed">Speed ×1</button></div>
-  </aside></main>`;
+    <div id="hero-host"></div></section><div class="round-controls"><button id="start" aria-label="Start round 1">▶</button><button id="speed">×1</button><button id="autoplay" aria-pressed="false">Auto: Off</button></div></main>`;
 const element = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const hud = element<HTMLOutputElement>('hud');
 const field = element<HTMLElement>('field');
@@ -40,14 +50,15 @@ const shop = element<HTMLElement>('shop');
 const shopButtons = (Object.keys(TOWERS) as TowerKind[]).map(type => {
   const button = document.createElement('button');
   button.addEventListener('click', () => {
-    placingHero = null; heroUI.cancel(); aiming = false; placing = placing === type ? null : type;
+    placingHero = null; heroUI.cancel(); aiming = false; heroTools = false; selected = -1; placing = placing === type ? null : type;
     hint.textContent = placing ? `Click on ${TOWERS[type].waterOnly ? 'water' : 'grass'} to place your ${TOWERS[type].name}. Escape cancels.` : 'Placement cancelled.';
     refresh();
   });
-  shop.appendChild(button); return { type, button };
+  button.className = 'tower-card';
+  shop.appendChild(button); return { type, button, key: '' };
 });
-const heroUI = heroControls(root.querySelector('aside')!, () => sim, () => selected, kind => {
-  placingHero = kind; placing = null; aiming = false; refresh();
+const heroUI = heroControls(element<HTMLElement>('hero-host'), () => sim, () => selected, kind => {
+  placingHero = kind; placing = null; aiming = false; if (kind) { heroTools = false; selected = -1; } refresh();
 }, message => { hint.textContent = message; });
 const start = element<HTMLButtonElement>('start');
 const towerSelect = element<HTMLSelectElement>('tower-select');
@@ -92,28 +103,94 @@ function resizeMap() {
 }
 new ResizeObserver(resizeMap).observe(field);
 resizeMap();
-function beginRound() { sim.startRound(roundGroups(sim.round + 1)); refresh(); }
+function beginRound() { if (flow.screen !== 'game') return; if (sim.roundActive) cycleSpeed(); else if (!sim.gameOver && !sim.won) sim.startRound(roundGroups(sim.round + 1)); refresh(); }
 start.addEventListener('click', beginRound);
-element<HTMLButtonElement>('speed').addEventListener('click', e => {
-  speed = speed % 3 + 1; (e.currentTarget as HTMLButtonElement).textContent = `Speed ×${speed}`;
-});
+function cycleSpeed() { speed = speed % 3 + 1; element<HTMLButtonElement>('speed').textContent = `×${speed}`; }
+element<HTMLButtonElement>('speed').addEventListener('click', cycleSpeed);
+element<HTMLButtonElement>('autoplay').addEventListener('click', () => { autoplay = !autoplay; refresh(); });
+for (const name of ['Primary', 'Military', 'Magic', 'Support', 'Hero']) {
+  const b = document.createElement('button'); b.textContent = name;
+  b.onclick = () => { category = name; heroTools = name === 'Hero'; refresh(); };
+  element('categories').appendChild(b);
+}
+element('collapse').onclick = () => { const content = element('shop-content'); content.hidden = !content.hidden; root.classList.toggle('shop-collapsed', content.hidden); element('collapse').setAttribute('aria-expanded', String(!content.hidden)); element('collapse').textContent = content.hidden ? 'Shop ▸' : 'Shop ▾'; };
+element('close-inspector').onclick = () => { selected = -1; heroTools = false; refresh(); };
 target.addEventListener('click', () => { sim.cycleTargeting(selected); refresh(); });
 sell.addEventListener('click', () => { if (sim.sell(selected)) selected = -1; refresh(); });
-towerSelect.addEventListener('change', () => { selected = Number(towerSelect.value); placing = null; aiming = false; refresh(); });
+towerSelect.addEventListener('change', () => { selected = Number(towerSelect.value); placing = null; aiming = false; heroTools = false; refresh(); });
 function newGame(map: string, mode: string) {
   mapId = map; modeId = mode; sim = createGame(map, mode); drawScene(bg, MAPS[map]);
-  placingHero = null; heroUI.cancel(); selected = -1; placing = null; aiming = false; acc = 0; ended = false; closeOverlay(root); refresh();
+  placingHero = null; heroUI.cancel(); selected = -1; placing = null; aiming = false; acc = 0; ended = false; pointer = null; heroTools = false;
+  element<HTMLSelectElement>('hero-select').value = flow.hero;
+  refresh();
 }
-const toMaps = () => showMapSelect(root, id => showModeSelect(root, id, mode => newGame(id, mode), toMaps));
-element<HTMLButtonElement>('menu').addEventListener('click', toMaps);
+// Detach audio's existing controls so the settings screen can reuse every control.
+initAudio(sim);
+const audioPanel = root.querySelector<HTMLElement>('aside fieldset') ?? undefined;
+audioPanel?.remove();
+function renderScreen() {
+  showScreen(root, flow, send, sim.round, { range: showRange, motion: reducedMotion, change: (key, value) => {
+    if (key === 'range') showRange = value; else reducedMotion = value;
+    root.classList.toggle('reduced-motion', reducedMotion);
+  } }, audioPanel);
+  root.querySelector<HTMLElement>('main')!.inert = flow.screen !== 'game';
+  root.querySelector<HTMLElement>('header')!.inert = flow.screen !== 'game';
+  if (flow.screen === 'game') start.focus();
+}
+function send(event: FlowEvent) {
+  const before = flow;
+  flow = transition(flow, event);
+  if (flow === before) return;
+  if (event.type === 'restart' || event.type === 'hero') newGame(flow.map, flow.mode);
+  if (event.type === 'continue') { sim.rules.winRound = Infinity; sim.won = false; ended = false; }
+  if (flow.screen !== 'game') { placing = null; placingHero = null; aiming = false; heroUI.cancel(); acc = 0; }
+  renderScreen(); refresh();
+}
+element<HTMLButtonElement>('menu').addEventListener('click', () => send({ type: 'pause' }));
+element<HTMLButtonElement>('settings').addEventListener('click', () => { send({ type: 'pause' }); send({ type: 'settings' }); });
+const shopKeys: Record<string, string> = { q: 'dart', w: 'boomerang', e: 'bomb', r: 'tack', t: 'ice', y: 'glue', z: 'sniper', x: 'sub', c: 'buccaneer', v: 'ace', b: 'heli', n: 'mortar', m: 'dartling', a: 'wizard', s: 'super', d: 'ninja', f: 'alchemist', g: 'druid', j: 'farm', k: 'spike', l: 'village', i: 'engineer' };
 addEventListener('keydown', e => {
-  if (e.key === 'Escape') { placingHero = null; heroUI.cancel(); placing = null; aiming = false; refresh(); }
-  if (e.code === 'Space' && (e.target === document.body || e.target === app.canvas)) { e.preventDefault(); beginRound(); }
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    if (flow.screen !== 'game') { send({ type: 'back' }); return; }
+    if (placing || placingHero || aiming) { placingHero = null; heroUI.cancel(); placing = null; aiming = false; pointer = null; }
+    else if (selected >= 0 || heroTools) { selected = -1; heroTools = false; }
+    else send({ type: 'pause' });
+    refresh(); return;
+  }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  // Keep keyboard focus inside the active overlay.
+  if (flow.screen !== 'game') {
+    if (e.key === 'Tab') {
+      const controls = [...root.querySelectorAll<HTMLElement>('#overlay button, #overlay input, #overlay select')].filter(x => !(x as HTMLButtonElement).disabled);
+      const first = controls[0], last = controls.at(-1);
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+    }
+    return;
+  }
+  if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement || e.target instanceof HTMLTextAreaElement) return;
+  if (e.code === 'Space' && !e.repeat) { e.preventDefault(); beginRound(); }
+  const path = [',', '.', '/'].indexOf(e.key);
+  if (path >= 0 && selected >= 0) { e.preventDefault(); upgradeButtons[path].click(); }
+  if (e.key === 'Backspace' && selected >= 0) { e.preventDefault(); sell.click(); }
+  if (e.key === 'Tab' && selected >= 0 && !e.shiftKey && (e.target === app.canvas || e.target === document.body || e.target === target)) { e.preventDefault(); target.click(); }
+  if (e.key.toLowerCase() === 'u') { category = 'Hero'; heroTools = true; refresh(); element<HTMLButtonElement>('hero-place').click(); }
+  const kind = shopKeys[e.key.toLowerCase()];
+  const card = shopButtons.find(b => b.type === kind);
+  if (card && !card.button.disabled && (!sim.rules.allowed || sim.rules.allowed(card.type))) { category = (CATEGORY[kind] ?? 'support').replace(/^./, c => c.toUpperCase()); refresh(); card.button.click(); }
 });
-app.canvas.addEventListener('pointerdown', e => {
+function mapPointer(e: PointerEvent) {
   const rect = app.canvas.getBoundingClientRect();
-  const { x, y } = worldPoint((e.clientX - rect.left) * app.screen.width / rect.width,
-    (e.clientY - rect.top) * app.screen.height / rect.height, app.screen.width, app.screen.height);
+  return worldPoint((e.clientX - rect.left) * app.screen.width / rect.width, (e.clientY - rect.top) * app.screen.height / rect.height, app.screen.width, app.screen.height);
+}
+app.canvas.tabIndex = 0;
+app.canvas.addEventListener('pointermove', e => { pointer = mapPointer(e); });
+app.canvas.addEventListener('pointerleave', () => { pointer = null; });
+app.canvas.addEventListener('pointerdown', e => {
+  if (flow.screen !== 'game') return;
+  app.canvas.focus();
+  const { x, y } = mapPointer(e);
   if (x < 0 || y < 0 || x > 960 || y > 540) return;
   if (aiming) {
     if (sim.setTarget(selected, { x, y })) { aiming = false; hint.textContent = 'Target point updated.'; }
@@ -126,33 +203,50 @@ app.canvas.addEventListener('pointerdown', e => {
   }
   if(!placing && sim.collectAt({x,y})){refresh();return;}
   const hit = sim.towers.findIndex(t => Math.hypot(t.x - x, t.y - y) < 16);
-  if (hit >= 0) { selected = hit; placing = null; }
+  if (hit >= 0) { selected = hit; heroTools = false; placing = null; }
   else if (placing) {
     if (!sim.canPlace(x, y, placing)) hint.textContent = `Choose ${TOWERS[placing].waterOnly ? 'water' : 'grass'}, clear of the track and other towers.`;
-    else if (sim.placeTower(x, y, placing)) { selected = sim.towers.length - 1; placing = null; hint.textContent = 'Monkey placed. Select upgrades below.'; }
+    else if (sim.placeTower(x, y, placing)) { selected = sim.towers.length - 1; heroTools = false; placing = null; hint.textContent = 'Monkey placed. Select upgrades below.'; }
   } else selected = -1;
   refresh();
 });
-let lastOptions = '', lastAim = '';
+let lastOptions: string | null = null, lastAim = '';
 drawScene(bg, MAPS[mapId] ?? MAPS.monkey_meadow);
 function refresh() {
   heroUI.refresh();
-  hud.textContent = `${MAPS[mapId].name} · ${modeById(modeId).name} · $${sim.cash.toFixed(0)} · Lives ${sim.lives} · Round ${sim.round}${Number.isFinite(sim.rules.winRound) ? '/' + sim.rules.winRound : ''}${sim.gameOver ? ' · Game over' : sim.won ? ' · Victory' : ''}`;
-  shopButtons.forEach(({ type, button }) => {
-    button.textContent = `${placing === type ? 'Cancel' : TOWERS[type].name} · $${sim.shopPrice(type)}`;
-    button.hidden = !!sim.rules.allowed && !sim.rules.allowed(type);
-    button.disabled = sim.gameOver || (placing !== type && sim.cash < sim.shopPrice(type));
+  hud.textContent = `Round ${sim.round}/${Number.isFinite(sim.rules.winRound) ? sim.rules.winRound : '∞'}`;
+  element('lives').textContent = `♥ ${sim.lives.toLocaleString()}`;
+  element('cash').textContent = `$ ${Math.floor(sim.cash).toLocaleString()}`;
+  element('autoplay').textContent = `Auto: ${autoplay ? 'On' : 'Off'}`;
+  element('autoplay').setAttribute('aria-pressed', String(autoplay));
+  element('speed').setAttribute('aria-label', `Speed ×${speed}`);
+  element('speed').textContent = `×${speed}`;
+  element('categories').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.textContent === category)));
+  element('hero-host').hidden = !heroTools;
+  element('inspector').hidden = selected < 0 && !heroTools;
+  element('inspector').classList.toggle('dock-right', (sim.towers[selected]?.x ?? 960) < 480);
+  shopButtons.forEach(card => {
+    const { type, button } = card, state = priceBadge(sim.shopPrice(type), sim.cash, sim.gameOver);
+    const key = `${state.label}:${placing === type}`;
+    if (key !== card.key) { button.innerHTML = `${portrait('tower', type, TOWERS[type].color)}<b>${TOWERS[type].name}</b><span class="price">${state.label}</span>`; card.key = key; }
+    button.hidden = (CATEGORY[type] ?? 'support') !== category.toLowerCase() || !!sim.rules.allowed && !sim.rules.allowed(type);
+    button.disabled = state.disabled;
+    button.classList.toggle('unaffordable', state.unaffordable);
     button.setAttribute('aria-pressed', String(placing === type));
   });
   field.classList.toggle('placing', placing !== null || placingHero !== null || aiming);
-  start.disabled = sim.roundActive || sim.gameOver || !roundGroups(sim.round + 1).length || sim.won && sim.round >= sim.rules.winRound;
-  start.textContent = sim.gameOver ? 'Game over' : sim.roundActive ? `Round ${sim.round} running` : `Start round ${sim.round + 1}`;
+  start.disabled = sim.gameOver || !sim.roundActive && !roundGroups(sim.round + 1).length || sim.won && sim.round >= sim.rules.winRound;
+  start.textContent = sim.gameOver ? '■' : sim.roundActive ? '»' : '▶';
+  start.setAttribute('aria-label', sim.roundActive ? 'Fast forward round' : `Start round ${sim.round + 1}`);
   const options = sim.towers.map((t, i) => `<option value="${i}">${t.degree?PARAGONS[t.type]!.name:TOWERS[t.type].name} ${i + 1} · ${t.degree?'Degree '+t.degree:t.tiers.join('-')}</option>`).join('');
   if (options !== lastOptions) { towerSelect.innerHTML = '<option value="-1">Select a tower</option>' + options; lastOptions = options; }
   towerSelect.value = String(selected);
-  const t = sim.towers[selected]; details.hidden = !t;
+  const t = sim.towers[selected]; details.hidden = !t || heroTools;
   if (!t) return;
   element<HTMLElement>('tower-title').textContent = `${t.degree?PARAGONS[t.type]!.name:TOWERS[t.type].name} · ${t.degree?'Degree '+t.degree:t.tiers.join('-')}`;
+  const portraitKey = t.type;
+  if (element('tower-portrait').dataset.kind !== portraitKey) { element('tower-portrait').innerHTML = portrait('tower', t.type, TOWERS[t.type].color); element('tower-portrait').dataset.kind = portraitKey; }
+  element('pops').textContent = `Pops: ${Math.floor(t.paragonPops ?? 0).toLocaleString()}`;
   aim.hidden = !sim.canSetTarget(t);
   aim.textContent = t.type === 'super' ? 'Set Darkshift destination' : t.type === 'mermonkey' ? 'Place melody totem' : 'Set target on map';
   aim.disabled = sim.gameOver;
@@ -166,7 +260,7 @@ function refresh() {
   abilityButton.disabled = sim.gameOver || t.ability?.kind === 'stub' || sim.tick < t.abilityReady;
   abilityButton.textContent = t.ability?.kind === 'stub' ? 'Ability not implemented' : sim.tick < t.abilityReady ? `Ability · ${Math.ceil((t.abilityReady - sim.tick) / 60)}s` : 'Activate ability';
   target.textContent = `Target: ${t.targeting}`; target.disabled = sim.gameOver;
-  sell.textContent = `Sell · $${sim.sellValue(t)}`; sell.disabled = sim.gameOver;
+  sell.textContent = `Sell · $${sim.sellValue(t)}`; sell.disabled = sim.gameOver || sim.rules.noSell;
   const collect=element<HTMLButtonElement>('collect');collect.hidden=t.type!=='farm' && !(t.type==='engineer' && t.tiers[2]>=4);collect.textContent=t.type==='farm' && t.tiers[1]>=3?`Collect bank · $${(t.bank??0).toFixed(0)}`:t.type==='engineer'?'Collect trap':'Collect bananas';collect.disabled=sim.gameOver;
   element<HTMLElement>('support-controls').hidden=t.type!=='beast' && !(t.type==='engineer' && (t.tiers[1]>=4 || t.degree));
   const allies=sim.towers.map((a,i)=>a!==t && (t.type!=='beast' || a.type==='beast')?`<option value="${i}">${TOWERS[a.type].name} ${i+1} · ${a.tiers.join('-')}</option>`:'').join('');
@@ -178,15 +272,24 @@ function refresh() {
   upgradeButtons.forEach((button, path) => {
     const next = TOWERS[t.type].paths[path][t.tiers[path]];
     const allowed = sim.canUpgradeTower(selected,path);
-    button.textContent = next ? `Path ${path + 1}: ${next.name} · $${sim.upgradePrice(selected,path)}${allowed ? '' : ' · Locked'}` : `Path ${path + 1}: ${TOWERS[t.type].paths[path][4].name} · Max`;
-    button.disabled = sim.gameOver || !allowed || !next || sim.cash < sim.upgradePrice(selected,path);
+    const cost = next ? sim.upgradePrice(selected, path) : 0;
+    const state = upgradeState(!!next, allowed, cost, sim.cash, sim.gameOver);
+    const desc = next ? upgradeDescription(t.tiers[path] ? TOWERS[t.type].paths[path][t.tiers[path] - 1].stats : TOWERS[t.type].base, next.stats) : 'Path complete';
+    const html = `<span>Path ${path + 1}</span><span class="pips" aria-label="${t.tiers[path]} of 5 tiers">${Array.from({ length: 5 }, (_, i) => `<i class="${i < t.tiers[path] ? 'owned' : ''}"></i>`).join('')}</span><b>${next?.name ?? TOWERS[t.type].paths[path][4].name}</b><small>${desc}</small><span class="price">${next ? '$' + cost : ''} ${state.reason}</span>`;
+    if (button.innerHTML !== html) button.innerHTML = html;
+    button.disabled = state.disabled;
+    button.title = t.tiers[path] ? `Owned: ${TOWERS[t.type].paths[path].slice(0, t.tiers[path]).map(x => x.name).join(', ')}` : 'No upgrades owned';
+
   });
 }
 const COL: Record<string, number> = { red: 0xee3333, blue: 0x3399ff, green: 0x33cc33, yellow: 0xeeee33, pink: 0xff88bb, black: 0x222222, white: 0xeeeeee, purple: 0x9933cc, lead: 0x888899, zebra: 0xcccccc, rainbow: 0xff9900, ceramic: 0xbb8855, moab: 0x3366cc };
 let acc = 0;
 refresh();
-if (!q.has('map')) toMaps();
+root.classList.toggle('reduced-motion', reducedMotion);
+renderScreen();
 app.ticker.add(t => {
+  if (flow.screen !== 'game') return;
+  if (autoplay && !sim.roundActive && !sim.gameOver && !sim.won) beginRound();
   acc = Math.min(acc + Math.min(t.deltaMS / 1000, 0.25) * speed, 0.75);
   while (acc >= DT) { sim.step(); acc -= DT; }
   initAudio(sim);
@@ -194,14 +297,20 @@ app.ticker.add(t => {
   const chosen = sim.towers[selected];
   if (!ended && (sim.gameOver || sim.won)) {
     ended = true; const won = sim.won && !sim.gameOver;
-    showEnd(root, won, sim.round, { again: () => newGame(mapId, modeId), menu: toMaps,
-      cont: won ? () => { sim.rules.winRound = Infinity; sim.won = false; ended = false; closeOverlay(root); } : undefined });
+    send({ type: won ? 'victory' : 'defeat' });
   }
   if (chosen && sim.canSetTarget(chosen)) {
     const p = chosen.targetPoint; g.circle(p.x, p.y, 8).stroke({ color: 0xffdf66, width: 2 });
     g.moveTo(p.x - 12, p.y).lineTo(p.x + 12, p.y).moveTo(p.x, p.y - 12).lineTo(p.x, p.y + 12).stroke({ color: 0xffdf66, width: 1 });
   }
-  if (chosen && sim.effectiveStats(chosen).range < 1000) g.circle(chosen.x, chosen.y, sim.effectiveStats(chosen).range).fill({ color: 0xffffff, alpha: 0.12 }).stroke({ color: 0xffffff, alpha: 0.7, width: 1 });
+  if (showRange && chosen && sim.effectiveStats(chosen).range < 1000) g.circle(chosen.x, chosen.y, sim.effectiveStats(chosen).range).fill({ color: 0xffffff, alpha: 0.12 }).stroke({ color: 0xffffff, alpha: 0.7, width: 1 });
+  if (pointer && (placing || placingHero)) {
+    const valid = placing ? sim.canPlace(pointer.x, pointer.y, placing) && sim.cash >= sim.shopPrice(placing) : sim.canPlaceHero(pointer.x, pointer.y, placingHero!) && sim.cash >= HEROES[placingHero!].cost[sim.difficulty];
+    const range = placing ? TOWERS[placing].base.range : heroStats(placingHero!, 1).range;
+    const color = valid ? 0x9affb0 : 0xff3d46;
+    g.circle(pointer.x, pointer.y, Math.min(range, 1000)).fill({ color, alpha: 0.15 }).stroke({ color, width: 2 });
+    g.circle(pointer.x, pointer.y, 13).fill({ color, alpha: 0.65 }).stroke({ color: 0x152b32, width: 3 });
+  }
   for (const b of sim.bloons) {
     const p = sim.posOf(b); g.ellipse(p.x, p.y, 7, 9).fill(COL[b.type] ?? 0x888888);
     if ((b.frozenUntil ?? 0) > sim.tick) g.ellipse(p.x, p.y, 8, 10).stroke({ color: 0xbbf4ff, width: 2 });
