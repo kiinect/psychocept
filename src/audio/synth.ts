@@ -14,6 +14,9 @@ export const PATCHES: Record<Cue, readonly [number, number, number, OscillatorTy
   'attack:buccaneer': [200, 70, 0.14, 'square'], 'attack:ace': [1100, 700, 0.05, 'square'],
   'attack:heli': [500, 380, 0.06, 'sawtooth'], 'attack:mortar': [100, 30, 0.22, 'sawtooth'],
   'attack:dartling': [1000, 700, 0.03, 'square'],
+  'attack:wizard': [600, 1200, 0.1, 'sine'], 'attack:ninja': [1500, 800, 0.04, 'triangle'], 'attack:super': [800, 1600, 0.06, 'sawtooth'],
+  'attack:alchemist': [350, 700, 0.12, 'sine'], 'attack:beast': [150, 90, 0.12, 'sawtooth'], 'attack:druid': [500, 250, 0.1, 'triangle'], 'attack:engineer': [700, 350, 0.08, 'square'],
+  'attack:mermonkey': [400, 300, 0.1, 'sine'], 'attack:spike': [300, 200, 0.06, 'square'],
 };
 export type MusicMode = 'menu' | 'game' | 'silent';
 // Two original eight-bar patterns, 16 seconds each. All pitches are synthesized.

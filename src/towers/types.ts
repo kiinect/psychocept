@@ -1,8 +1,8 @@
 // World units and seconds. Tier entries are resulting stats, not incremental patches.
 export type AttackKind = 'projectile' | 'boomerang' | 'bomb' | 'tack' | 'ice' | 'glue' | 'ring';
-export type DamageType = 'sharp' | 'explosion' | 'cold' | 'fire' | 'normal' | 'shatter' | 'acid' | 'energy' | 'plasma';
+export type DamageType = 'sharp' | 'explosion' | 'cold' | 'fire' | 'normal' | 'shatter' | 'acid' | 'energy' | 'plasma' | 'frigid';
 export interface Ability {
-  kind: 'boost' | 'missile' | 'blades' | 'snow' | 'glue' | 'cash' | 'strike' | 'hook' | 'blast' | 'awe' | 'stub';
+  kind: 'loan' | 'storm' | 'arms' | 'overclock' | 'stomp' | 'paragon' | 'boost' | 'missile' | 'blades' | 'snow' | 'glue' | 'cash' | 'strike' | 'hook' | 'blast' | 'awe' | 'phoenix' | 'annihilate' | 'sabotage' | 'transform' | 'vines' | 'icejet' | 'darkshift' | 'stub';
   cooldown: number; initial: number; duration: number;
   damage: number; speed: number; count: number; pierce: number;
 }
@@ -12,6 +12,8 @@ export function ability(kind: Ability['kind'], cooldown: number, initial: number
 }
 export type Tiers = [number, number, number];
 export interface TowerStats {
+  popCashBonus: number; universal: boolean;
+  stripCamo: boolean; stripRegrow: boolean;
   accuracy: number; impactSpread: number; rotationSpeed: number;
   homing: boolean; intel: boolean; radial: boolean; pursuit: boolean; moveSpeed: number; rotor: number;
   camoBonus: number; burnDamage: number; burnMoab: number; burnInterval: number; burnDuration: number; defortify: boolean; income: number; entryDamage: number;
@@ -34,6 +36,8 @@ export interface TowerStats {
 }
 
 export const DEFAULT_STATS: TowerStats = {
+  popCashBonus: 0, universal: false,
+  stripCamo: false, stripRegrow: false,
   accuracy: 0, impactSpread: 0, rotationSpeed: 0,
   homing: false, intel: false, radial: false, pursuit: false, moveSpeed: 0, rotor: 0, camoBonus: 0,
   burnDamage: 0, burnMoab: 0, burnInterval: 1, burnDuration: 0, defortify: false, income: 0, entryDamage: 0,

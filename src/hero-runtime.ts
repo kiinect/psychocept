@@ -40,8 +40,8 @@ export function roundHero(s: Sim) {
 const active = (s: Sim, h: Hero, id: string) => (h.until[id] ?? 0) > s.tick;
 export function heroTargets(s: Sim, h: Hero, range = h.stats.range) {
   const result = s.bloons.filter(b => (!(b.camo || b.type === 'ddt') || h.stats.camo || active(s, h, 'vision')) &&
-    Math.hypot(s.posAt(b.dist).x - h.x, s.posAt(b.dist).y - h.y) <= range + 7);
-  const dist = (b: Bloon) => Math.hypot(s.posAt(b.dist).x - h.x, s.posAt(b.dist).y - h.y);
+    Math.hypot(s.posOf(b).x - h.x, s.posOf(b).y - h.y) <= range + 7);
+  const dist = (b: Bloon) => Math.hypot(s.posOf(b).x - h.x, s.posOf(b).y - h.y);
   return result.sort((a, b) => h.targeting === 'Last' ? a.dist - b.dist : h.targeting === 'Close' ? dist(a) - dist(b) : h.targeting === 'Strong' ? BLOONS[b.type].rbe - BLOONS[a.type].rbe || b.dist - a.dist : b.dist - a.dist);
 }
 function hit(s: Sim, h: Hero, b: Bloon, patch: Partial<TowerStats> = {}) { s.heroHit(b, { ...h.stats, ...patch }, h); }
@@ -58,7 +58,7 @@ export function activateHero(s: Sim, id: string, point?: Pt, towerIndex?: number
   if (!a || s.tick < (h.ready[id] ?? 0) || id === 'shop') return false;
   if (point && (!Number.isFinite(point.x) || !Number.isFinite(point.y) || point.x < 0 || point.y < 0 || point.x > 960 || point.y > 540)) return false;
   const targets = heroTargets(s, h, a.radius === 2000 || id === 'kinetic' ? 2000 : Math.max(h.stats.range, a.radius));
-  const p = point ?? (targets[0] ? s.posAt(targets[0].dist) : s.nearestTrack(h));
+  const p = point ?? (targets[0] ? s.posOf(targets[0]) : s.nearestTrack(h));
   if (id === 'totem' && s.lives <= (h.level >= 16 ? 1 : 10)) return false;
   if (id === 'sacrifice' && !s.towers[towerIndex ?? -1]) return false;
   if (id === 'walk' || id === 'reposition') {
@@ -94,7 +94,7 @@ export function activateHero(s: Sim, id: string, point?: Pt, towerIndex?: number
     if (h.level === 20 || s.rng() < 0.5) s.heroDestroy(b); else b.dist = Math.max(0, b.dist - 100 - 150 * s.rng());
   }
   if (id === 'squeeze') {
-    for (const b of targets.filter(b => moab(b) && b.type !== 'bad' && Math.hypot(s.posAt(b.dist).x - h.x, s.posAt(b.dist).y - h.y) <= 42).slice(0, a.pierce)) {
+    for (const b of targets.filter(b => moab(b) && b.type !== 'bad' && Math.hypot(s.posOf(b).x - h.x, s.posOf(b).y - h.y) <= 42).slice(0, a.pierce)) {
       b.stunnedUntil = s.tick + 360; h.pending.push({ at: s.tick + 240, bloon: b, damage: b.hp, destroy: false, kind: 'squeeze' });
     }
     h.cd = 5;
@@ -113,7 +113,7 @@ export function activateHero(s: Sim, id: string, point?: Pt, towerIndex?: number
   if (id === 'cascade' || id === 'burial') {
     const places = id === 'burial' ? [{ x: 480, y: 270 }] : [h, ...s.towers.filter(t => t.type === 'ice').sort((a, b) => Math.hypot(a.x - h.x, a.y - h.y) - Math.hypot(b.x - h.x, b.y - h.y)).slice(0, 9)];
     for (const p of places) {
-      const near = s.bloons.filter(b => Math.hypot(s.posAt(b.dist).x - p.x, s.posAt(b.dist).y - p.y) <= (id === 'burial' ? 2000 : 47)).slice(0, a.pierce);
+      const near = s.bloons.filter(b => Math.hypot(s.posOf(b).x - p.x, s.posOf(b).y - p.y) <= (id === 'burial' ? 2000 : 47)).slice(0, a.pierce);
       for (const b of near) hit(s, h, b, { ...normal(a), damage: a.damage + ((b.frozenUntil ?? 0) > s.tick ? id === 'burial' ? l >= 15 ? 200 : 60 : l >= 15 ? 30 : 15 : 0),
         damageType: id === 'cascade' && ['lead', 'ddt'].includes(b.type) ? 'cold' : 'normal', freezeDuration: id === 'burial' ? 6 : 9, freezeLayers: 10, moabStun: id === 'burial' ? 3 : 0 });
     }
@@ -123,9 +123,9 @@ export function activateHero(s: Sim, id: string, point?: Pt, towerIndex?: number
   }
   return true;
 }
-export function heroTowerWeapon(s: Sim, tower: Tower): Tower {
-  const h = s.hero; if (!h) return tower;
-  const t = { ...tower }, l = h.level, near = Math.hypot(t.x - h.x, t.y - h.y) <= h.stats.range;
+export function heroTowerWeapon(s: Sim, tower: Tower, base: Tower = tower): Tower {
+  const h = s.hero; if (!h) return base;
+  const t = { ...base }, l = h.level, near = Math.hypot(t.x - h.x, t.y - h.y) <= h.stats.range;
   if (h.kind === 'etienne' && l >= 8) t.camo = true;
   if (h.kind === 'striker') {
     if (['bomb', 'mortar'].includes(t.type)) {
@@ -168,13 +168,13 @@ export function updateHero(s: Sim) {
     if (p.at > s.tick && !(p.kind === 'kinetic' && (!s.bloons.includes(p.bloon) || received >= (l === 20 ? 16000 : 6000)))) continue;
     resolved.add(p);
     if (p.kind === 'kinetic') {
-      blast(s, h, s.posAt(p.bloon.dist), 50, { damage: p.damage + Math.min(l === 20 ? 12000 : 4500, received), pierce: 500, damageType: 'normal', moabBonus: 0, camo: true });
+      blast(s, h, s.posOf(p.bloon), 50, { damage: p.damage + Math.min(l === 20 ? 12000 : 4500, received), pierce: 500, damageType: 'normal', moabBonus: 0, camo: true });
     } else if (p.kind === 'squeeze' && s.bloons.includes(p.bloon)) {
       hit(s, h, p.bloon, { damage: p.bloon.hp, moabBonus: 0, ceramicBonus: 0, damageType: 'normal' });
       for (const b of s.bloons) if (Math.abs(b.dist - p.bloon.dist) < 10) b.stunnedUntil = s.tick + 120;
     } else if (p.destroy) {
       const present = s.bloons.includes(p.bloon); s.heroDestroy(p.bloon);
-      if (present && h.kind === 'psi' && l >= 8) blast(s, h, s.posAt(p.bloon.dist), l >= 19 ? 30 : 20, { damage: l >= 19 ? 10 : l >= 15 ? 3 : 1, pierce: 10, damageType: 'plasma', camo: true });
+      if (present && h.kind === 'psi' && l >= 8) blast(s, h, s.posOf(p.bloon), l >= 19 ? 30 : 20, { damage: l >= 19 ? 10 : l >= 15 ? 3 : 1, pierce: 10, damageType: 'plasma', camo: true });
     } else if (s.bloons.includes(p.bloon)) hit(s, h, p.bloon, { damage: p.damage, damageType: 'normal', moabBonus: 0, camo: true });
   }
   h.pending = h.pending.filter(p => !resolved.has(p));
@@ -182,7 +182,7 @@ export function updateHero(s: Sim) {
   for (const z of h.zones) {
     if (s.tick < z.next || z.until <= s.tick || z.remaining <= 0) continue;
     const a = z.ability;
-    const targets = s.bloons.filter(b => Math.hypot(s.posAt(b.dist).x - z.point.x, s.posAt(b.dist).y - z.point.y) <= (z.id === 'mine' ? 30 : a.radius) + 7);
+    const targets = s.bloons.filter(b => Math.hypot(s.posOf(b).x - z.point.x, s.posOf(b).y - z.point.y) <= (z.id === 'mine' ? 30 : a.radius) + 7);
     if (z.id === 'wall') {
       for (const b of targets) if (!['white', 'zebra', 'lead', 'ddt', 'bad', ...(l < 12 ? ['bfb', 'zomg'] : [])].includes(b.type)) {
         const cost = b.type === 'zomg' ? 30 : b.type === 'bfb' ? 15 : b.type === 'moab' ? l >= 12 ? 5 : 30 : 1;
@@ -191,7 +191,7 @@ export function updateHero(s: Sim) {
       }
     } else if (z.id === 'fragment') {
       const p = { x: z.point.x + Math.cos(s.tick / 30) * a.radius, y: z.point.y + Math.sin(s.tick / 30) * a.radius };
-      const nearby = s.bloons.filter(b => Math.hypot(s.posAt(b.dist).x - p.x, s.posAt(b.dist).y - p.y) <= 15);
+      const nearby = s.bloons.filter(b => Math.hypot(s.posOf(b).x - p.x, s.posOf(b).y - p.y) <= 15);
       for (const b of nearby.slice(0, z.remaining)) {
         hit(s, h, b, { damage: 1 + ((b.frozenUntil ?? 0) > s.tick ? l >= 19 ? 8 : l >= 16 ? 6 : l >= 9 ? 3 : 1 : 0), damageType: 'cold' }); z.remaining--;
       }
@@ -213,7 +213,7 @@ export function updateHero(s: Sim) {
     if (!active(s, h, a.id) || s.tick < (h.next[a.id] ?? 0)) continue;
     h.next[a.id] = s.tick + a.interval * 60;
     if (a.id === 'arrows') {
-      for (const b of s.bloons) if (Math.hypot(s.posAt(b.dist).x - h.point.x, s.posAt(b.dist).y - h.point.y) <= 107 && s.rng() < (l >= 18 ? 0.075 : 0.05) * 3) hit(s, h, b, { ...normal(a), moabBonus: 6, ceramicBonus: l >= 18 ? 18 : 0 });
+      for (const b of s.bloons) if (Math.hypot(s.posOf(b).x - h.point.x, s.posOf(b).y - h.point.y) <= 107 && s.rng() < (l >= 18 ? 0.075 : 0.05) * 3) hit(s, h, b, { ...normal(a), moabBonus: 6, ceramicBonus: l >= 18 ? 18 : 0 });
     }
     if (a.id === 'ball' || a.id === 'ucav' || a.id === 'scatter') blast(s, h, a.id === 'scatter' ? h.point : h, a.radius, { ...normal(a), damageType: a.id === 'ball' && l < 20 ? 'plasma' : a.id === 'scatter' ? 'explosion' : 'normal', fortifiedBonus: a.id === 'ball' ? a.damage : 0, stun: a.id === 'scatter' ? 1 : 0 });
     if (a.id === 'barrage') for (const b of heroTargets(s, h, 2000).filter(moab).slice(0, 10)) hit(s, h, b, normal(a));
@@ -229,9 +229,9 @@ export function updateHero(s: Sim) {
     h.secondary = s.tick + (h.kind === 'churchill' ? 6 : h.kind === 'brickell' ? (l >= 11 ? 150 : l >= 2 ? 168 : 180) / (active(s, h, 'chain') ? 2 : 1) : 60);
     const b = heroTargets(s, h)[0];
     if (b && h.kind === 'churchill' && l >= 5) hit(s, h, b, { damage: l >= 18 ? 10 : l >= 14 ? 8 : l >= 12 ? 6 : l >= 7 ? 4 : 2, damageType: 'sharp', pierce: 1, moabBonus: 0 });
-    if (b && h.kind === 'brickell') blast(s, h, s.posAt(b.dist), l >= 15 ? 30 : 20, { damage: l >= 17 ? 22 : l >= 12 ? 12 : l >= 9 ? 8 : l >= 6 ? 2 : 1, pierce: 20, strip: l >= 15, damageType: l >= 15 ? 'normal' : 'explosion' });
+    if (b && h.kind === 'brickell') blast(s, h, s.posOf(b), l >= 15 ? 30 : 20, { damage: l >= 17 ? 22 : l >= 12 ? 12 : l >= 9 ? 8 : l >= 6 ? 2 : 1, pierce: 20, strip: l >= 15, damageType: l >= 15 ? 'normal' : 'explosion' });
     if (b && h.kind === 'rosalia' && l >= 2) {
-      const p = s.posAt(b.dist), enhanced = h.shots > 0 && h.shots % 10 === 0;
+      const p = s.posOf(b), enhanced = h.shots > 0 && h.shots % 10 === 0;
       for (let n = 0; n < (enhanced ? l >= 15 ? 5 : 3 : 1); n++) blast(s, h, p, 15, { damage: l >= 8 ? 3 : 2, pierce: 10, ceramicBonus: l >= 15 ? 6 : 1, damageType: 'explosion' });
       // uncertain: cluster damage is absent; retain the main grenade's base damage.
       if (l >= 13) for (let n = 0; n < (l >= 19 ? 5 : 3); n++) blast(s, h, { x: p.x + Math.cos(n * 2) * 15, y: p.y + Math.sin(n * 2) * 15 }, 10, { damage: 3, pierce: 10, ceramicBonus: l >= 15 ? 4 : 0, damageType: 'explosion' });
@@ -292,7 +292,7 @@ export function updateHero(s: Sim) {
   }
   if (h.kind === 'silas' && l >= 6) {
     // Advanced Intel is limited to Ice Monkey sight.
-    for (const b of s.bloons) if (!targets.includes(b) && s.towers.some(t => t.type === 'ice' && Math.hypot(s.posAt(b.dist).x - t.x, s.posAt(b.dist).y - t.y) <= t.range)) targets.push(b);
+    for (const b of s.bloons) if (!targets.includes(b) && s.towers.some(t => t.type === 'ice' && Math.hypot(s.posOf(b).x - t.x, s.posOf(b).y - t.y) <= t.range)) targets.push(b);
   }
   if (!targets.length) return;
   h.cd = stats.cooldown; h.shots++;
@@ -309,14 +309,14 @@ export function updateHero(s: Sim) {
     if (h.kind === 'silas') { attack.damage += (b.frozenUntil ?? 0) > s.tick ? l >= 18 ? 5 : 1 : 0; attack.freezeDuration = b.slow ? 3 : 0; b.slow = 0.85; b.slowUntil = s.tick + 180; }
     if (h.kind === 'pat' && l >= 5 && h.shots % 5 === 0 || h.kind === 'dan' && l >= 3 && h.shots % 4 === 0) attack.knockback = true;
     if (h.kind === 'corvus') { h.mana = Math.min(800, h.mana + 2); b.brittle = l >= 17 ? 2 : 1; b.brittleUntil = s.tick + 180; }
-    if (attack.radius) blast(s, h, s.posAt(b.dist), attack.radius, attack);
+    if (attack.radius) blast(s, h, s.posOf(b), attack.radius, attack);
     else for (const other of targets.slice(0, attack.pierce)) hit(s, h, other, attack);
-    if (h.kind === 'quincy' && l >= 7 && h.shots % (l >= 17 ? 2 : 3) === 0) blast(s, h, s.posAt(b.dist), 25.7, { damage: 1, pierce: 10, damageType: 'explosion' });
+    if (h.kind === 'quincy' && l >= 7 && h.shots % (l >= 17 ? 2 : 3) === 0) blast(s, h, s.posOf(b), 25.7, { damage: 1, pierce: 10, damageType: 'explosion' });
     if (h.kind === 'dan' && !h.transformed && l >= 9 && (h.shots % 3 === 0 || l >= 18 && h.shots % 2 === 0)) {
       h.pending.push({ at: s.tick + 3, bloon: b, damage: attack.damage, destroy: false });
       if (l >= 13 && h.shots % 3 === 0) h.pending.push({ at: s.tick + 6, bloon: b, damage: attack.damage, destroy: false });
     }
-    if (h.kind === 'dan' && h.transformed && h.shots % 3 === 0) blast(s, h, s.posAt(b.dist), 60, { damage: l >= 6 ? 3 : l >= 4 ? 2 : 1, pierce: 15, damageType: 'energy' });
+    if (h.kind === 'dan' && h.transformed && h.shots % 3 === 0) blast(s, h, s.posOf(b), 60, { damage: l >= 6 ? 3 : l >= 4 ? 2 : 1, pierce: 15, damageType: 'energy' });
   }
 }
 export function cycleHeroTarget(s: Sim) {
