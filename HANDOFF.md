@@ -6,8 +6,12 @@ Merged on main: scaffold, wiki data tables (data/wiki/*.json), sim with real blo
 In flight: Magic + Support towers + paragons are on branch `lane/towers` (Codex). It conflicts with main in sim.ts/main.ts; a Sonnet agent is merging it in its own worktree (branch `worktree-agent-a39a5cda10c60332f`). Check whether it landed before redoing: `git log --oneline main | head`, `git branch --contains lane/towers`.
 
 ## Team
-Opus (lead, reviews/merges/browser checks) + gpt-6.1-sol via Codex CLI (workhorse; it is the model `codex exec` already uses, seen as `gpt-6.1-sol` in ~/.codex/sessions rollouts). Claude Sonnet subagents were used for art/maps/merge lanes and can still be used.
-
+Opus and gpt-6.1-sol (via Codex CLI; the model `codex exec` already uses, seen as `gpt-6.1-sol` in ~/.codex/sessions rollouts) work SIDE BY SIDE as peers, not lead/workhorse. Both are strong, so quality comes from combining them:
+- Each owns its own lanes (separate worktrees/branches, disjoint files where possible) and works in parallel.
+- Cross-review before merge: whoever did NOT write a branch reviews its diff (correctness, tests that actually test, look in the browser) before it merges to main. Use `codex exec --sandbox read-only ... < /dev/null` to ask gpt-6.1-sol for a review, or the agent-watch panel chat; Opus reviews Codex branches.
+- Design/architecture decisions (screen flow, data shapes, shared APIs) are agreed in a short spec in `.tasks/` BEFORE either side builds; either side can propose, the other signs off.
+- Nobody force-pushes or edits the other's active worktree; merge to main one at a time, gate after each (`npx tsc && npx vitest run && npx vite build`), then a real-browser check.
+Claude Sonnet subagents were used for art/maps/merge lanes and remain optional extra hands.
 ## Next (in order)
 1. Land the towers merge (gate: `npx tsc && npx vitest run && npx vite build`, then browser check with playwright-core).
 2. UI lane per `.tasks/UI-PLAN.md`: splash -> main menu -> map -> difficulty -> mode -> hero pick -> game -> pause -> victory/defeat, BTD6-style HUD + right sidebar + upgrade panel; hook src/art sprites into the Pixi scene (rotating towers, pooled bloon sprites, pop fx). Biggest visible gap vs the real game right now: the in-game UI is a plain placeholder side panel and entities are still flat shapes.
