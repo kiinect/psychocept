@@ -1,6 +1,7 @@
+import { PARAGONS } from './towers/paragons';
 import { Application, Graphics } from 'pixi.js';
 import { Sim, DT, roundGroups, type Difficulty } from './sim';
-import { canUpgrade, TOWERS, type TowerKind } from './towers';
+import { TOWERS, type TowerKind } from './towers';
 import { fitWorld, worldPoint } from './viewport';
 import './style.css';
 import { DEFAULT_MAP } from './map';
@@ -19,7 +20,9 @@ root.innerHTML = `
     <p id="hint" role="status">Buy a monkey, then choose a spot on the map.</p>
     <label for="tower-select">Select a tower</label><select id="tower-select"><option value="-1">No towers placed</option></select>
     <section id="details" hidden><h2 id="tower-title">Dart Monkey</h2>
-      <button id="aim" hidden>Set target on map</button><div id="target-point" hidden><label for="aim-x">Target X</label><input id="aim-x" type="number" min="0" max="960"><label for="aim-y">Target Y</label><input id="aim-y" type="number" min="0" max="540"><button id="apply-aim">Apply target coordinates</button></div><button id="target">Target: First</button><button id="ability" hidden>Activate ability</button><div id="upgrades"></div><button id="sell">Sell</button>
+      <button id="aim" hidden>Set target on map</button><div id="target-point" hidden><label for="aim-x">Target X</label><input id="aim-x" type="number" min="0" max="960"><label for="aim-y">Target Y</label><input id="aim-y" type="number" min="0" max="540"><button id="apply-aim">Apply target coordinates</button></div><button id="target">Target: First</button><button id="ability" hidden>Activate ability</button><div id="upgrades"></div><button id="collect" hidden>Collect bank</button>
+      <div id="support-controls" hidden><label for="support-ally">Support target / beast to merge</label><select id="support-ally"></select><button id="support-target" hidden>Choose buff target</button><label for="merge-path" id="merge-label" hidden>Beast path</label><select id="merge-path" hidden><option value="0">Water beast</option><option value="1">Land beast</option><option value="2">Bird</option></select><button id="merge" hidden>Merge chosen beast into this handler</button></div>
+      <div id="paragon-controls" hidden><p id="paragon-info"></p><label for="paragon-investment">Extra paragon investment</label><input id="paragon-investment" type="number" min="0" step="1000" value="0"><button id="paragon">Create paragon</button></div><button id="sell">Sell</button>
     </section>
     <div class="round-controls"><button id="start">Start round 1</button><button id="speed">Speed ×1</button></div>
   </aside></main>`;
@@ -63,6 +66,11 @@ const upgradeButtons = [0, 1, 2].map(path => {
   button.addEventListener('click', () => { const tower = sim.towers[selected]; sim.upgrade(selected, path); selected = sim.towers.indexOf(tower); refresh(); });
   upgrades.appendChild(button); return button;
 });
+const allySelect=element<HTMLSelectElement>('support-ally');
+element<HTMLButtonElement>('collect').addEventListener('click',()=>{sim.collect(selected);refresh();});
+element<HTMLButtonElement>('support-target').addEventListener('click',()=>{if(sim.setSupportTarget(selected,Number(allySelect.value)))hint.textContent='Buff target selected.';refresh();});
+element<HTMLButtonElement>('merge').addEventListener('click',()=>{hint.textContent=sim.mergeBeast(Number(allySelect.value),selected,Number(element<HTMLSelectElement>('merge-path').value))?'Beast power merged.':'Choose an unmerged handler with a beast on the same path.';refresh();});
+element<HTMLButtonElement>('paragon').addEventListener('click',()=>{const tower=sim.towers[selected];if(sim.makeParagon(selected,Number(element<HTMLInputElement>('paragon-investment').value))){selected=sim.towers.indexOf(tower);hint.textContent='Paragon created.';}refresh();});
 const app = new Application();
 await app.init({ width: 960, height: 540, background: '#182b21', antialias: true });
 field.appendChild(app.canvas);
@@ -100,6 +108,7 @@ app.canvas.addEventListener('pointerdown', e => {
     if (sim.setTarget(selected, { x, y })) { aiming = false; hint.textContent = 'Target point updated.'; }
     refresh(); return;
   }
+  if(!placing && sim.collectAt({x,y})){refresh();return;}
   const hit = sim.towers.findIndex(t => Math.hypot(t.x - x, t.y - y) < 16);
   if (hit >= 0) { selected = hit; placing = null; }
   else if (placing) {
@@ -112,20 +121,20 @@ let lastOptions = '', lastAim = '';
 function refresh() {
   hud.textContent = `$${sim.cash.toFixed(0)} · Lives ${sim.lives} · Round ${sim.round}${sim.gameOver ? ' · Game over' : ''}`;
   shopButtons.forEach(({ type, button }) => {
-    button.textContent = `${placing === type ? 'Cancel' : TOWERS[type].name} · $${sim.price(TOWERS[type].cost)}`;
-    button.disabled = sim.gameOver || (placing !== type && sim.cash < sim.price(TOWERS[type].cost));
+    button.textContent = `${placing === type ? 'Cancel' : TOWERS[type].name} · $${sim.shopPrice(type)}`;
+    button.disabled = sim.gameOver || (placing !== type && sim.cash < sim.shopPrice(type));
     button.setAttribute('aria-pressed', String(placing === type));
   });
   field.classList.toggle('placing', placing !== null || aiming);
   difficulty.disabled = sim.roundActive || sim.towers.length > 0 || sim.round > (sim.difficulty === 'impoppable' ? 5 : 0);
   start.disabled = sim.roundActive || sim.gameOver || !roundGroups(sim.round + 1).length;
   start.textContent = sim.gameOver ? 'Game over' : sim.roundActive ? `Round ${sim.round} running` : `Start round ${sim.round + 1}`;
-  const options = sim.towers.map((t, i) => `<option value="${i}">${TOWERS[t.type].name} ${i + 1} · ${t.tiers.join('-')}</option>`).join('');
+  const options = sim.towers.map((t, i) => `<option value="${i}">${t.degree?PARAGONS[t.type]!.name:TOWERS[t.type].name} ${i + 1} · ${t.degree?'Degree '+t.degree:t.tiers.join('-')}</option>`).join('');
   if (options !== lastOptions) { towerSelect.innerHTML = '<option value="-1">Select a tower</option>' + options; lastOptions = options; }
   towerSelect.value = String(selected);
   const t = sim.towers[selected]; details.hidden = !t;
   if (!t) return;
-  element<HTMLElement>('tower-title').textContent = `${TOWERS[t.type].name} · ${t.tiers.join('-')}`;
+  element<HTMLElement>('tower-title').textContent = `${t.degree?PARAGONS[t.type]!.name:TOWERS[t.type].name} · ${t.degree?'Degree '+t.degree:t.tiers.join('-')}`;
   aim.hidden = !sim.canSetTarget(t);
   aim.textContent = t.type === 'super' ? 'Set Darkshift destination' : t.type === 'mermonkey' ? 'Place melody totem' : 'Set target on map';
   aim.disabled = sim.gameOver;
@@ -139,12 +148,20 @@ function refresh() {
   abilityButton.disabled = sim.gameOver || t.ability?.kind === 'stub' || sim.tick < t.abilityReady;
   abilityButton.textContent = t.ability?.kind === 'stub' ? 'Ability not implemented' : sim.tick < t.abilityReady ? `Ability · ${Math.ceil((t.abilityReady - sim.tick) / 60)}s` : 'Activate ability';
   target.textContent = `Target: ${t.targeting}`; target.disabled = sim.gameOver;
-  sell.textContent = `Sell · $${Math.floor(t.cost * 70 / 100)}`; sell.disabled = sim.gameOver;
+  sell.textContent = `Sell · $${sim.sellValue(t)}`; sell.disabled = sim.gameOver;
+  const collect=element<HTMLButtonElement>('collect');collect.hidden=t.type!=='farm' && !(t.type==='engineer' && t.tiers[2]>=4);collect.textContent=t.type==='farm' && t.tiers[1]>=3?`Collect bank · $${(t.bank??0).toFixed(0)}`:t.type==='engineer'?'Collect trap':'Collect bananas';collect.disabled=sim.gameOver;
+  element<HTMLElement>('support-controls').hidden=t.type!=='beast' && !(t.type==='engineer' && (t.tiers[1]>=4 || t.degree));
+  const allies=sim.towers.map((a,i)=>a!==t && (t.type!=='beast' || a.type==='beast')?`<option value="${i}">${TOWERS[a.type].name} ${i+1} · ${a.tiers.join('-')}</option>`:'').join('');
+  if(allySelect.innerHTML!==allies){const value=allySelect.value;allySelect.innerHTML=allies;if([...allySelect.options].some(o=>o.value===value))allySelect.value=value;}
+  element<HTMLElement>('support-target').hidden=t.type!=='engineer';
+  for(const id of ['merge','merge-path','merge-label'])element<HTMLElement>(id).hidden=t.type!=='beast';
+  const paragon=PARAGONS[t.type];element<HTMLElement>('paragon-controls').hidden=!paragon || !!t.degree;
+  if(paragon){element<HTMLElement>('paragon-info').textContent=`${paragon.name}: requires all three tier 5 paths; absorbs all ${TOWERS[t.type].name} towers.`;const button=element<HTMLButtonElement>('paragon');button.textContent=`Create ${paragon.name} · $${sim.price(paragon.cost)}`;button.disabled=!sim.canMakeParagon(selected) || sim.cash<sim.price(paragon.cost)+Number(element<HTMLInputElement>('paragon-investment').value);}
   upgradeButtons.forEach((button, path) => {
     const next = TOWERS[t.type].paths[path][t.tiers[path]];
-    const allowed = canUpgrade(t.tiers, path);
-    button.textContent = next ? `Path ${path + 1}: ${next.name} · $${sim.price(next.cost)}${allowed ? '' : ' · Locked'}` : `Path ${path + 1}: ${TOWERS[t.type].paths[path][4].name} · Max`;
-    button.disabled = sim.gameOver || !allowed || !next || sim.cash < sim.price(next.cost);
+    const allowed = sim.canUpgradeTower(selected,path);
+    button.textContent = next ? `Path ${path + 1}: ${next.name} · $${sim.upgradePrice(selected,path)}${allowed ? '' : ' · Locked'}` : `Path ${path + 1}: ${TOWERS[t.type].paths[path][4].name} · Max`;
+    button.disabled = sim.gameOver || !allowed || !next || sim.cash < sim.upgradePrice(selected,path);
   });
 }
 const COL: Record<string, number> = { red: 0xee3333, blue: 0x3399ff, green: 0x33cc33, yellow: 0xeeee33, pink: 0xff88bb, black: 0x222222, white: 0xeeeeee, purple: 0x9933cc, lead: 0x888899, zebra: 0xcccccc, rainbow: 0xff9900, ceramic: 0xbb8855, moab: 0x3366cc };
@@ -160,7 +177,7 @@ app.ticker.add(t => {
     const p = chosen.targetPoint; g.circle(p.x, p.y, 8).stroke({ color: 0xffdf66, width: 2 });
     g.moveTo(p.x - 12, p.y).lineTo(p.x + 12, p.y).moveTo(p.x, p.y - 12).lineTo(p.x, p.y + 12).stroke({ color: 0xffdf66, width: 1 });
   }
-  if (chosen && chosen.range < 1000) g.circle(chosen.x, chosen.y, chosen.range).fill({ color: 0xffffff, alpha: 0.12 }).stroke({ color: 0xffffff, alpha: 0.7, width: 1 });
+  if (chosen && sim.effectiveStats(chosen).range < 1000) g.circle(chosen.x, chosen.y, sim.effectiveStats(chosen).range).fill({ color: 0xffffff, alpha: 0.12 }).stroke({ color: 0xffffff, alpha: 0.7, width: 1 });
   for (const b of sim.bloons) {
     const p = sim.posAt(b.dist); g.ellipse(p.x, p.y, 7, 9).fill(COL[b.type] ?? 0x888888);
     if ((b.frozenUntil ?? 0) > sim.tick) g.ellipse(p.x, p.y, 8, 10).stroke({ color: 0xbbf4ff, width: 2 });
@@ -176,6 +193,10 @@ app.ticker.add(t => {
     g.circle(t.x - 4, t.y - 2, 2).circle(t.x + 4, t.y - 2, 2).fill(0x201a16);
     if (tower === chosen) g.circle(t.x, t.y, 16).stroke({ width: 2, color: 0xffdf66 });
   }
+  for(const banana of sim.collectibles)g.ellipse(banana.x,banana.y,6,3).fill(0xffdf55).stroke({color:0x765714,width:1});
+  for(const item of sim.roadItems){const p=sim.posAt(item.dist);g.rect(p.x-4,p.y-4,8,8).fill(item.kind==='foam'?0xeaf5f4:item.kind==='trap'?0xa66b32:0xc6d1db);}
+  for(const sentry of sim.sentries)g.rect(sentry.x-5,sentry.y-5,10,10).fill(0xd3b463).stroke({color:0x302a20,width:2});
+  for(const tower of sim.towers)if(tower.degree)g.circle(tower.x,tower.y,15).stroke({color:0xd990ff,width:3});
   for (const d of sim.darts) g.circle(d.x, d.y, d.kind === 'bomb' || d.kind === 'boomerang' || d.bounce ? 5 : 2).fill(d.kind === 'glue' ? 0xeed34e : d.kind === 'bomb' ? 0x222222 : 0xffffff);
   for (const e of sim.effects) g.circle(e.x, e.y, e.radius).stroke({ color: e.kind === 'ice' ? 0xbbeeff : 0xffdd77, width: 2, alpha: e.life / 0.2 });
   refresh();

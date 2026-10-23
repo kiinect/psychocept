@@ -1,3 +1,4 @@
+import { farm, spike, village, engineer, beast } from './support';
 import { wizard, superMonkey, ninja, alchemist, druid, mermonkey } from './magic';
 import { sniper, sub, buccaneer, ace, heli, mortar, dartling } from './military';
 import { dart } from './dart';
@@ -6,6 +7,6 @@ import { bomb } from './bomb';
 import { tack } from './tack';
 import { ice } from './ice';
 import { glue } from './glue';
-export const TOWERS = { wizard, super: superMonkey, ninja, alchemist, druid, mermonkey, dart, boomerang, bomb, tack, ice, glue, sniper, sub, buccaneer, ace, heli, mortar, dartling };
+export const TOWERS = { farm, spike, village, engineer, beast, wizard, super: superMonkey, ninja, alchemist, druid, mermonkey, dart, boomerang, bomb, tack, ice, glue, sniper, sub, buccaneer, ace, heli, mortar, dartling };
 export type TowerKind = keyof typeof TOWERS;
 export { resultingStats, canUpgrade } from './types';

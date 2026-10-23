@@ -1,3 +1,4 @@
+import { PARAGONS } from './towers/paragons';
 // Fixed-step (60 Hz), deterministic and independent of rendering.
 import bloonJson from '../data/wiki/bloons.json';
 import roundJson from '../data/wiki/rounds.json';
@@ -25,7 +26,10 @@ export interface DamageStatus { until: number; next: number; interval: number; d
 export interface Bloon { goldUntil?: number; concoction?: TowerStats; stickyUntil?: number;  burn?: DamageStatus; freezeLayers?: number; slowUntil?: number; icicle?: { until: number; next: number; stats: TowerStats }; shardStats?: TowerStats; frozenUntil?: number; stunnedUntil?: number; slow?: number; glue?: GlueStatus; brittleUntil?: number; brittle?: number; id: number; type: string; dist: number; hp: number; camo?: boolean; fortified?: boolean; regrow?: boolean }
 export const TARGETING = ['First', 'Last', 'Close', 'Strong'] as const;
 export type Targeting = typeof TARGETING[number];
-export interface Tower extends Pt, TowerStats { magicNext?: Record<string, number>; graveyard?: number; abilityUses?: number; purchaseLives?: number; oakLives?: number; wrathDamage?: number; lastDamage?: number; blackHoleUntil?: number; blackHoleReady?: number; blackHoleUses?: number; brew?: { source: Tower; until: number; shots: number; level: number }; dip?: { source: Tower; shots: number }; transformedUntil?: number;  aimAngle: number; targetPoint: Pt; flight: Pt; rotorReady: number; type: TowerKind; tiers: Tiers; cd: number; cost: number; targeting: Targeting; shots: number; abilityReady: number; abilityUntil: number; abilityNext: number; secondaryReady: number; orbitReady: number; blitzRound: number; buffUntil: number }
+export interface Tower extends Pt, TowerStats { farmAccounted?: number; farmCreated?: number; farmNext?: number; bank?: number; debt?: number; ultra?: number; overclockUntil?: number; supportTarget?: Tower; mergedInto?: Tower; merges?: Tower[]; degree?: number; paragonPops?: number; opolisIncome?: number; freeDarts?: number; roundUses?: number; magicNext?: Record<string, number>; graveyard?: number; abilityUses?: number; purchaseLives?: number; oakLives?: number; wrathDamage?: number; lastDamage?: number; blackHoleUntil?: number; blackHoleReady?: number; blackHoleUses?: number; brew?: { source: Tower; until: number; shots: number; level: number }; dip?: { source: Tower; shots: number }; transformedUntil?: number;  aimAngle: number; targetPoint: Pt; flight: Pt; rotorReady: number; type: TowerKind; tiers: Tiers; cd: number; cost: number; targeting: Targeting; shots: number; abilityReady: number; abilityUntil: number; abilityNext: number; secondaryReady: number; orbitReady: number; blitzRound: number; buffUntil: number }
+export interface Collectible extends Pt { owner:Tower; value:number; until:number }
+export interface RoadItem { owner:Tower; dist:number; until:number; round:number; carry:number; pierce:number; stats:TowerStats; kind: 'spike' | 'foam' | 'trap'; stored:number; fragment?:boolean; hit:Set<number> }
+export interface Sentry extends Pt { owner:Tower; until:number; next:number; stats:TowerStats; variant:number }
 export interface Dart extends Pt, TowerStats {
   vx: number; vy: number; life: number; hit: Set<number>;
   heavy?: boolean; owner?: Tower; age?: number; lastHit?: Map<number, number>; target?: Pt;
@@ -42,6 +46,8 @@ export function popCashMultiplier(round: number) {
 }
 export class Sim {
   bloons: Bloon[] = []; towers: Tower[] = []; darts: Dart[] = []; effects: Effect[] = [];
+  collectibles:Collectible[]=[];
+  roadItems: RoadItem[] = []; sentries: Sentry[] = []; roundStartTick=0;
   cash: number; lives: number; round = 0; tick = 0; nextId = 1; rng = mulberry32(1);
   roundActive = false;
   private delayed: { at: number; target: Bloon; stats: TowerStats; damage: number; splash: number; radius: number; pierce: number }[] = [];
@@ -82,8 +88,9 @@ export class Sim {
   }
   // Low-level setup API remains compatible; interactive purchases use placeTower.
   addTower(x: number, y: number, type: TowerKind = 'dart') {
-    const def = TOWERS[type], cost = this.price(def.cost);
+    const def = TOWERS[type], cost = type === 'dart' && this.freeDartSource() ? 0 : this.towerPrice(type, {x,y});
     if (this.gameOver || this.cash < cost || !Number.isFinite(x) || !Number.isFinite(y)) return false;
+    if(type === 'dart' && cost === 0) this.freeDartSource()!.freeDarts!--;
     this.cash -= cost;
     this.towers.push({ ...def.base, type, x, y, aimAngle: -Math.PI / 2, targetPoint: { x, y: Math.max(0, y - 40) }, flight: { x, y }, rotorReady: 0, tiers: [0, 0, 0], cd: 0, cost, targeting: type === 'ice' || type === 'tack' ? 'Close' : 'First', shots: 0, abilityReady: 0, abilityUntil: 0, abilityNext: 0, secondaryReady: 0, orbitReady: 0, blitzRound: -1, buffUntil: 0, purchaseLives: this.lives }); return true;
   }
@@ -92,9 +99,15 @@ export class Sim {
   }
   upgrade(towerIdx: number, path: number) {
     const t = this.towers[towerIdx];
-    if (this.gameOver || !t || !canUpgrade(t.tiers, path)) return false;
-    const cost = this.price(TOWERS[t.type].paths[path][t.tiers[path]].cost);
+    if (this.gameOver || !t || t.degree || t.mergedInto || !canUpgrade(t.tiers, path) || !this.supportUpgradeAllowed(t,path)) return false;
+    const cost = this.upgradePrice(towerIdx,path);
     if (this.cash < cost) return false;
+    if(t.type==='village' && path===2 && t.tiers[2]===4) {
+      const farms=this.opolisFarms(t);
+      // uncertain: local formula is garbled; use its explicit max(200,200*floor(value/2000))+1000.
+      t.opolisIncome=Math.max(200,200*Math.floor(farms.reduce((sum,f)=>sum+f.cost,0)/2000))+1000;
+      this.towers=this.towers.filter(a=>!farms.includes(a));
+    }
     this.cash -= cost; t.cost += cost; t.tiers[path]++;
     if(t.type === 'super' && path === 0 && t.tiers[0] >= 4) {
       // uncertain: the wiki omits numeric category bonuses; sacrifice is modeled with the unsacrificed weapon stats.
@@ -104,6 +117,7 @@ export class Sim {
     if(t.type === 'druid' && path === 2 && t.tiers[2] === 2) t.purchaseLives=this.lives;
     const hadAbility = t.ability;
     Object.assign(t, resultingStats(TOWERS[t.type], t.tiers));
+    if(t.type==='engineer' && path===1 && t.tiers[1]===5)t.abilityReady=this.tick;
     if (t.ability && !hadAbility) t.abilityReady = this.tick + t.ability.initial * 60;
     return true;
   }
@@ -111,6 +125,7 @@ export class Sim {
     const t = this.towers[towerIdx];
     if (this.gameOver || !t || !this.canSetTarget(t) ||
       !Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.x > 960 || p.y < 0 || p.y > 540) return false;
+    if((t.type==='engineer' || t.type==='spike') && Math.hypot(p.x-t.x,p.y-t.y)>this.effectiveStats(t).range)return false;
     if(t.type === 'mermonkey') {
       if(this.tick < (t.magicNext?.totem ?? 0) || t.tiers[2] < 5 && Math.hypot(p.x-t.x,p.y-t.y)>t.range*1.35) return false;
       t.magicNext ??= {};t.magicNext.totem=this.tick+360;
@@ -118,11 +133,12 @@ export class Sim {
     t.targetPoint = { ...p }; return true;
   }
   canSetTarget(t: Tower) {
-    return ['mortar','heli','dartling','ace'].includes(t.type) || t.type === 'super' && t.tiers[2] >= 3 || t.type === 'mermonkey' && t.tiers[2] >= 4;
+    return t.type==='spike' && t.tiers[2]>=2 || t.type==='engineer' && (t.tiers[1]>=3 || t.tiers[2]>=4) || t.type==='beast' && t.tiers[2]>0 || ['mortar','heli','dartling','ace'].includes(t.type) || t.type === 'super' && t.tiers[2] >= 3 || t.type === 'mermonkey' && t.tiers[2] >= 4;
   }
   activate(towerIdx: number) {
     const t = this.towers[towerIdx], a = t?.ability;
     if (this.gameOver || !t || !a || this.tick < t.abilityReady) return false;
+    if (!this.activateSupport(t)) return false;
     if (a.kind === 'stub' || t.abilityUntil > this.tick) return false;
     if(a.kind === 'darkshift') {
       const p=t.targetPoint;
@@ -186,7 +202,7 @@ export class Sim {
     const energizer = this.towers.some(ally => ally.type === 'sub' && ally.tiers[0] === 5);
     const reactor = this.towers.some(ally => ally.type === 'sub' && ally.tiers[0] >= 4);
     const cooldownMult = energizer ? TOWERS[t.type].waterOnly ? 0.6 : 0.8 : reactor && TOWERS[t.type].waterOnly ? 0.85 : 1;
-    t.abilityReady = this.tick + a.cooldown * cooldownMult * 60;
+    t.abilityReady = this.tick + a.cooldown * cooldownMult * this.villageAbilityMult(t) * 60;
     t.abilityUntil = this.tick + a.duration * 60; t.abilityNext = this.tick;
     if (a.kind === 'snow' && t.tiers[1] === 5) {
       for (const ally of this.towers) if (ally.type === 'ice') ally.buffUntil = this.tick + 600;
@@ -195,7 +211,11 @@ export class Sim {
     return true;
   }
   private source(t: TowerStats & Pt, stats: Partial<TowerStats> = {}): Dart {
-    return { ...t, ...stats, vx: 0, vy: 0, life: 0, hit: new Set() };
+    const actual=this.towers.includes(t as Tower)?t as Tower:undefined;
+    const buffed=actual?this.effectiveStats(actual):t;
+    const result:Dart={ ...buffed, ...stats, owner:actual, vx: 0, vy: 0, life: 0, hit: new Set() };
+    if(actual && !actual.degree && this.villages(actual).some(v=>v.tiers[1]>=3)){result.damageType='normal';result.frozen=true;result.lead=true;}
+    return result;
   }
   private globalAbility(t: Tower) {
     if (t.ability?.kind === 'glue') {
@@ -262,14 +282,17 @@ export class Sim {
   }
   sell(towerIdx: number) {
     const t = this.towers[towerIdx]; if (this.gameOver || !t) return false;
-    this.cash += Math.floor(t.cost * 70 / 100); this.towers.splice(towerIdx, 1); return true;
+    this.collect(towerIdx);
+    this.cash += this.sellValue(t); this.towers.splice(towerIdx, 1);
+    for(const ally of this.towers)if(ally.mergedInto===t)ally.mergedInto=undefined;
+    this.roadItems=this.roadItems.filter(i=>i.owner!==t);this.sentries=this.sentries.filter(i=>i.owner!==t);return true;
   }
   cycleTargeting(towerIdx: number) {
     const t = this.towers[towerIdx]; if (t) t.targeting = TARGETING[(TARGETING.indexOf(t.targeting) + 1) % TARGETING.length];
   }
   startRound(groups = roundGroups(this.round + 1)) {
     if (this.gameOver || this.roundActive || !groups.length) return false;
-    this.round++; this.roundActive = true; let time = 0;
+    this.round++; this.roundActive = true; this.roundStartTick=this.tick; for(const t of this.towers){t.roundUses=0;t.farmAccounted=0;t.farmCreated=0;t.farmNext=this.tick;} let time = 0;
     for (const g of groups) for (let i = 0; i < g.n; i++) {
       this.spawnQ.push({ at: this.tick + Math.round(time * 60), type: g.type, camo: g.camo, fortified: g.fortified, regrow: g.regrow }); time += g.gap;
     }
@@ -284,6 +307,7 @@ export class Sim {
   private canHit(b: Bloon, d: TowerStats) {
     if ((b.camo || b.type === 'ddt' && b.camo !== false) && !d.camo) return false;
     if (this.isMoab(b) && !d.moabTargetable) return false;
+    if(d.universal)return true;
     const gold = (b.goldUntil ?? 0) > this.tick;
     const immune = gold ? [] : BLOONS[b.type].immunities;
     if (d.damageType === 'frigid' && !gold && (b.type === 'white' || b.type === 'zebra')) return false;
@@ -331,7 +355,7 @@ export class Sim {
     }
     if (d.burnDamage) b.burn = { until: this.tick + d.burnDuration * 60,
       next: b.burn?.next ?? this.tick + d.burnInterval * 60, interval: d.burnInterval * 60,
-      damage: d.burnDamage + (moab ? d.burnMoab : 0), stats: { ...d, damageType: d.damageType === 'acid' ? 'acid' : 'fire', frozen: true } };
+      damage: d.burnDamage + (moab ? d.burnMoab : 0), stats: { ...d, damageType: d.damageType === 'normal' ? 'normal' : d.damageType === 'acid' ? 'acid' : 'fire', frozen: true } };
     if (d.shards) b.shardStats = { ...d };
     if (d.orbit && moab && !b.burn) {
       b.burn = { until: this.tick + 600, next: this.tick + 60, interval: 60, damage: 100, stats: { ...d, damageType: 'normal', frozen: true } };
@@ -391,7 +415,7 @@ export class Sim {
     }
     const angle = t.type === 'dartling' ? t.aimAngle : Math.atan2(p.y - t.y, p.x - t.x);
     for (let n = 0; n < t.projectiles; n++) {
-      const aim = t.kind === 'tack' || t.radial ? n * Math.PI * 2 / t.projectiles : angle + (n - (t.projectiles - 1) / 2) * t.spread * Math.PI / 180 + (t.accuracy ? (this.rng() - 0.5) * t.accuracy * Math.PI / 180 : 0);
+      const aim = t.kind === 'tack' || t.radial ? n * Math.PI * 2 / t.projectiles + (t.degree && t.type==='tack'?this.tick*0.03:0) : angle + (n - (t.projectiles - 1) / 2) * t.spread * Math.PI / 180 + (t.accuracy ? (this.rng() - 0.5) * t.accuracy * Math.PI / 180 : 0);
       const offset = t.projectiles === 2 ? (n === 0 ? -3 : 3) : 0;
       this.darts.push({ ...t, x: t.x - Math.sin(angle) * offset, y: t.y + Math.cos(angle) * offset,
         damage: t.critEvery && t.shots % t.critEvery === 0 ? t.critDamage : t.damage,
@@ -402,9 +426,10 @@ export class Sim {
   // Remaining damage carries through children, charging each destroyed layer only once.
   private damage(b: Bloon, amount: number, d: Dart) {
     if (!this.canHit(b, d)) return;
+    if(d.owner) {const owner=this.towers.find(t=>t.type===d.owner!.type && t.x===d.owner!.x && t.y===d.owner!.y);if(owner)owner.paragonPops=(owner.paragonPops??0)+Math.min(amount,b.hp);}
     if (amount < b.hp) { b.hp -= amount; return; }
     const remaining = amount - b.hp;
-    this.cash += BLOONS[b.type].popCash * popCashMultiplier(this.round) * ((b.goldUntil ?? 0) > this.tick ? 2 : 1);
+    this.credit(BLOONS[b.type].popCash * popCashMultiplier(this.round) * (((b.goldUntil ?? 0) > this.tick ? 2 : 1) + d.popCashBonus));
     for(const t of this.towers) if(t.type==='wizard' && t.tiers[2]>=4 && Math.hypot(this.posAt(b.dist).x-t.x,this.posAt(b.dist).y-t.y)<=t.range)
       t.graveyard=Math.min(t.tiers[2]===5?3000:500,(t.graveyard ?? 0)+1);
     if(b.concoction) {
@@ -511,6 +536,7 @@ export class Sim {
     return weapon;
   }
   private magicAttack(t: Tower, weapon: Tower) {
+    if(t.degree)return;
     if ((t.transformedUntil ?? 0)>this.tick) return;
     const [a,b,c]=t.tiers;
     const targets=this.magicTargets(weapon,weapon.range), target=targets[0];
@@ -680,7 +706,8 @@ export class Sim {
   }
   private spawn(s: Omit<Bloon, 'id' | 'hp' | 'dist'>) {
     const b = this.makeBloon(s.type, 0, s); this.bloons.push(b);
-    for(const t of this.towers) if(t.type==='ninja' && t.tiers[1]===5 && this.tick<t.abilityUntil && this.isMoab(b)) b.hp*=0.75;
+    if(this.towers.some(t=>t.type==='ninja' && t.degree) && this.isMoab(b) && b.type!=='bad') {b.hp*=0.75;b.slow=0.5;}
+    for(const t of this.towers) if(!t.degree && t.type==='ninja' && t.tiers[1]===5 && this.tick<t.abilityUntil && this.isMoab(b)) b.hp*=0.75;
     if (this.isMoab(b)) for (const t of this.towers) if (t.entryDamage) {
       this.applyHit(b, this.source(t, { damage: t.entryDamage, damageType: 'normal', camo: true, frozen: true, moabBonus: 0 }));
     }
@@ -700,6 +727,338 @@ export class Sim {
       if (distance) { t.flight.x += dx / distance * amount; t.flight.y += dy / distance * amount; }
     }
   }
+  private primary(t: {type:TowerKind}) { return ['dart','boomerang','bomb','tack','ice','glue'].includes(t.type); }
+  private villageRange(t:Tower) { return t.range*(1+(t.ultra??0)*0.015)*((t.overclockUntil??0)>this.tick?1.1:1); }
+  private villages(t:Pt) { return this.towers.filter(v=>v!==t && v.type==='village' && Math.hypot(v.x-t.x,v.y-t.y)<=this.villageRange(v)); }
+  private freeDartSource() { return this.towers.find(t=>t.type==='village' && (t.freeDarts??0)>0); }
+  private discount(p:Pt) {
+    const villages=this.villages(p);
+    return villages.some(v=>v.tiers[2]>=1)?0.1+Math.min(3,villages.filter(v=>v.tiers[2]>=2).length)*0.05:0;
+  }
+  shopPrice(type:TowerKind) {
+    if(type==='dart' && this.freeDartSource())return 0;
+    return Math.min(this.price(TOWERS[type].cost),...this.towers.filter(t=>t.type==='village').map(v=>this.towerPrice(type,{x:v.x,y:v.y})));
+  }
+  canUpgradeTower(index:number,path:number) {const t=this.towers[index];return !!t && !t.degree && !t.mergedInto && canUpgrade(t.tiers,path) && this.supportUpgradeAllowed(t,path);}
+  towerPrice(type:TowerKind,p?:Pt) { return this.price(TOWERS[type].cost*(p?1-this.discount(p):1)); }
+  private opolisFarms(t:Tower) { return this.towers.filter(a=>a.type==='farm' && !a.tiers.includes(5) && Math.hypot(a.x-t.x,a.y-t.y)<=this.villageRange(t)); }
+  upgradePrice(index:number,path:number) {
+    const t=this.towers[index]; if(!t || !canUpgrade(t.tiers,path))return Infinity;
+    if(t.type==='village' && path===2 && t.tiers[2]===4)return this.opolisFarms(t).length*5000;
+    const tier=t.tiers[path]+1, villages=this.villages(t);
+    if(this.primary(t) && villages.some(v=>v.tiers[0]>=4 && tier<=(v.tiers[0]===5?2:1)))return 0;
+    return this.price(TOWERS[t.type].paths[path][tier-1].cost*(tier<=3?1-this.discount(t):1));
+  }
+  sellValue(t:Tower) {return Math.floor(t.cost*(t.type==='farm' && t.tiers[2]>=2?80:70)/100);}
+  private supportUpgradeAllowed(t:Tower,path:number) {
+    if(t.type==='village' && path===2 && t.tiers[2]===4)return this.opolisFarms(t).length>0;
+    if(t.type!=='beast')return true;
+    if(path===0 && !this.water.some(w=>Math.hypot(t.x-Math.max(w.x,Math.min(t.x,w.x+w.width)),t.y-Math.max(w.y,Math.min(t.y,w.y+w.height)))<=60))return false;
+    if(path===2 && !t.tiers[2] && this.nearTrack(t,60).length===0)return false;
+    if(t.tiers[path]===4)return (t.merges??[]).filter(a=>this.towers.includes(a) && a.tiers[path]===4).length>=3;
+    return true;
+  }
+  setSupportTarget(index:number,targetIndex:number) {
+    const t=this.towers[index], target=this.towers[targetIndex];
+    if(this.gameOver || !t || !target || t===target || t.type!=='engineer' || t.tiers[1]<4 && !t.degree)return false;
+    t.supportTarget=target;return true;
+  }
+  mergeBeast(sourceIndex:number,targetIndex:number,path:number) {
+    const source=this.towers[sourceIndex],target=this.towers[targetIndex];
+    if(this.gameOver || !Number.isInteger(path) || path<0 || path>2 || !source || !target || source===target || source.type!=='beast' || target.type!=='beast' || source.mergedInto || target.mergedInto || source.merges?.length || source.tiers[path]<1 || target.tiers[path]<1)return false;
+    source.mergedInto=target;target.merges??=[];target.merges.push(source);return true;
+  }
+  private beastPower(t:Tower,path:number) {
+    const power=[0,1,3,8,16,36], cap=[0,1,6,24,64,132];
+    return Math.min(cap[t.tiers[path]],power[t.tiers[path]]+(t.merges??[]).filter(a=>this.towers.includes(a)).reduce((sum,a)=>sum+power[a.tiers[path]],0));
+  }
+  private villageAbilityMult(t:Tower) {
+    return this.primary(t) && this.villages(t).some(v=>v.tiers[0]===5)?0.75:this.primary(t) && this.villages(t).some(v=>v.tiers[0]>=4)?0.85:1;
+  }
+  effectiveStats(t:Tower):Tower {
+    const weapon={...t}, villages=this.villages(t);
+    if(t.degree) {
+      // Paragons reject ordinary buffs; Ascended Shadow is the explicit camo exception.
+      if(this.towers.some(a=>a.type==='ninja' && a.degree))weapon.camo=true;
+      return weapon;
+    }
+    if(villages.some(v=>v.tiers[2]>=3))weapon.popCashBonus=0.5;
+    if(villages.length)weapon.range*=1.1;
+    if(villages.some(v=>v.tiers[0]>=2))weapon.cooldown*=0.85;
+    if(villages.some(v=>v.tiers[1]>=2) || this.towers.some(a=>a.type==='ninja' && a.degree))weapon.camo=true;
+    if(villages.some(v=>v.tiers[1]>=3)) {weapon.damageType='normal';weapon.lead=true;weapon.frozen=true;weapon.universal=true;}
+    if(this.primary(t)) {
+      const level=Math.max(0,...villages.map(v=>v.tiers[0]));
+      if(level>=3){weapon.pierce+=level===5?3:1;weapon.range=weapon.range*1.1+(level>=4?5:0);weapon.projectileSpeed*=1.25;}
+      if(this.towers.some(a=>a.type==='boomerang' && a.degree))weapon.cooldown*=0.9;
+    }
+    const arms=Math.max(1,...this.towers.filter(v=>v.type==='village' && v.ability?.kind==='arms' && v.abilityUntil>this.tick).map(v=>v.tiers[1]===5?2:1.5));
+    weapon.cooldown/=arms;weapon.pierce*=arms;
+    weapon.cooldown*=1-(t.ultra??0)*0.04;
+    if((t.overclockUntil??0)>this.tick)weapon.cooldown*=0.6;
+    if(t.type==='beast') {
+      const path=t.tiers.findIndex(n=>n>2)>=0?t.tiers.findIndex(n=>n>2):t.tiers.findIndex(n=>n>0);
+      if(path>=0) {
+        const tier=t.tiers[path],min=[0,1,3,8,16,36][tier],max=[0,1,6,24,64,132][tier];
+        const ratio=max===min?0:(this.beastPower(t,path)-min)/(max-min);
+        const damageMax=[[1,4,36,90,1800],[1,4,16,60,2000],[1,2,3,6,90]][path][tier-1];
+        const pierceMax=[[1,12,30,60,90],[5,20,26,45,83],[3,12,90,90,450]][path][tier-1];
+        weapon.damage+=(damageMax-weapon.damage)*ratio;weapon.pierce+=(pierceMax-weapon.pierce)*ratio;
+        weapon.cooldown*=1-ratio*0.3439;
+      }
+    }
+    return weapon;
+  }
+  collect(index:number) {
+    const t=this.towers[index];if(this.gameOver || !t)return false;
+    let collected=false;
+    if((t.bank??0)>0){this.credit(t.bank!);t.bank=0;collected=true;}
+    for(const banana of [...this.collectibles])if(banana.owner===t){this.collectBanana(banana);collected=true;}
+    for(const trap of [...this.roadItems])if(trap.owner===t && trap.kind==='trap' && trap.stored>0){this.credit(trap.stored*(t.tiers[2]===5?3:2)*popCashMultiplier(this.round));this.roadItems.splice(this.roadItems.indexOf(trap),1);collected=true;}
+    return collected;
+  }
+  collectAt(p:Pt) {
+    if(this.gameOver || !Number.isFinite(p.x) || !Number.isFinite(p.y))return false;
+    let collected=false;
+    for(const banana of [...this.collectibles])if(Math.hypot(p.x-banana.x,p.y-banana.y)<=(banana.owner.tiers[2]>=1?75:50)){this.collectBanana(banana);collected=true;}
+    return collected;
+  }
+  private collectBanana(banana:Collectible,fraction=1) {
+    banana.owner.farmAccounted=(banana.owner.farmAccounted??0)+banana.value;
+    this.credit(banana.value*fraction);this.collectibles.splice(this.collectibles.indexOf(banana),1);
+  }
+  private runCollectibles() {
+    for(const banana of [...this.collectibles]) {
+      if(!this.towers.includes(banana.owner)){this.collectibles.splice(this.collectibles.indexOf(banana),1);continue;}
+      const wallStreet=this.towers.some(t=>t.type==='farm' && t.tiers[2]===5 && Math.hypot(t.x-banana.x,t.y-banana.y)<=t.range);
+      if(wallStreet)this.collectBanana(banana);
+      else if(banana.until<=this.tick)this.collectBanana(banana,banana.owner.tiers[2]>=2?0.85:banana.owner.tiers[2]>=1?0.5:0);
+    }
+  }
+  private credit(amount:number) {
+    // uncertain: the loan prose omits repayment fraction; half of subsequent income repays debt.
+    let repayment=amount*0.5;
+    for(const t of this.towers)if((t.debt??0)>0){const paid=Math.min(t.debt!,repayment);t.debt!-=paid;repayment-=paid;amount-=paid;}
+    this.cash+=amount;
+  }
+  roundIncome(t:Tower) {
+    let income=t.opolisIncome??t.income;
+    if(t.type==='farm') {
+      const [a,b,c]=t.tiers;
+      if(b>=3)income=225+(a===1?100:a===2?200:0);
+      else if(c>=3)income=(16+a*2)*(c>=4?70:20)*(b>=2?1.25:1)+(c===5?4000:0);
+      else income=[80,120,160,320,1500,6000][a]*(b>=2?1.25:1);
+      if(a===4 && this.towers.some(f=>f.type==='farm' && f.tiers[0]===5))income*=1.25;
+    }
+    if(t.type==='buccaneer' && t.tiers[2]>=3)income*=1+Math.min(1,this.towers.filter(f=>f.type==='farm' && f.tiers[2]>=4).length*0.1);
+    if(this.villages(t).some(v=>v.tiers[2]>=4))income*=1.2;
+    if(t.type==='farm')income/= (1-(t.ultra??0)*0.04)*((t.overclockUntil??0)>this.tick?0.6:1);
+    return income;
+  }
+  private supportRoundEnd() {
+    const suppress=this.towers.some(t=>t.degree && t.type==='druid' && t.abilityUntil>this.tick);
+    for(const t of this.towers) {
+      if(t.type==='farm' && t.tiers[1]>=3) {
+        const cap=t.tiers[1]>=4?10000:7000;
+        t.bank=Math.min(cap,((t.bank??0)+(suppress?0:this.roundIncome(t)))*1.15);
+        if(t.tiers[2]>=2 && t.bank>=cap)this.collect(this.towers.indexOf(t));
+      } else if(!suppress)this.credit(Math.max(0,this.roundIncome(t)-(t.type==='farm'?(t.farmAccounted??0):0)));
+      if(t.type==='farm' && t.tiers[2]===5)this.lives+=15;
+      if(t.type==='village' && t.tiers[2]>=4)t.freeDarts=(t.freeDarts??0)+1;
+      if(t.type==='engineer' && t.degree)t.cooldown/=1.3;
+      if(t.type==='druid' && t.degree)this.lives++;
+    }
+    this.collectibles=[];
+    this.roadItems=this.roadItems.filter(item=>this.round-item.round<item.carry || item.kind==='trap');
+  }
+  canMakeParagon(index:number) {
+    const t=this.towers[index];if(this.gameOver || !t || t.degree || !t.tiers.includes(5) || !PARAGONS[t.type] || this.towers.some(a=>a.type===t.type && a.degree))return false;
+    return [0,1,2].every(path=>this.towers.some(a=>a.type===t.type && !a.degree && a.tiers[path]===5));
+  }
+  makeParagon(index:number,investment=0) {
+    const t=this.towers[index];if(!this.canMakeParagon(index) || !Number.isFinite(investment) || investment<0)return false;
+    const def=PARAGONS[t.type]!,cost=this.price(def.cost)+investment;
+    if(this.cash<cost)return false;
+    const sacrifices=this.towers.filter(a=>a.type===t.type), value=sacrifices.reduce((sum,a)=>sum+a.cost,0),pops=sacrifices.reduce((sum,a)=>sum+(a.paragonPops??0),0);
+    // uncertain: wiki omits degree power formula; use deterministic spending/pops with a hard 1..100 cap.
+    const degree=Math.min(100,1+Math.floor(Math.sqrt((Math.max(0,value-50000)+investment)/1000+pops/1000)));
+    this.cash-=cost;this.towers=this.towers.filter(a=>a.type!==t.type || a===t);
+    Object.assign(t,def.stats,{degree,tiers:[0,0,0],cost:value+cost,cd:0,magicNext:{},abilityReady:this.tick,abilityUntil:0});
+    t.damage*=1+(degree-1)*0.05;t.pierce*=1+(degree-1)*0.025;t.cooldown/=1+(degree-1)*0.01;
+    this.roadItems=this.roadItems.filter(i=>!sacrifices.includes(i.owner));this.sentries=this.sentries.filter(i=>!sacrifices.includes(i.owner));
+    return true;
+  }
+  private activateSupport(t:Tower) {
+    const kind=t.ability?.kind;
+    if(kind==='loan') {
+      if(!this.roundActive || this.tick-this.roundStartTick>180*60 || (t.roundUses??0)>=2 || (t.debt??0)>0)return false;
+      t.roundUses=(t.roundUses??0)+1;const cash=9000*(this.villages(t).some(v=>v.tiers[2]>=4)?1.2:1);
+      this.credit(cash);if(t.tiers[1]===4)t.debt=cash;
+    }
+    if(kind==='arms') {
+      const active=this.towers.filter(v=>v.type==='village' && v.ability?.kind==='arms' && v.abilityUntil>this.tick);
+      if(active.some(v=>v.tiers[1]>=t.tiers[1]))return false;
+      for(const v of active)v.abilityUntil=this.tick;
+    }
+    if(kind==='overclock') {
+      const target=t.supportTarget && this.towers.includes(t.supportTarget)?t.supportTarget:this.towers.find(a=>a!==t && !a.degree && !a.mergedInto);
+      if(!target || t.tiers[1]===5 && (t.roundUses??0)>=10)return false;
+      target.overclockUntil=this.tick+(t.tiers[1]===5?60:60-Math.max(...target.tiers)*6)*60;
+      if(t.tiers[1]===5)target.ultra=Math.min(10,(target.ultra??0)+1);
+      t.roundUses=(t.roundUses??0)+1;
+    }
+    if(kind==='stomp') {
+      const weapon=this.effectiveStats(t),a=t.ability!;
+      this.burst(t,this.source(weapon,{damage:a.damage,pierce:a.count,stun:t.tiers[1]===5?12:6,moabStun:t.tiers[1]===5?4:2}),a.pierce);
+    }
+    if(kind==='storm')this.spikeStorm(t,this.effectiveStats(t));
+    if(kind==='paragon') {
+      if(t.type==='buccaneer') {
+        const b=[...this.bloons].sort((a,b)=>BLOONS[b.type].rbe-BLOONS[a.type].rbe)[0];
+        if(!b)return false;this.credit(BLOONS[b.type].rbe*popCashMultiplier(this.round));this.bloons.splice(this.bloons.indexOf(b),1);
+      } else if(t.type==='engineer') {
+        this.sentries.push({...t.targetPoint,owner:t,until:Infinity,next:0,variant:0,stats:{...t,damage:300,range:2000,cooldown:0.1}});
+        const target=t.supportTarget;if(target && this.towers.includes(target))target.overclockUntil=this.tick+(target.degree?15:60)*60;
+      } else if(t.type==='spike')this.spikeStorm(t,t);
+      else this.burst(t,this.source(t,{damage:t.ability!.damage,range:2000,pierce:1000,stun:t.type==='ice'?10:2,moabStun:t.type==='ice'?5:1,camo:true}),t.type==='ice'||t.type==='ace'||t.type==='sub'?2000:100);
+    }
+    return true;
+  }
+  private nearTrack(p:Pt,range:number) {
+    const distances:number[]=[];
+    for(let dist=0;dist<=this.pathLen;dist+=4){const point=this.posAt(dist);if(Math.hypot(p.x-point.x,p.y-point.y)<=range)distances.push(dist);}
+    return distances;
+  }
+  private roadItem(t:Tower,stats:TowerStats,dist:number,kind:RoadItem['kind']='spike',life=stats.lifespan,carry=0) {
+    const item:RoadItem={owner:t,dist,kind,until:this.tick+life*60,round:this.round,carry,pierce:stats.pierce,stats:{...stats,radius:0,projectileSpeed:0},stored:0,hit:new Set()};
+    this.roadItems.push(item);return item;
+  }
+  private spikeStorm(t:Tower,weapon:Tower) {
+    // uncertain: deploy all 204 deterministic seeded piles at activation rather than scheduling 4-pile clusters.
+    const life=(t.tiers[1]===5?20:10)*(t.tiers[2]>=1?2:1);
+    for(let n=0;n<204;n++)this.roadItem(t,weapon,this.rng()*this.pathLen,'spike',life,t.tiers[1]===5?1:0);
+  }
+  private supportAttack(t:Tower,weapon:Tower) {
+    if(t.degree) {
+      if(t.type==='ninja')for(const b of this.bloons)if(b.type!=='bad'){b.slow=0.5;b.slowUntil=this.tick+2;}
+      if((t.type==='druid'||t.type==='spike') && this.magicDue(t,'paragonTrack',0.5))for(const b of [...this.bloons])this.applyHit(b,this.source(weapon,{damage:50*(1+t.degree/20),camo:true,stripRegrow:t.type==='druid'}));
+      if(t.type==='sniper' && this.roundActive && this.tick-this.roundStartTick>=10*60 && t.blitzRound!==this.round){t.blitzRound=this.round;this.credit(20000);}
+      if(t.type==='buccaneer' && this.magicDue(t,'autoHook',1)) {
+        const b=this.bloons.find(b=>this.isMoab(b) && b.type!=='bad');if(b){this.credit(BLOONS[b.type].rbe*popCashMultiplier(this.round));this.bloons.splice(this.bloons.indexOf(b),1);}
+      }
+      if(t.type==='druid'){weapon.damage*=1+Math.min(10,this.cash/100000);if(t.abilityUntil>this.tick){weapon.damage*=2;this.cash=Math.max(0,this.cash-10*DT);}}
+      if(t.type!=='spike')return false;
+    }
+    if(t.type==='farm') {
+      if(this.roundActive && t.tiers[1]<3 && t.tiers[2]<3) {
+        const count=t.tiers[0]>=4?5:[4,6,8,16][t.tiers[0]];
+        if((t.farmCreated??0)<count && this.tick>=(t.farmNext??0)) {
+          // uncertain: wiki gives production per round without spawn timing; spread over 60s,
+          // then settle any unproduced/uncollected income at round end as required by this task.
+          const angle=this.rng()*Math.PI*2, distance=this.rng()*t.range;
+          this.collectibles.push({owner:t,x:t.x+Math.cos(angle)*distance,y:t.y+Math.sin(angle)*distance,value:this.roundIncome(t)/count,until:this.tick+(t.tiers[1]>=1?30:15)*60});
+          t.farmCreated=(t.farmCreated??0)+1;t.farmNext=this.tick+60/count*60;
+        }
+      }
+      return true;
+    }
+    if(t.type==='village') {
+      if(t.tiers[1]>=1)for(const b of this.bloons)if(Math.hypot(this.posAt(b.dist).x-t.x,this.posAt(b.dist).y-t.y)<=this.villageRange(t))b.regrow=false;
+      if(t.tiers[0]===5 && this.magicDue(t,'ballista',2.5*weapon.cooldown)) {
+        const target=this.magicTargets({...weapon,camo:true,damageType:'normal'},2000)[0];
+        if(target)this.burst(this.posAt(target.dist),this.source(weapon,{damage:10,ceramicBonus:270,moabBonus:270,pierce:100,damageType:'normal',camo:true}),90);
+      }
+      return true;
+    }
+    if(t.type==='spike') {
+      if(t.tiers[1]===5 && this.roundActive && this.magicDue(t,'carpet',15))this.spikeStorm(t,weapon);
+      let cooldown=weapon.cooldown;
+      if(t.tiers[2]>=2 && this.roundActive && this.tick-this.roundStartTick<(t.tiers[2]===5?10:3)*60)cooldown/=4;
+      if(this.magicDue(t,'pile',cooldown)) {
+        const distances=this.nearTrack(t,weapon.range);
+        if(distances.length){
+          let dist=distances[Math.floor(this.rng()*distances.length)];
+          if(t.tiers[2]>=2){const target=this.nearTrack(t.targetPoint,8).filter(d=>distances.includes(d));dist=target[0]??distances[distances.length-1];}
+          const carry=t.degree?5:t.tiers[2]>=3?t.tiers[2]-2:0;
+          if(t.tiers[2]===5 && t.tiers[0]>=1)weapon.pierce=85;
+          this.roadItem(t,weapon,dist,'spike',weapon.lifespan,carry);t.shots++;
+        }
+      }
+      return true;
+    }
+    if(t.type==='engineer') {
+      const [a,b,c]=t.tiers;
+      if(a>=1 && this.magicDue(t,'sentry',a>=2?5:10)) {
+        const variant=(t.shots??0)%4;
+        // uncertain: Expert per-type stats are omitted; original estimates preserve the four damage types.
+        const damage=a===5?3:a===4?variant===0?4:2:1;
+        const stats={...weapon,damage,range:(a===5?50:45)+(b?4:0),cooldown:a===5?0.06:a>=3?0.475:0.95,pierce:a===5?c?10:5:c?3:2,radius:a===4 && variant===1?20:0,damageType:a===5?'plasma' as const:a===4?(['normal','explosion','cold','energy'] as const)[variant]:weapon.damageType,stun:c>=2 && a>=3?1:0};
+        this.sentries.push({x:t.x+Math.cos(this.tick)*12,y:t.y+Math.sin(this.tick)*12,owner:t,until:this.tick+(a>=2?30:25)*60,next:0,stats,variant});
+      }
+      if(b>=3 && this.magicDue(t,'foam',a>=2?1:2)) {
+        const distances=this.nearTrack(t.targetPoint,weapon.range).sort((a,b)=>{const p=this.posAt(a),q=this.posAt(b);return Math.hypot(p.x-t.targetPoint.x,p.y-t.targetPoint.y)-Math.hypot(q.x-t.targetPoint.x,q.y-t.targetPoint.y);});
+        const near=this.nearTrack(t,weapon.range);const dist=distances.find(d=>near.includes(d))??near[0];
+        if(dist!==undefined)this.roadItem(t,{...weapon,damage:0,pierce:b===5?24:b===4?14:10,camo:true,stripCamo:true,stripRegrow:true,damageType:'normal'},dist,'foam',10);
+      }
+      if(c>=4 && !this.roadItems.some(i=>i.owner===t && i.kind==='trap') && this.magicDue(t,'trap',c===5?4.6:a>=2?4.3:5)) {
+        const near=this.nearTrack(t,weapon.range);if(near.length)this.roadItem(t,{...weapon,damage:0,damageType:'normal',lead:true,frozen:true,pierce:c===5?10000:500},near[Math.floor(near.length/2)],'trap',Infinity);
+      }
+    }
+    if(t.type==='beast') {
+      if(this.magicDue(t,'beast',weapon.cooldown)) {
+        const target=this.magicTargets(weapon,weapon.range)[0];
+        if(target) {
+          const bird=t.tiers[2]>0 && t.tiers[0]<3 && t.tiers[1]<3;
+          if(bird && target.type!=='bad')target.dist=Math.max(0,target.dist-30);
+          const bonus=t.tiers[1]>=3 && (target.stunnedUntil??0)>this.tick?weapon.damage*0.5:0;
+          this.burst(this.posAt(target.dist),this.source(weapon,{damage:weapon.damage+bonus}),weapon.radius);t.shots++;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+  private runRoadItems() {
+    for(const sentry of [...this.sentries]) {
+      if(!this.towers.includes(sentry.owner) || sentry.until<=this.tick) {
+        if(sentry.owner.tiers[0]===5)this.burst(sentry,this.source({...sentry.stats,...sentry},{damage:100,pierce:50,damageType:'normal'}),30);
+        this.sentries.splice(this.sentries.indexOf(sentry),1);continue;
+      }
+      if(this.tick>=sentry.next) {
+        const target=this.bloons.find(b=>this.canHit(b,sentry.stats) && Math.hypot(this.posAt(b.dist).x-sentry.x,this.posAt(b.dist).y-sentry.y)<=sentry.stats.range+7);
+        if(target){this.burst(this.posAt(target.dist),{...this.source({...sentry.stats,...sentry}),owner:sentry.owner},sentry.stats.radius||2);sentry.next=this.tick+sentry.stats.cooldown*60;}
+      }
+    }
+    for(const item of [...this.roadItems]) {
+      const owner=item.owner;
+      if(!this.towers.includes(owner)) {this.roadItems.splice(this.roadItems.indexOf(item),1);continue;}
+      if(item.until>this.tick)for(const b of [...this.bloons]) {
+        if(item.pierce<=0 || Math.abs(b.dist-item.dist)>10 || (item.kind!=='spike' && item.hit.has(b.id)) || !this.canHit(b,item.stats))continue;
+        if(item.kind==='trap') {
+          const rbe=b.fortified && owner.tiers[1]<2?BLOONS[b.type].fortifiedRbe:BLOONS[b.type].rbe;
+          if(b.type==='bad' || this.isMoab(b) && owner.tiers[2]<5 || rbe>item.pierce)continue;
+          if(owner.tiers[1]>=2)b.fortified=false;
+          item.pierce-=rbe;item.stored+=rbe;this.bloons.splice(this.bloons.indexOf(b),1);
+          this.effect(this.posAt(item.dist),10,'trap');
+        } else {
+          item.hit.add(b.id);item.pierce--;this.applyHit(b,{...this.source({...item.stats,...this.posAt(item.dist)}),owner});
+          if(item.kind==='foam' && b.type==='lead')this.damage(b,b.hp,this.source({...item.stats,...this.posAt(item.dist)},{damage:1}));
+        }
+      }
+      if(item.kind==='trap' && item.stored>0 && (item.pierce<=0 || owner.tiers[1]>=1 || !this.bloons.length)) {
+        this.credit(item.stored*(owner.tiers[2]===5?3:2)*popCashMultiplier(this.round));item.pierce=0;
+      }
+      if(item.pierce<=0 || item.until<=this.tick) {
+        if(item.kind==='spike' && (owner.tiers[0]>=4 || owner.degree)) {
+          const superMine=owner.tiers[0]===5 || !!owner.degree,expired=item.until<=this.tick;
+          this.burst(this.posAt(item.dist),this.source({...item.stats,...this.posAt(item.dist)},{damage:superMine?expired?1000:20:10,pierce:superMine && expired?60:30,damageType:'normal',ceramicBonus:superMine?expired?500:15:2,fortifiedBonus:superMine?expired?250:5:3,burnDamage:superMine?expired?2500:0:10,burnInterval:2,burnDuration:6.05}),superMine && expired?owner.tiers[2]?133:100:owner.tiers[2]?40:30);
+          if(owner.degree && !item.fragment)for(let n=0;n<10;n++)this.roadItem(owner,{...item.stats,damage:100,pierce:20},Math.max(0,Math.min(this.pathLen,item.dist+(n-5)*8)),'spike',60,1).fragment=true;
+        }
+        this.roadItems.splice(this.roadItems.indexOf(item),1);
+      }
+    }
+  }
+
   step() {
     if (this.gameOver) return;
     this.tick++;
@@ -747,7 +1106,7 @@ export class Sim {
         const stats = b.glue.stats;
         b.glue.next += stats.dotInterval * 60;
         const damage = stats.dotDamage + (b.type.includes('ceramic') ? stats.dotCeramicBonus : 0) + (this.isMoab(b) ? stats.dotMoabBonus : 0);
-        this.damage(b, damage, { ...stats, ...this.posAt(b.dist), kind: 'projectile', damageType: 'acid', vx: 0, vy: 0, life: 0, hit: new Set() });
+        this.damage(b, damage, { ...stats, ...this.posAt(b.dist), kind: 'projectile', damageType: stats.damageType === 'normal' ? 'normal' : 'acid', vx: 0, vy: 0, life: 0, hit: new Set() });
         if (!this.bloons.includes(b)) continue;
       }
       let slow = b.slow ?? 1;
@@ -785,8 +1144,11 @@ export class Sim {
         const turn = t.rotationSpeed * Math.PI / 180 * DT;
         t.aimAngle += Math.max(-turn, Math.min(turn, delta));
       }
-      const origin = t.type === 'ace' || t.type === 'heli' ? t.flight : t;
-      const weapon = this.magicBuffs(t, { ...t, ...origin });
+      const origin = t.type === 'ace' || t.type === 'heli' ? t.flight : {x:t.x,y:t.y};
+      if(t.mergedInto && !this.towers.includes(t.mergedInto))t.mergedInto=undefined;
+      if(t.mergedInto)continue;
+      const weapon = this.magicBuffs(t, { ...this.effectiveStats(t), ...origin });
+      if(this.supportAttack(t,weapon))continue;
       this.magicAttack(t, weapon);
       if (t.type === 'sub' && t.tiers[2] !== 5 && this.towers.some(ally => ally.type === 'sub' && ally.tiers[2] === 5 && Math.hypot(t.x - ally.x, t.y - ally.y) <= ally.range)) {
         weapon.damage *= 2; weapon.moabBonus *= 2; weapon.fortifiedBonus *= 2; weapon.pierce += 4;
@@ -895,8 +1257,9 @@ export class Sim {
       }
       if (detonated || d.pierce <= 0 || d.life <= 0) this.darts.splice(j, 1);
     }
+    this.runRoadItems();this.runCollectibles();
     if (this.roundActive && !this.spawnQ.length && !this.bloons.length) {
-      this.cash += 100 + this.round + this.towers.reduce((sum, t) => sum + t.income, 0); this.roundActive = false; this.darts = [];
+      this.cash += 100 + this.round; this.supportRoundEnd(); this.roundActive = false; this.darts = [];
       for(const t of this.towers) {
         t.blackHoleUses=0;t.wrathDamage=0;
         if(t.type==='druid' && t.tiers[1]>=4)this.lives+=t.tiers[1]===5?25:1;
