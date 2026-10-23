@@ -36,7 +36,7 @@ export function rulesFor(m: ModeDef): Rules {
   const r: Rules = { ...STANDARD_RULES, winRound: m.winRound, auto: !!m.apopalypse };
   if (m.halfCash) { r.cashMult = 0.5; r.incomeMult = 0.5; }
   if (m.deflation) { r.cashMult = 0; r.incomeMult = 0; }
-  if (m.chimps) { r.incomeMult = 0; r.noSell = true; } // uncertain: pop cash kept; only round/other income removed
+  if (m.chimps) { r.incomeMult = 0; r.noSell = true; r.noPowers = true; } // uncertain: pop cash kept; only round/other income removed
   if (m.doubleMoab) r.moabHpMult = 2;
   if (m.only) { const c = m.only; r.allowed = k => CATEGORY[k] === c; }
   return r;
