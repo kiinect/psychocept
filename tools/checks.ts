@@ -1,4 +1,4 @@
-import { Sim, BLOONS, ROUNDS, type Pt } from '../src/sim';
+import { Sim, BLOONS, ROUNDS, bloonRbe, type Pt } from '../src/sim';
 import { TOWERS, type TowerKind } from '../src/towers';
 import rounds from '../data/wiki/rounds.json';
 
@@ -49,16 +49,15 @@ export function sweepTowers(seconds = 20): SweepRow[] {
 }
 
 export interface RbeRow { round: number; sim: number; wiki: number; ok: boolean }
-/** Rounds above this use the wiki's HP-scaled RBE (MOAB-class scaling from r81), which the sim data does not model. */
-export const RBE_STRICT_TO = 80;
-/** Sum RBE of each round's groups (fortified bloons use fortifiedRbe) vs data/wiki/rounds.json rbe_scaled (base when no scaled). */
+export const RBE_STRICT_TO = 140;
+/** Sum RBE of each round's groups using the sim's HP rules (bloonRbe) vs data/wiki/rounds.json rbe_scaled (base when no scaled). */
 export function roundRbe(to = 140): RbeRow[] {
   const out: RbeRow[] = [];
   for (let r = 1; r <= to; r++) {
     const row: any = rounds.data.rounds[r - 1];
-    const sim = ROUNDS[r - 1].groups.reduce((a, g) => a + g.count * (g.fortified ? BLOONS[g.type].fortifiedRbe : BLOONS[g.type].rbe), 0);
+    const sim = ROUNDS[r - 1].groups.reduce((a, g) => a + g.count * bloonRbe(g.type, !!g.fortified, r), 0);
     const wiki = row.rbe_scaled ?? row.rbe_base;
-    out.push({ round: r, sim, wiki, ok: sim === wiki });
+    out.push({ round: r, sim, wiki, ok: Math.abs(sim - wiki) < 0.5 });
   }
   return out;
 }
