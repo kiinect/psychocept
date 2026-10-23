@@ -17,7 +17,14 @@ import { priceBadge, upgradeState } from './ui/state';
 import { portrait } from './ui/icons';
 import { upgradeDescription, upgradeRowState } from './ui/upgrade';
 import { CATEGORY } from './modes/modes';
-import { activeKnowledge, unlockKnowledge, respecKnowledge, settingsSlot, profileSlot, runSlot, snapshotSim, restoreSim, purchasePower, usePower, POWERS, POWER_BY_ID, slot, type Settings } from './meta';
+import { activeKnowledge, unlockKnowledge, respecKnowledge, settingsSlot, profileSlot, runSlot, snapshotSim, restoreSim, purchasePower, usePower, POWERS, POWER_BY_ID, type Settings } from './meta';
+import { contextSlot } from './meta/run-context';
+import { defaultKV } from './storage/store';
+import { saveCodecs } from './storage/save-codecs';
+import { SaveSync } from './storage/cloud-sync';
+import { configuredClient, SupabaseStore } from './storage/supabase';
+import { Accounts, SupabaseAuth } from './storage/accounts';
+import { mountAccount } from './screens/account';
 import { gameRewards, powerButtonState, supportedPowers, type Rewards } from './ui/meta';
 import { modeById } from './modes/modes';
 import { heroControls } from './hero-ui';
@@ -27,11 +34,15 @@ import { HEROES, heroStats, type HeroKind } from './heroes';
 
 let flow = initialFlow(location.search);
 let mapId = flow.map, modeId = flow.mode, ended = false;
-const profileStore = profileSlot(), settingsStore = settingsSlot(), runStore = runSlot();
+const client = configuredClient((import.meta as ImportMeta & { env: Record<string, string | undefined> }).env);
+const saves = new SaveSync(defaultKV(), new SupabaseStore(client), saveCodecs);
+// Auth tokens are memory-only. Start with the guest workspace; account caches stay private.
+await saves.connect(null);
+const accounts = new Accounts(client ? new SupabaseAuth(client) : null, user => saves.connect(user), () => flow.screen === 'menu');
+const profileStore = profileSlot(saves), settingsStore = settingsSlot(saves), runStore = runSlot(saves);
 let profile = profileStore.load(), savedSettings = settingsStore.load();
 const supported = supportedPowers(POWERS.map(p => p.id));
-interface RunContext { mode: string; hero: HeroKind; savedAt: number; rewardedRound: number; recorded: boolean }
-const contextStore = slot<RunContext | null>('mpt.run.ui', [], () => null, r => r && typeof r.mode === 'string' && HEROES[r.hero as HeroKind] && Number.isFinite(r.savedAt) && Number.isFinite(r.rewardedRound) && typeof r.recorded === 'boolean' ? r : null);
+const contextStore = contextSlot(saves);
 let rewardedRound = modeById(modeId).startRound - 1, recorded = false;
 let rewards: Rewards | undefined;
 let placingPower: string | null = null;
@@ -72,6 +83,7 @@ root.innerHTML = `
     <label for="paragon-investment">Boost your Paragon with more in-game cash</label><input id="paragon-investment" type="range" min="0" step="500" value="0"><output id="paragon-total"></output>
     <div class="dialog-actions"><button id="paragon-cancel">Cancel</button><button id="paragon" class="go">Do it</button></div></dialog>
   </main>`;
+const accountUI = mountAccount(root, accounts, saves);
 const element = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 /** Co-op session while a co-op game runs (null in single player). */
 let net: Session | null = null;
@@ -241,6 +253,7 @@ function renderScreen() {
     change: changeSetting,
     buy: id => { if (!supported.has(id)) return; profile = purchasePower(profile, id); profileStore.save(profile); renderScreen(); },
     coop: coopView(),
+    account: { open: () => accountUI.open(), label: accounts.user ? 'Your account' : 'Sign in · cloud saves' },
     knowledge: {
       learn: name => { profile = unlockKnowledge(profile, name); profileStore.save(profile); renderScreen(); },
       respec: () => { profile = respecKnowledge(profile); profileStore.save(profile); renderScreen(); },
@@ -250,6 +263,7 @@ function renderScreen() {
   root.querySelector<HTMLElement>('main')!.inert = flow.screen !== 'game';
   root.querySelector<HTMLElement>('header')!.inert = flow.screen !== 'game';
   if (flow.screen === 'game') start.focus();
+  void accounts.resume();
 }
 function consumePower(id: string, point?: { x: number; y: number }) {
   if (!(profile.powers[id] > 0) || !sim.canUsePower(id, point)) return false;
@@ -274,6 +288,7 @@ function saveRun(completedRound = sim.round) {
   snapshot.round = completedRound;
   runStore.save(snapshot);
   contextStore.save({ mode: modeId, hero: flow.hero, savedAt: snapshot.savedAt, rewardedRound, recorded });
+  void saves.flush();
 }
 function loadRun() {
   const snapshot = runStore.load(), context = contextStore.load();
@@ -306,6 +321,7 @@ element<HTMLButtonElement>('menu').addEventListener('click', () => send({ type: 
 element<HTMLButtonElement>('settings').addEventListener('click', () => { send({ type: 'pause' }); send({ type: 'settings' }); });
 const shopKeys: Record<string, string> = { q: 'dart', w: 'boomerang', e: 'bomb', r: 'tack', t: 'ice', y: 'glue', z: 'sniper', x: 'sub', c: 'buccaneer', v: 'ace', b: 'heli', n: 'mortar', m: 'dartling', a: 'wizard', s: 'super', d: 'ninja', f: 'alchemist', g: 'druid', j: 'farm', k: 'spike', l: 'village', i: 'engineer' };
 addEventListener('keydown', e => {
+  if (element<HTMLDialogElement>('account-dialog').open) return;
   if (e.key === 'Escape') {
     e.preventDefault();
     if (flow.screen !== 'game') { send({ type: 'back' }); return; }
@@ -496,6 +512,18 @@ let acc = 0;
 refresh();
 root.classList.toggle('reduced-motion', reducedMotion);
 renderScreen();
+saves.onChange = () => accountUI.update();
+saves.onApply = keys => {
+  if (keys.includes('mpt.profile')) profile = profileStore.load();
+  if (keys.includes('mpt.settings')) { savedSettings = settingsStore.load(); showRange = savedSettings.showRange; reducedMotion = savedSettings.reducedMotion; root.classList.toggle('reduced-motion', reducedMotion); syncAudio(); }
+  if (flow.screen !== 'game') renderScreen();
+  refresh();
+};
+accounts.onChange = () => { accountUI.update(); const button = root.querySelector('#account-open'); if (button) button.textContent = accounts.user ? 'Your account' : 'Sign in · cloud saves'; };
+void accounts.start();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') void saves.flush(); });
+addEventListener('pagehide', () => { void saves.flush(); });
+addEventListener('online', () => { void saves.flush(); });
 app.ticker.add(t => {
   if (flow.screen !== 'game' && !net) return;
   if (net) {
@@ -528,6 +556,7 @@ app.ticker.add(t => {
     profile = rewards.profile; profileStore.save(profile);
     rewardedRound = completedRound; recorded = true;
     runStore.clear(); contextStore.clear();
+    void saves.flush();
     send({ type: won ? 'victory' : 'defeat' });
   }
   if (chosen && sim.canSetTarget(chosen)) {

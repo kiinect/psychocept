@@ -30,6 +30,9 @@ HP-scaled and the sim data does not model that yet). Both are also covered by `v
 
 ## Meta layer (`src/meta`)
 
+Optional account creation and cloud autosave: setup, migration, conflict behavior,
+and verification are documented in [supabase/README.md](supabase/README.md).
+
 Pure, deterministic TypeScript with a single entry point, `src/meta/index.ts`: rank/XP table and level-up logic, round XP,
 Monkey Money, the 44-row powers table with typed effects, profile / settings / mid-game save in versioned `localStorage`
 slots (with migration; falls back to memory if storage is blocked).

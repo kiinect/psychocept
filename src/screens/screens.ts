@@ -42,6 +42,7 @@ export interface ScreenMeta {
   supported: Set<string>; buy: (id: string) => void; knowledge: KnowledgeActions;
   change: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
   coop: CoopView;
+  account?: { open(): void; label: string };
 }
 const MAPS_PER_PAGE = 6;
 
@@ -62,6 +63,7 @@ export function showScreen(root: HTMLElement, flow: Flow, send: (event: FlowEven
       const prog = rankProgress(p.xp), hero = HEROES[flow.hero];
       html = `<div class="profile-card"><span class="rank-badge">${p.rank}</span><div><progress aria-label="Rank XP" value="${prog.into}" max="${Math.max(1, prog.need)}"></progress><small>${prog.into.toLocaleString()} / ${prog.need.toLocaleString()} XP</small><b>Monkey</b></div></div>${money}
         <button class="side-btn" data-action="settings" aria-label="Settings">⚙</button>
+        ${meta.account ? `<button class="account-menu" id="account-open">${esc(meta.account.label)}</button>` : ''}
         <div class="menu-stage">${portrait('hero', hero.name, hero.color)}</div>
         ${meta.hasRun ? `<button class="continue-banner" data-action="loadRun"><span>💾</span><b>Continue saved game?</b></button>` : ''}
         <nav class="menu-row" aria-label="Main menu">${round('heroes', '⭐', 'Heroes')}${round('knowledge', '📘', 'Knowledge')}${round('play', '▶', 'Play', 'play-big')}${round('social', '🤝', 'Co-op')}${round('powers', '⚡', 'Powers')}${round('settings', '⚙', 'Settings')}</nav>`; break;
@@ -172,6 +174,7 @@ export function showScreen(root: HTMLElement, flow: Flow, send: (event: FlowEven
     }
   }
   if (flow.screen === 'social' || flow.screen === 'lobby') bindCoop(o, meta.coop);
+  o.querySelector('#account-open')?.addEventListener('click', () => meta.account?.open());
   if (flow.screen === 'splash') o.onclick = () => send({ type: 'start' });
   o.querySelector<HTMLButtonElement>(flow.screen === 'hero' ? '[data-hero]' : flow.screen === 'menu' ? '.play-big' : 'button:not(.back-btn)')?.focus();
 }

@@ -1,4 +1,6 @@
 # Handoff (BTD6-style web clone, working title "Monkey Pop TD")
+
+2026-10-23: `lane/supabase` adds optional email/password accounts, local-first autosave, account caches, conflict choices, strict save decoding, and an owner-only SQL migration; see `supabase/README.md`. Verified: 1,015 Vitest tests, tsc, Vite build, isolated Playwright flows, and PostgreSQL RLS assertions. Auth sessions are memory-only (refresh requires sign-in). Pending: peer review, real Supabase URL/public key, production migration/redirects/live RLS checks, and deployment approval; nothing deployed or written to the vault.
 Repo: /mnt/windows_d/projects/BTD6 CLONE (git, branch `main`). Stack: TS + Vite + PixiJS, Vitest. Hosted on the owner's own site (no single-file requirement; `npm run build:single` optional). Art/audio must stay original (owner's prompt: `~/Documents/btd6-web-prompt.md`). Vault note: `~/Documents/Obsidian Vault/Claude/Projects/BTD6 Web Clone/BTD6 Web Clone Overview.md`.
 
 ## State
