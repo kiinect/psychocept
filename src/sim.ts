@@ -4,6 +4,7 @@ import roundJson from '../data/wiki/rounds.json';
 import modeJson from '../data/wiki/modes.json';
 import { TOWERS, canUpgrade, resultingStats, type TowerKind } from './towers';
 import { type TowerStats, type Tiers } from './towers/types';
+import { endlessGroups } from './modes/endless';
 export { canUpgrade } from './towers';
 export const DT = 1 / 60;
 export interface Rect { x: number; y: number; width: number; height: number }
@@ -19,10 +20,10 @@ export interface Group { type: string; count: number; camo?: boolean; regrow?: b
 export const ROUNDS: { groups: Group[] }[] = roundJson.data.rounds;
 const SPACING = roundJson.data.default_spacing as Record<string, unknown>;
 export interface SpawnGroup { type: string; n: number; gap: number; camo?: boolean; regrow?: boolean; fortified?: boolean }
-export const roundGroups = (r: number): SpawnGroup[] => (ROUNDS[r - 1]?.groups ?? []).map(g => ({ ...g, n: g.count, gap: typeof SPACING[g.type] === 'number' ? SPACING[g.type] as number : 0.5 }));
+export const roundGroups = (r: number): SpawnGroup[] => (ROUNDS[r - 1]?.groups ?? endlessGroups(r, ROUNDS)).map(g => ({ ...g, n: g.count, gap: typeof SPACING[g.type] === 'number' ? SPACING[g.type] as number : 0.5 }));
 export interface GlueStatus { until: number; next: number; stats: TowerStats; layers: number }
 export interface DamageStatus { until: number; next: number; interval: number; damage: number; stats: TowerStats }
-export interface Bloon { burn?: DamageStatus; freezeLayers?: number; slowUntil?: number; icicle?: { until: number; next: number; stats: TowerStats }; shardStats?: TowerStats; frozenUntil?: number; stunnedUntil?: number; slow?: number; glue?: GlueStatus; brittleUntil?: number; brittle?: number; id: number; type: string; dist: number; hp: number; camo?: boolean; fortified?: boolean; regrow?: boolean }
+export interface Bloon { burn?: DamageStatus; freezeLayers?: number; slowUntil?: number; icicle?: { until: number; next: number; stats: TowerStats }; shardStats?: TowerStats; frozenUntil?: number; stunnedUntil?: number; slow?: number; glue?: GlueStatus; brittleUntil?: number; brittle?: number; id: number; type: string; dist: number; hp: number; camo?: boolean; fortified?: boolean; regrow?: boolean; lane?: number; regrowMax?: string; regrowAt?: number; spd?: number }
 export const TARGETING = ['First', 'Last', 'Close', 'Strong'] as const;
 export type Targeting = typeof TARGETING[number];
 export interface Tower extends Pt, TowerStats { aimAngle: number; targetPoint: Pt; flight: Pt; rotorReady: number; type: TowerKind; tiers: Tiers; cd: number; cost: number; targeting: Targeting; shots: number; abilityReady: number; abilityUntil: number; abilityNext: number; secondaryReady: number; orbitReady: number; blitzRound: number; buffUntil: number }
@@ -32,6 +33,13 @@ export interface Dart extends Pt, TowerStats {
 }
 export interface Effect extends Pt { radius: number; life: number; kind: string }
 export type Difficulty = keyof typeof modeJson.data.difficulties;
+export interface Circle extends Pt { r: number }
+// Mode rules (see modes/modes.ts); defaults = standard play.
+export interface Rules { cashMult: number; incomeMult: number; noSell: boolean; moabHpMult: number; winRound: number; auto: boolean; allowed?: (k: string) => boolean }
+export const STANDARD_RULES: Rules = { cashMult: 1, incomeMult: 1, noSell: false, moabHpMult: 1, winRound: Infinity, auto: false };
+// regrow restores along single-child chains only (blue->red etc.), reverse-derived from bloons.json.
+const REGROW_PARENT: Record<string, string> = {};
+for (const [id, d] of Object.entries(BLOONS)) if (d.kids.length === 1) REGROW_PARENT[d.kids[0]] ??= id;
 export function mulberry32(a: number) {
   return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
@@ -43,23 +51,29 @@ export function popCashMultiplier(round: number) {
 export class Sim {
   bloons: Bloon[] = []; towers: Tower[] = []; darts: Dart[] = []; effects: Effect[] = [];
   cash: number; lives: number; round = 0; tick = 0; nextId = 1; rng = mulberry32(1);
-  roundActive = false;
+  roundActive = false; won = false; rules: Rules = { ...STANDARD_RULES };
+  lanes: Pt[][]; private lens: number[][] = []; private laneRR = 0;
   private puddles: (Pt & { until: number; next: number; stats: TowerStats })[] = [];
   spawnQ: (Omit<Bloon, 'id' | 'hp' | 'dist'> & { at: number })[] = [];
-  private len: number[] = [];
-  constructor(public path: Pt[], public difficulty: Difficulty = 'medium', public water: Rect[] = []) {
+  constructor(public path: Pt[], public difficulty: Difficulty = 'medium', public water: Rect[] = [], lanes?: Pt[][], public blocked: Circle[] = []) {
+    this.lanes = lanes ?? [path];
     const mode = modeJson.data.difficulties[difficulty];
     this.cash = 'starting_cash' in mode ? mode.starting_cash : 650; this.lives = mode.lives;
     this.round = 'start_round' in mode ? mode.start_round - 1 : 0;
-    let s = 0; this.len = [0];
-    for (let i = 1; i < path.length; i++) { s += Math.hypot(path[i].x - path[i - 1].x, path[i].y - path[i - 1].y); this.len.push(s); }
+    for (const l of this.lanes) {
+      let s = 0; const len = [0];
+      for (let i = 1; i < l.length; i++) { s += Math.hypot(l[i].x - l[i - 1].x, l[i].y - l[i - 1].y); len.push(s); }
+      this.lens.push(len);
+    }
   }
   get gameOver() { return this.lives <= 0; }
-  get pathLen() { return this.len[this.len.length - 1]; }
+  get pathLen() { return this.laneLen(0); }
+  laneLen(lane = 0) { const l = this.lens[lane] ?? this.lens[0]; return l[l.length - 1]; }
+  posOf(b: Bloon) { return this.posAt(b.dist, b.lane); }
   price(cost: number) { return Math.ceil(cost * modeJson.data.difficulties[this.difficulty].tower_cost_mult / 5 - 1e-10) * 5; }
-  posAt(d: number): Pt {
-    const L = this.len; let i = 1; while (i < L.length - 1 && L[i] < d) i++;
-    const t = (d - L[i - 1]) / (L[i] - L[i - 1] || 1), a = this.path[i - 1], b = this.path[i];
+  posAt(d: number, lane = 0): Pt {
+    const L = this.lens[lane] ?? this.lens[0], path = this.lanes[lane] ?? this.lanes[0]; let i = 1; while (i < L.length - 1 && L[i] < d) i++;
+    const t = (d - L[i - 1]) / (L[i] - L[i - 1] || 1), a = path[i - 1], b = path[i];
     return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
   }
   canPlace(x: number, y: number, type: TowerKind = 'dart') {
@@ -70,16 +84,17 @@ export class Sim {
       y - Math.max(w.y, Math.min(y, w.y + w.height))) < r);
     if (TOWERS[type].waterOnly ? !contained : overlaps) return false;
     if (this.towers.some(t => Math.hypot(t.x - x, t.y - y) < TOWERS[t.type].footprint + r)) return false;
-    return !this.path.slice(1).some((b, i) => {
-      const a = this.path[i], dx = b.x - a.x, dy = b.y - a.y;
+    if (this.blocked.some(o => Math.hypot(o.x - x, o.y - y) < o.r + r)) return false;
+    return !this.lanes.some(path => path.slice(1).some((b, i) => {
+      const a = path[i], dx = b.x - a.x, dy = b.y - a.y;
       const along = Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / (dx * dx + dy * dy || 1)));
       return Math.hypot(x - a.x - along * dx, y - a.y - along * dy) < 20 + r;
-    });
+    }));
   }
   // Low-level setup API remains compatible; interactive purchases use placeTower.
   addTower(x: number, y: number, type: TowerKind = 'dart') {
     const def = TOWERS[type], cost = this.price(def.cost);
-    if (this.gameOver || this.cash < cost || !Number.isFinite(x) || !Number.isFinite(y)) return false;
+    if (this.gameOver || this.cash < cost || this.rules.allowed && !this.rules.allowed(type) || !Number.isFinite(x) || !Number.isFinite(y)) return false;
     this.cash -= cost;
     this.towers.push({ ...def.base, type, x, y, aimAngle: -Math.PI / 2, targetPoint: { x, y: Math.max(0, y - 40) }, flight: { x, y }, rotorReady: 0, tiers: [0, 0, 0], cd: 0, cost, targeting: type === 'ice' || type === 'tack' ? 'Close' : 'First', shots: 0, abilityReady: 0, abilityUntil: 0, abilityNext: 0, secondaryReady: 0, orbitReady: 0, blitzRound: -1, buffUntil: 0 }); return true;
   }
@@ -115,7 +130,7 @@ export class Sim {
     if (a.kind === 'strike') {
       const target = [...this.bloons].sort((a, b) => BLOONS[b.type].rbe - BLOONS[a.type].rbe)[0];
       if (!target) return false;
-      const p = this.posAt(target.dist);
+      const p = this.posOf(target);
       this.applyHit(target, this.source(t, { damage: a.damage, damageType: 'normal', camo: true, frozen: true, moabBonus: 0 }));
       this.burst(p, this.source(t, { damage: a.pierce, damageType: 'normal', camo: true, frozen: true, pierce: a.count }), 65);
     }
@@ -128,7 +143,7 @@ export class Sim {
         if (cost > hooks) continue;
         hooks -= cost; used = true;
         this.bloons.splice(this.bloons.indexOf(b), 1);
-        this.effect(this.posAt(b.dist), 20, 'hook');
+        this.effect(this.posOf(b), 20, 'hook');
         // uncertain: use RBE for total hooked layer cash; pop income tax still applies.
         this.cash += BLOONS[b.type].rbe * popCashMultiplier(this.round) * (a.count > 1 ? 2 : 1);
       }
@@ -139,7 +154,7 @@ export class Sim {
         .sort((a, b) => BLOONS[b.type].rbe - BLOONS[a.type].rbe)[0];
       if (!target) return false;
       this.applyHit(target, this.source(t, { damage: a.damage, damageType: 'normal', moabBonus: 0 }));
-      this.effect(this.posAt(target.dist), 16, 'bomb');
+      this.effect(this.posOf(target), 16, 'bomb');
     }
     const energizer = this.towers.some(ally => ally.type === 'sub' && ally.tiers[0] === 5);
     const reactor = this.towers.some(ally => ally.type === 'sub' && ally.tiers[0] >= 4);
@@ -191,7 +206,7 @@ export class Sim {
     }
   }
   sell(towerIdx: number) {
-    const t = this.towers[towerIdx]; if (this.gameOver || !t) return false;
+    const t = this.towers[towerIdx]; if (this.gameOver || !t || this.rules.noSell) return false;
     this.cash += Math.floor(t.cost * 70 / 100); this.towers.splice(towerIdx, 1); return true;
   }
   cycleTargeting(towerIdx: number) {
@@ -201,14 +216,20 @@ export class Sim {
     if (this.gameOver || this.roundActive || !groups.length) return false;
     this.round++; this.roundActive = true; let time = 0;
     for (const g of groups) for (let i = 0; i < g.n; i++) {
-      this.spawnQ.push({ at: this.tick + Math.round(time * 60), type: g.type, camo: g.camo, fortified: g.fortified, regrow: g.regrow }); time += g.gap;
+      this.spawnQ.push({ at: this.tick + Math.round(time * 60), lane: this.laneRR++ % this.lanes.length, type: g.type, camo: g.camo, fortified: g.fortified, regrow: g.regrow }); time += g.gap;
     }
     return true;
   }
-  private makeBloon(type: string, dist: number, flags: Pick<Bloon, 'camo' | 'fortified' | 'regrow'>): Bloon {
+  private makeBloon(type: string, dist: number, flags: Pick<Bloon, 'camo' | 'fortified' | 'regrow' | 'lane' | 'regrowMax'>): Bloon {
     const def = BLOONS[type];
     const fortified = Boolean(flags.fortified && def.fortifiable);
-    return { id: this.nextId++, type, dist, hp: fortified ? def.fortifiedHp : def.hp, fortified, regrow: flags.regrow, camo: flags.camo || type === 'ddt' };
+    let hp = fortified ? def.fortifiedHp : def.hp, spd = 1;
+    const moab = this.isMoab({ type } as Bloon), late = Math.max(0, this.round - 80);
+    // uncertain: late-game ramp numbers are hand-tuned; wiki gives only the "slightly tougher/faster" prose.
+    if (moab) { hp *= this.rules.moabHpMult * (1 + Math.min(late, 20) * 0.02 + Math.max(0, Math.min(late, 44) - 20) * 0.05 + Math.max(0, late - 44) * 0.2); spd = 1 + Math.min(late, 60) * 0.005; }
+    else if (type === 'ceramic' && late > 0) hp = fortified ? 120 : 60; // r81+ "super ceramic"
+    return { id: this.nextId++, type, dist, hp, fortified, regrow: flags.regrow, camo: flags.camo || type === 'ddt', lane: flags.lane, spd,
+      regrowMax: flags.regrow ? flags.regrowMax ?? type : undefined };
   }
   private isMoab(b: Bloon) { return ['moab', 'bfb', 'zomg', 'ddt', 'bad'].includes(b.type); }
   private canHit(b: Bloon, d: TowerStats) {
@@ -271,7 +292,7 @@ export class Sim {
     let pierce = d.pierce;
     for (const b of [...this.bloons]) {
       if (pierce <= 0) break;
-      const bp = this.posAt(b.dist);
+      const bp = this.posOf(b);
       if (!d.hit.has(b.id) && Math.hypot(bp.x - p.x, bp.y - p.y) <= radius + 7 && this.canHit(b, d)) {
         d.hit.add(b.id); this.applyHit(b, d); pierce--;
       }
@@ -282,9 +303,9 @@ export class Sim {
       let point = p;
       const hit = new Set<number>();
       for (let n = 0; n < t.pierce; n++) {
-        const b = this.bloons.find(b => !hit.has(b.id) && this.canHit(b, t) && Math.hypot(this.posAt(b.dist).x - point.x, this.posAt(b.dist).y - point.y) < (n ? t.bounceRange : 1));
+        const b = this.bloons.find(b => !hit.has(b.id) && this.canHit(b, t) && Math.hypot(this.posOf(b).x - point.x, this.posOf(b).y - point.y) < (n ? t.bounceRange : 1));
         if (!b) break;
-        point = this.posAt(b.dist); hit.add(b.id);
+        point = this.posOf(b); hit.add(b.id);
         this.applyHit(b, { ...this.source(t), owner: t }); this.effect(point, 3, 'sniper');
         if (t.shards) this.shards(b, { ...t, shards: 5 });
         if (!t.bounceRange) break;
@@ -317,19 +338,20 @@ export class Sim {
     if (!this.canHit(b, d)) return;
     if (amount < b.hp) { b.hp -= amount; return; }
     const remaining = amount - b.hp;
-    this.cash += BLOONS[b.type].popCash * popCashMultiplier(this.round);
+    this.cash += BLOONS[b.type].popCash * popCashMultiplier(this.round) * this.rules.cashMult;
+    if (this.isMoab(b)) this.effect(this.posOf(b), b.type === 'moab' ? 24 : 36, 'blimp');
     this.bloons.splice(this.bloons.indexOf(b), 1);
     if (b.shardStats && d.owner?.type !== 'sniper') this.shards(b, b.shardStats);
     if (!BLOONS[b.type].kids.length && b.glue?.stats.puddleDamage) {
-      const p = this.posAt(b.dist);
+      const p = this.posOf(b);
       this.puddles.push({ ...p, until: this.tick + 7.7 * 60, next: this.tick, stats: b.glue.stats });
     }
     if (b.glue?.stats.stun) {
-      const stats = b.glue.stats, p = this.posAt(b.dist);
+      const stats = b.glue.stats, p = this.posOf(b);
       let pierce = stats.pierce >= 6 ? 11 : 6;
       for (const other of this.bloons) {
         if (pierce <= 0) break;
-        if (other.type !== 'bad' && Math.hypot(this.posAt(other.dist).x - p.x, this.posAt(other.dist).y - p.y) <= 12) {
+        if (other.type !== 'bad' && Math.hypot(this.posOf(other).x - p.x, this.posOf(other).y - p.y) <= 12) {
           other.stunnedUntil = this.tick + (this.isMoab(other) ? other.type === 'ddt' ? 0.2 : 0.25 : 1) * 60; pierce--;
         }
       }
@@ -346,7 +368,7 @@ export class Sim {
     }
   }
   private shards(b: Bloon, stats: TowerStats) {
-    const p = this.posAt(b.dist);
+    const p = this.posOf(b);
     for (let n = 0; n < stats.shards; n++) {
       const angle = n * 2 * Math.PI / stats.shards;
       this.darts.push({ ...this.source({ ...stats, ...p }), kind: 'projectile', damageType: 'shatter',
@@ -361,22 +383,22 @@ export class Sim {
     }
     if (!t.secondaryCooldown || this.tick < t.secondaryReady) return;
     const target = this.bloons.find(b => this.canHit(b, t) && (t.meteor || this.isMoab(b)) &&
-      (t.meteor || Math.hypot(this.posAt(b.dist).x - t.x, this.posAt(b.dist).y - t.y) <= t.range));
+      (t.meteor || Math.hypot(this.posOf(b).x - t.x, this.posOf(b).y - t.y) <= t.range));
     if (!target) return;
     t.secondaryReady = this.tick + t.secondaryCooldown * 60;
     if (t.meteor && ['sub', 'ace', 'heli', 'buccaneer'].includes(t.type)) {
       // uncertain: consolidate auxiliary missiles/aircraft into one periodic blast;
       // omitted projectile travel and separate weapon targeting use the shared target above.
       const normal = t.type === 'ace' && t.tiers[0] === 5;
-      this.burst(this.posAt(target.dist), this.source(t, { kind: 'bomb', damage: t.meteor,
+      this.burst(this.posOf(target), this.source(t, { kind: 'bomb', damage: t.meteor,
         damageType: normal ? 'normal' : 'explosion', pierce: 40, moabBonus: 0, ceramicBonus: 0,
         radius: 0, shards: 0, rotor: 0 }), 35);
     } else if (t.meteor) {
       this.applyHit(target, this.source(t, { kind: 'projectile', damageType: 'normal', damage: t.meteor, moabBonus: 0 }));
       // uncertain: meteor blast radius/pierce are unspecified; use 30 units and 30 targets.
-      this.burst(this.posAt(target.dist), this.source(t, { damage: 5, damageType: 'explosion', pierce: 30 }), 30);
+      this.burst(this.posOf(target), this.source(t, { damage: 5, damageType: 'explosion', pierce: 30 }), 30);
     } else {
-      const p = this.posAt(target.dist), angle = Math.atan2(p.y - t.y, p.x - t.x);
+      const p = this.posOf(target), angle = Math.atan2(p.y - t.y, p.x - t.x);
       this.darts.push({ ...this.source(t), kind: 'boomerang', heavy: true, owner: t, age: 0,
         damage: t.damage, moabBonus: t.heavyDamage, knockback: true, moabStun: t.tiers[2] === 5 ? 0.25 : 0, pierce: t.heavyPierce + (t.tiers[0] ? 100 : 0),
         lastHit: new Map(), rehit: 0.1, vx: Math.cos(angle) * t.projectileSpeed, vy: Math.sin(angle) * t.projectileSpeed, life: 1 });
@@ -418,7 +440,7 @@ export class Sim {
         y: Math.max(0, Math.min(540, center.y + Math.sin(angle) * 90)) };
     } else if (t.type === 'heli') {
       const first = [...this.bloons].sort((a, b) => b.dist - a.dist)[0];
-      const p = t.pursuit && first ? this.posAt(first.dist) : t.targetPoint;
+      const p = t.pursuit && first ? this.posOf(first) : t.targetPoint;
       const dx = p.x - t.flight.x, dy = p.y - t.flight.y, distance = Math.hypot(dx, dy);
       const amount = Math.min(distance, t.moveSpeed * DT);
       if (distance) { t.flight.x += dx / distance * amount; t.flight.y += dy / distance * amount; }
@@ -440,13 +462,13 @@ export class Sim {
       if (b.icicle && b.icicle.until > this.tick && b.icicle.next <= this.tick) {
         b.icicle.next = this.tick + 12;
         // uncertain: prose omits the attached icicle's radius; use 12 units.
-        this.burst(this.posAt(b.dist), { ...this.source({ ...b.icicle.stats, ...this.posAt(b.dist) },
+        this.burst(this.posOf(b), { ...this.source({ ...b.icicle.stats, ...this.posOf(b) },
           { damageType: 'shatter', kind: 'projectile', damage: 6, pierce: 6, radius: 0, icicles: false, freezeDuration: 0, moabBonus: 0 }), hit: new Set([b.id]) }, 12);
         if (!this.bloons.includes(b)) continue;
       }
       if (b.burn && b.burn.until > this.tick && b.burn.next <= this.tick) {
         b.burn.next += b.burn.interval;
-        this.damage(b, b.burn.damage, this.source({ ...b.burn.stats, ...this.posAt(b.dist) }));
+        this.damage(b, b.burn.damage, this.source({ ...b.burn.stats, ...this.posOf(b) }));
         if (!this.bloons.includes(b)) continue;
       }
       if (b.glue && b.glue.until <= this.tick) b.glue = undefined;
@@ -454,16 +476,21 @@ export class Sim {
         const stats = b.glue.stats;
         b.glue.next += stats.dotInterval * 60;
         const damage = stats.dotDamage + (b.type.includes('ceramic') ? stats.dotCeramicBonus : 0) + (this.isMoab(b) ? stats.dotMoabBonus : 0);
-        this.damage(b, damage, { ...stats, ...this.posAt(b.dist), kind: 'projectile', damageType: 'acid', vx: 0, vy: 0, life: 0, hit: new Set() });
+        this.damage(b, damage, { ...stats, ...this.posOf(b), kind: 'projectile', damageType: 'acid', vx: 0, vy: 0, life: 0, hit: new Set() });
         if (!this.bloons.includes(b)) continue;
+      }
+      if (b.regrow && b.regrowMax && b.type !== b.regrowMax) {
+        b.regrowAt ??= this.tick + 180; // uncertain: regrow period (s) not in data; 3 s per layer
+        const up = REGROW_PARENT[b.type];
+        if (up && this.tick >= b.regrowAt) { b.type = up; b.hp = BLOONS[up].hp; b.regrowAt = undefined; }
       }
       let slow = b.slow ?? 1;
       if (b.glue) slow = Math.min(slow, this.isMoab(b) ? b.glue.stats.moabSlow : b.glue.stats.slow);
       for (const t of this.towers) {
-        if (t.auraSlow < 1 && this.canHit(b, t) && Math.hypot(this.posAt(b.dist).x - t.x, this.posAt(b.dist).y - t.y) <= t.range) slow = Math.min(slow, this.isMoab(b) ? t.moabSlow : t.auraSlow);
+        if (t.auraSlow < 1 && this.canHit(b, t) && Math.hypot(this.posOf(b).x - t.x, this.posOf(b).y - t.y) <= t.range) slow = Math.min(slow, this.isMoab(b) ? t.moabSlow : t.auraSlow);
       }
-      b.dist += BLOONS[b.type].speed * DT * (b.type === 'bad' ? 1 : Math.max(b.frozenUntil ?? 0, b.stunnedUntil ?? 0) > this.tick ? 0 : slow);
-      if (b.dist >= this.pathLen) {
+      b.dist += BLOONS[b.type].speed * (b.spd ?? 1) * DT * (b.type === 'bad' ? 1 : Math.max(b.frozenUntil ?? 0, b.stunnedUntil ?? 0) > this.tick ? 0 : slow);
+      if (b.dist >= this.laneLen(b.lane)) {
         const blitz = this.towers.find(t => t.type === 'bomb' && t.tiers[2] === 5 && t.blitzRound !== this.round);
         if (blitz) {
           blitz.blitzRound = this.round;
@@ -507,14 +534,14 @@ export class Sim {
       }
       t.cd -= DT; if (t.cd > 0) continue;
       // Range intersects the bloon body (7 units), so short-range towers can reach from grass.
-      const detected = (b: Bloon) => !(b.camo || b.type === 'ddt') || t.camo || t.intel && this.towers.some(ally => ally.camo && Math.hypot(this.posAt(b.dist).x - ally.x, this.posAt(b.dist).y - ally.y) <= ally.range);
-      const targets = this.bloons.filter(b => detected(b) && (Math.hypot(this.posAt(b.dist).x - origin.x, this.posAt(b.dist).y - origin.y) <= t.range + 7 ||
-        t.intel && this.towers.some(ally => Math.hypot(this.posAt(b.dist).x - ally.x, this.posAt(b.dist).y - ally.y) <= ally.range && (!b.camo || ally.camo))));
-      const distance = (b: Bloon) => Math.hypot(this.posAt(b.dist).x - t.x, this.posAt(b.dist).y - t.y);
+      const detected = (b: Bloon) => !(b.camo || b.type === 'ddt') || t.camo || t.intel && this.towers.some(ally => ally.camo && Math.hypot(this.posOf(b).x - ally.x, this.posOf(b).y - ally.y) <= ally.range);
+      const targets = this.bloons.filter(b => detected(b) && (Math.hypot(this.posOf(b).x - origin.x, this.posOf(b).y - origin.y) <= t.range + 7 ||
+        t.intel && this.towers.some(ally => Math.hypot(this.posOf(b).x - ally.x, this.posOf(b).y - ally.y) <= ally.range && (!b.camo || ally.camo))));
+      const distance = (b: Bloon) => Math.hypot(this.posOf(b).x - t.x, this.posOf(b).y - t.y);
       targets.sort((a, b) => t.targeting === 'Last' ? a.dist - b.dist : t.targeting === 'Close' ? distance(a) - distance(b) : t.targeting === 'Strong' ? BLOONS[b.type].rbe - BLOONS[a.type].rbe || b.dist - a.dist : b.dist - a.dist);
       const manual = t.type === 'mortar' || t.type === 'dartling';
       if (!targets.length && !manual && t.type !== 'ace') continue;
-      const p = manual ? t.targetPoint : targets.length ? this.posAt(targets[0].dist) : t.targetPoint; t.cd = t.cooldown / (this.tick < t.buffUntil ? t.type === 'sniper' ? 4 : 1.5 : 1)
+      const p = manual ? t.targetPoint : targets.length ? this.posOf(targets[0]) : t.targetPoint; t.cd = t.cooldown / (this.tick < t.buffUntil ? t.type === 'sniper' ? 4 : 1.5 : 1)
         * ((TOWERS[t.type].waterOnly || t.type === 'ace') && this.towers.some(ally => ally.type === 'buccaneer' && ally.tiers[0] === 5) ? 0.8 : 1)
         / (t.type === 'sniper' && t.tiers[2] === 5 ? 1 + Math.max(0, ...this.bloons.map(b => b.dist / this.pathLen)) : 1) / (this.tick < t.abilityUntil && t.ability?.kind === 'boost' ? t.ability.speed : 1); t.shots++;
       if (t.intel && targets[0] && detected(targets[0])) weapon.camo = true;
@@ -531,7 +558,7 @@ export class Sim {
       if (d.homing) {
         const target = this.bloons.find(b => !d.hit.has(b.id) && this.canHit(b, d));
         if (target) {
-          const p = this.posAt(target.dist), angle = Math.atan2(p.y - d.y, p.x - d.x);
+          const p = this.posOf(target), angle = Math.atan2(p.y - d.y, p.x - d.x);
           d.vx = Math.cos(angle) * d.projectileSpeed; d.vy = Math.sin(angle) * d.projectileSpeed;
         }
       }
@@ -550,7 +577,7 @@ export class Sim {
         if (d.pierce <= 0) break;
         const repeat = d.kind === 'boomerang' && this.tick - (d.lastHit?.get(b.id) ?? -Infinity) >= d.rehit * 60;
         if ((!repeat && d.hit.has(b.id)) || !this.bloons.includes(b)) continue;
-        const p = this.posAt(b.dist), dx = d.x - previous.x, dy = d.y - previous.y;
+        const p = this.posOf(b), dx = d.x - previous.x, dy = d.y - previous.y;
         const along = Math.max(0, Math.min(1, ((p.x - previous.x) * dx + (p.y - previous.y) * dy) / (dx * dx + dy * dy || 1)));
         if (Math.hypot(p.x - previous.x - dx * along, p.y - previous.y - dy * along) >= 10) continue;
         if (d.kind === 'bomb' || d.radius > 0 && d.kind !== 'boomerang') {
@@ -564,9 +591,9 @@ export class Sim {
         this.applyHit(b, d);
         if (d.bounceRange) {
           const next = this.bloons.find(other => !d.hit.has(other.id) && this.canHit(other, d) &&
-            Math.hypot(this.posAt(other.dist).x - d.x, this.posAt(other.dist).y - d.y) <= d.bounceRange);
+            Math.hypot(this.posOf(other).x - d.x, this.posOf(other).y - d.y) <= d.bounceRange);
           if (next) {
-            const point = this.posAt(next.dist), angle = Math.atan2(point.y - d.y, point.x - d.x);
+            const point = this.posOf(next), angle = Math.atan2(point.y - d.y, point.x - d.x);
             d.vx = Math.cos(angle) * d.projectileSpeed; d.vy = Math.sin(angle) * d.projectileSpeed;
           }
         }
@@ -577,7 +604,7 @@ export class Sim {
       if (d.heavy && d.heavyRadius && (d.life <= 0 || d.pierce <= 0)) {
         this.burst(d, { ...d, kind: 'bomb', damageType: 'explosion', damage: 100, pierce: 40, hit: new Set() }, d.heavyRadius);
         for (const b of this.bloons) {
-          if (Math.hypot(this.posAt(b.dist).x - d.x, this.posAt(b.dist).y - d.y) <= d.heavyRadius && this.canHit(b, d)) {
+          if (Math.hypot(this.posOf(b).x - d.x, this.posOf(b).y - d.y) <= d.heavyRadius && this.canHit(b, d)) {
             b.burn = { until: this.tick + 240, next: this.tick + 60, interval: 60, damage: d.heavyBurn, stats: { ...d, damageType: 'normal', frozen: true } };
           }
         }
@@ -585,7 +612,10 @@ export class Sim {
       if (detonated || d.pierce <= 0 || d.life <= 0) this.darts.splice(j, 1);
     }
     if (this.roundActive && !this.spawnQ.length && !this.bloons.length) {
-      this.cash += 100 + this.round + this.towers.reduce((sum, t) => sum + t.income, 0); this.roundActive = false; this.darts = [];
+      this.cash += (100 + this.round + this.towers.reduce((sum, t) => sum + t.income, 0)) * this.rules.incomeMult; this.roundActive = false; this.darts = [];
+      if (this.round >= this.rules.winRound) this.won = true;
+    } else if (this.rules.auto && this.roundActive && !this.spawnQ.length && this.round < this.rules.winRound) {
+      this.roundActive = false; this.startRound(); // Apopalypse: next round starts as soon as the last bloon is sent
     }
   }
 }
