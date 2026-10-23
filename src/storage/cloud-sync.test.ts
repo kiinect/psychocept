@@ -109,3 +109,10 @@ it('ignores stale hydration after signing out during a read', async () => {
   const pending = sync.connect('a'); await sync.connect(null); release([row(9, 200_000)]); await pending;
   expect(save.load()).toEqual({ n: 3 }); expect(sync.status).toBe('guest');
 });
+it('reports a failed local write instead of continuing to claim the save succeeded', async () => {
+  const kv = memoryKV(); let blocked = false;
+  const local = { ...kv, setItem(k: string, v: string) { if (blocked) throw Error('quota'); kv.setItem(k, v); } };
+  const sync = new SaveSync(local, new FakeCloud(), codecs), save = slot(key, [], () => ({ n: 0 }), d => d, sync);
+  await sync.connect('a'); blocked = true;
+  expect(save.save({ n: 3 })).toBe(false); expect(sync.status).toBe('error');
+});

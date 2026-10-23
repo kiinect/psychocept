@@ -63,11 +63,13 @@ export class SaveSync implements KV {
   }
   getItem(key: string) { return this.local.getItem(key); }
   setItem(key: string, value: string) {
-    this.local.setItem(key, value); // Local-first, including when offline or signed out.
+    try { this.local.setItem(key, value); } // Local-first, including when offline or signed out.
+    catch (error) { this.storageFailed = true; this.setStatus('error'); throw error; }
     if (Object.hasOwn(this.codecs, key)) this.changed(key, this.normalize(key, value));
   }
   removeItem(key: string) {
-    this.local.removeItem(key);
+    try { this.local.removeItem(key); }
+    catch (error) { this.storageFailed = true; this.setStatus('error'); throw error; }
     if (Object.hasOwn(this.codecs, key)) this.changed(key, null);
   }
   private changed(key: string, raw: string | null) {
