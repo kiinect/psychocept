@@ -37,3 +37,30 @@
 .power-list { display: grid; gap: 8px; }
 .power-list button { min-height: 48px; }
 #active-powers { font-size: 12px; max-width: 28vw; }
+/* Monkey Knowledge */
+.mk-tabs button small { display: inline-block; min-width: 1.6em; margin-left: 4px; border-radius: 10px; background: #0003; }
+.mk-tabs button[aria-selected="true"] { background: linear-gradient(#5fbf4a, #2f7f2a); outline: 3px solid var(--gold); }
+.mk-stats { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.mk-stats b { font-size: 26px; color: var(--gold); }
+.mk-stats label { margin-left: auto; }
+.mk-stats button { width: auto; }
+.mk-scroll { max-height: 46vh; overflow: auto; border: 4px solid var(--ink); border-radius: 16px; background: radial-gradient(#1f5f86, #133e5a); overscroll-behavior: contain; scroll-behavior: smooth; }
+.mk-tree { position: relative; margin: 0 auto; }
+.mk-lines { position: absolute; inset: 0; }
+.mk-lines line { stroke: #0b2638; stroke-width: 6; stroke-linecap: round; }
+.mk-lines line.lit { stroke: var(--gold); }
+.mk-tier { position: absolute; left: 6px; font-size: 12px; color: #cfe8ff99; }
+.mk-node, .mk-node[aria-pressed="true"] { position: absolute; transform: translate(-50%, -50%); width: 104px; padding: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 0; background: none; box-shadow: none; color: #fff; }
+.mk-node .mk-icon { display: grid; place-items: center; width: 52px; height: 52px; border: 4px solid var(--ink); border-radius: 50%; font-weight: 900; font-size: 16px; background: linear-gradient(#6a7480, #3e4650); box-shadow: 0 4px 0 #0006; }
+.mk-node small { font-size: 11px; line-height: 1.1; text-shadow: 0 1px 2px #000; }
+.mk-node.available .mk-icon { background: linear-gradient(#48a8e8, #1f6aa0); animation: mk-glow 1.4s ease-in-out infinite alternate; }
+.mk-node.owned .mk-icon { background: linear-gradient(#ffd85a, #e09a1a); color: #4a2a00; }
+.mk-node.locked { opacity: .7; }
+.mk-node.unsim .mk-icon { border-style: dashed; }
+.mk-node.picked .mk-icon { outline: 4px solid #fff; outline-offset: 2px; }
+@keyframes mk-glow { to { box-shadow: 0 4px 0 #0006, 0 0 14px #9fdcff; } }
+.mk-detail { margin-top: 12px; padding: 12px 16px; border: 3px solid var(--ink); border-radius: 16px; background: #164b6d; min-height: 88px; }
+.mk-detail h2 { margin: 0 0 6px; }
+.mk-note { color: #cfe8ff; font-size: 13px; }
+.mk-unsim { color: #ffd38a; font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { .mk-node.available .mk-icon { animation: none; } .mk-scroll { scroll-behavior: auto; } }

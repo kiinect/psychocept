@@ -17,7 +17,7 @@ import { priceBadge, upgradeState } from './ui/state';
 import { portrait } from './ui/icons';
 import { upgradeDescription } from './ui/upgrade';
 import { CATEGORY } from './modes/modes';
-import { settingsSlot, profileSlot, runSlot, snapshotSim, restoreSim, purchasePower, usePower, POWERS, POWER_BY_ID, slot, type Settings } from './meta';
+import { activeKnowledge, unlockKnowledge, respecKnowledge, settingsSlot, profileSlot, runSlot, snapshotSim, restoreSim, purchasePower, usePower, POWERS, POWER_BY_ID, slot, type Settings } from './meta';
 import { gameRewards, powerButtonState, supportedPowers, type Rewards } from './ui/meta';
 import { modeById } from './modes/modes';
 import { heroControls } from './hero-ui';
@@ -36,7 +36,7 @@ let placingPower: string | null = null;
 let showRange = savedSettings.showRange, reducedMotion = savedSettings.reducedMotion;
 let autoplay = savedSettings.autoplay, category = 'Primary', heroTools = false;
 let pointer: { x: number; y: number } | null = null;
-let sim = createGame(mapId, modeId);
+let sim = createGame(mapId, modeId, activeKnowledge(profile));
 let selected = -1, placing: TowerKind | null = null, speed = 1, aiming = false;
 let placingHero: HeroKind | null = null;
 if (savedSettings.fastForward) speed = 3;
@@ -152,7 +152,7 @@ function newGame(map: string, mode: string) {
   rewards = undefined; recorded = false; rewardedRound = modeById(mode).startRound - 1;
   speed = savedSettings.fastForward ? 3 : 1; autoplay = savedSettings.autoplay;
   placingPower = null;
-  mapId = map; modeId = mode; scene.reset(); sim = createGame(map, mode); drawScene(bg, MAPS[map]); resizeMap();
+  mapId = map; modeId = mode; scene.reset(); sim = createGame(map, mode, activeKnowledge(profile)); drawScene(bg, MAPS[map]); resizeMap();
   placingHero = null; heroUI.cancel(); selected = -1; placing = null; aiming = false; acc = 0; ended = false; pointer = null; heroTools = false;
   element<HTMLSelectElement>('hero-select').value = flow.hero;
   refresh();
@@ -181,6 +181,11 @@ function renderScreen() {
     profile, settings: savedSettings, hasRun: !!runStore.load(), rewards, supported,
     change: changeSetting,
     buy: id => { if (!supported.has(id)) return; profile = purchasePower(profile, id); profileStore.save(profile); renderScreen(); },
+    knowledge: {
+      learn: name => { profile = unlockKnowledge(profile, name); profileStore.save(profile); renderScreen(); },
+      respec: () => { profile = respecKnowledge(profile); profileStore.save(profile); renderScreen(); },
+      toggle: on => { profile = { ...profile, mkOn: on }; profileStore.save(profile); renderScreen(); },
+    },
   }, audioPanel);
   root.querySelector<HTMLElement>('main')!.inert = flow.screen !== 'game';
   root.querySelector<HTMLElement>('header')!.inert = flow.screen !== 'game';
@@ -213,7 +218,7 @@ function loadRun() {
   if (!snapshot || !MAPS[snapshot.map]) return false;
   const matching = context?.savedAt === snapshot.savedAt ? context : null;
   const mode = matching?.mode ?? snapshot.difficulty;
-  const restored = createGame(snapshot.map, mode);
+  const restored = createGame(snapshot.map, mode, activeKnowledge(profile));
   if (!restoreSim(restored, snapshot)) { hint.textContent = 'Saved run could not be restored.'; return false; }
   scene.reset(); sim = restored; mapId = snapshot.map; modeId = mode;
   flow = { ...flow, map: mapId, mode, difficulty: sim.difficulty, hero: matching?.hero ?? flow.hero };

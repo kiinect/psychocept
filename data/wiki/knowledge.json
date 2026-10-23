@@ -1,0 +1,1445 @@
+[
+{
+"tree": "primary",
+"name": "Fast Tack Attacks",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Tack Shooter attack speed increased by 8%.",
+"note": "-"
+},
+{
+"tree": "primary",
+"name": "Increased Lifespan",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Longer projectile lifespan for Dart Monkey, Bomb Shooter, Tack Shooter, and Glue Gunner.",
+"note": "Does not apply to Ice Monkey's higher Path-3 upgrades, such as Cryo Cannon."
+},
+{
+"tree": "primary",
+"name": "Extra Dart Pops",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Dart Monkeys get +1 pierce to all shots.",
+"note": "Base pierce increased from 2 to 3."
+},
+{
+"tree": "primary",
+"name": "Poppy Blades",
+"prereq": [
+"Hard Tacks"
+],
+"points": 0,
+"mm": 0,
+"description": "Blade Shooter upgrade gets +2 pierce.",
+"note": "Blade Shooter pops 10 bloons per shot instead of 8, also affect Blade Maelstrom or Super Maelstrom ability."
+},
+{
+"tree": "primary",
+"name": "Hard Tacks",
+"prereq": [
+"Fast Tack Attacks"
+],
+"points": 0,
+"mm": 0,
+"description": "Tack Shooter tacks can pop Frozen Bloons.",
+"note": "Allows all Tack Shooter projectiles to pop Frozen Bloons. Therefore, frozen-popping is no longer limited to Hot Shots and above or Super Maelstrom."
+},
+{
+"tree": "primary",
+"name": "Fast Glue",
+"prereq": [
+"Fast Tack Attacks"
+],
+"points": 0,
+"mm": 0,
+"description": "Glue Gunner 10% increased attack speed.",
+"note": "-"
+},
+{
+"tree": "primary",
+"name": "Fraggy Frags",
+"prereq": [
+"Increased Lifespan"
+],
+"points": 0,
+"mm": 0,
+"description": "Frag bombs get 2 extra frags.",
+"note": "Increases number of frags per bomb from 8 to 10. 3-0-2 from 10 to 12, 4-0-2 and 5-0-2 from 16 to 18."
+},
+{
+"tree": "primary",
+"name": "Cheap 'Rangs",
+"prereq": [
+"Increased Lifespan"
+],
+"points": 0,
+"mm": 0,
+"description": "Base cost of Boomerang Thrower reduced by 50.",
+"note": "Discount is applied after price multiplier for other difficulties: the cost will always be $50 less than normal regardless of the difficulty."
+},
+{
+"tree": "primary",
+"name": "Crossbow Reach",
+"prereq": [
+"Extra Dart Pops"
+],
+"points": 0,
+"mm": 0,
+"description": "Crossbow range increased.",
+"note": "Increases range of the Crossbow and its upgrades by 3 (from 56 to 59 for the Crossbow and the Sharp Shooter and from 76 to 79 for the Crossbow Master)."
+},
+{
+"tree": "primary",
+"name": "Big Inferno",
+"prereq": [
+"Poppy Blades"
+],
+"points": 5,
+"mm": 0,
+"description": "Inferno Ring upgrade gets +3 burst radius.",
+"note": "Base Inferno Ring range increases from 34.5 to 37.5."
+},
+{
+"tree": "primary",
+"name": "Icy Chill",
+"prereq": [
+"Hard Tacks"
+],
+"points": 5,
+"mm": 0,
+"description": "Freeze radius slightly increased.",
+"note": "Increases range by +3, a small range increase that can be compared to a weaker version of adding the Larger Radius upgrade."
+},
+{
+"tree": "primary",
+"name": "More Splatty Glue",
+"prereq": [
+"Fast Glue"
+],
+"points": 5,
+"mm": 0,
+"description": "Glue Splatter can affect up to 8 Bloons per shot.",
+"note": "Increases Glue Splatter pierce by 2, from 5 to 7."
+},
+{
+"tree": "primary",
+"name": "Budget Clusters",
+"prereq": [
+"Fraggy Frags"
+],
+"points": 5,
+"mm": 0,
+"description": "Bomb Shooter's Cluster Bombs cost reduced by 100.",
+"note": "Discount is applied after price multiplier for other difficulties: the cost will always be $100 less than normal regardless of the difficulty."
+},
+{
+"tree": "primary",
+"name": "Extra Bounce",
+"prereq": [
+"Cheap 'Rangs"
+],
+"points": 5,
+"mm": 0,
+"description": "Increase Boomerang Ricochet to bounce up to 80 times.",
+"note": "Increases the pierce of ricocheting Glaives, including M.O.A.R Glaives and Glaive Lord, by 30."
+},
+{
+"tree": "primary",
+"name": "Recurring 'Rangs",
+"prereq": [
+"Extra Bounce"
+],
+"points": 5,
+"mm": 0,
+"description": "Boomerangs that return to the Boomerang Monkey will be thrown a second time.",
+"note": "Added in Version 22.0.\nReplaced Ambidextrous 'Rangs, which is now a built-in feature for the Boomerang Monkey."
+},
+{
+"tree": "primary",
+"name": "4 And 4",
+"prereq": [
+"Crossbow Reach"
+],
+"points": 5,
+"mm": 0,
+"description": "Dart Monkey's triple shot gets 4 darts every 4th shot.",
+"note": "-"
+},
+{
+"tree": "primary",
+"name": "Force vs Force",
+"prereq": [
+"Crossbow Reach"
+],
+"points": 5,
+"mm": 0,
+"description": "Juggernaut does +2 damage per shot to MOAB-Class Bloons.",
+"note": "Increases MOAB-class damage by +2, from 2 to 4. Also applies to sub-projectiles from the Ultra-Juggernaut."
+},
+{
+"tree": "primary",
+"name": "So... Cold...",
+"prereq": [
+"Icy Chill"
+],
+"points": 8,
+"mm": 250,
+"description": "Ice Monkey's Permafrost upgrade slows by 60%.",
+"note": "Increases effect from 50% to 60%."
+},
+{
+"tree": "primary",
+"name": "Aviation Grade Glue",
+"prereq": [
+"More Splatty Glue"
+],
+"points": 8,
+"mm": 250,
+"description": "MOAB Glue slows more than normal.",
+"note": "MOAB Glue and Relentless Glue slowdown effect for MOAB-class bloons increases from 37.5% slowdown to 45% slowdown, or MOAB-class bloons slow down to 55% speed instead of 62.5% speed."
+},
+{
+"tree": "primary",
+"name": "Mega Mauler",
+"prereq": [
+"Aviation Grade Glue",
+"Hard Press"
+],
+"points": 8,
+"mm": 250,
+"description": "MOAB Mauler does more damage per hit.",
+"note": "Increases MOAB-class damage of main explosives from MOAB Mauler and above by 2. MOAB Maulers will deal 18 damage to MOAB-class instead of 16, non-ability MOAB Assassins will deal 33 damage instead of 31, while non-ability MOAB Eliminators will deal 102 damage instead of 100. Does not affect fragments or ability secondary explosions."
+},
+{
+"tree": "primary",
+"name": "Hard Press",
+"prereq": [
+"Extra Bounce"
+],
+"points": 8,
+"mm": 250,
+"description": "MOAB Press special knockback boomerangs push back 30% further.",
+"note": "-"
+},
+{
+"tree": "primary",
+"name": "Master Double Cross",
+"prereq": [
+"4 And 4"
+],
+"points": 8,
+"mm": 250,
+"description": "Allows you to have TWO Crossbow Masters.",
+"note": "Allows for the purchase of two Crossbow Masters on the same map."
+},
+{
+"tree": "primary",
+"name": "Big Cryo Blast",
+"prereq": [
+"So... Cold..."
+],
+"points": 10,
+"mm": 500,
+"description": "Cryo Cannon gets increased blast radius.",
+"note": "Increases blast radius by 12%."
+},
+{
+"tree": "primary",
+"name": "Hypothermia",
+"prereq": [
+"So... Cold..."
+],
+"points": 10,
+"mm": 500,
+"description": "Snowstorm freezes Bloons for longer.",
+"note": "Snowstorm ability freezes bloons for 1 second longer. Also affects Absolute Zero and its global Ice Monkey buff."
+},
+{
+"tree": "primary",
+"name": "Cheaper Solution",
+"prereq": [
+"Aviation Grade Glue"
+],
+"points": 10,
+"mm": 500,
+"description": "Bloon Liquifier cost reduced by 1000.",
+"note": "Discount is applied after price multiplier for other difficulties: the cost will always be $1000 less than normal regardless of the difficulty."
+},
+{
+"tree": "primary",
+"name": "Violent Impact",
+"prereq": [
+"Budget Clusters"
+],
+"points": 10,
+"mm": 500,
+"description": "Bomb Shooter's Bloon Impact stuns for 25% longer.",
+"note": "Increases effect from 1.4 seconds to 1.75 seconds for Bloon Impact. Does not affect Bloon Crush."
+},
+{
+"tree": "primary",
+"name": "Long Turbo",
+"prereq": [
+"Hard Press"
+],
+"points": 10,
+"mm": 500,
+"description": "Boomerang Turbo Charge ability lasts 15 seconds.",
+"note": "Increases effect by 5 seconds. Also affects Perma Charge's ability."
+},
+{
+"tree": "primary",
+"name": "Bionic Augmentation",
+"prereq": [
+"Long Turbo"
+],
+"points": 10,
+"mm": 500,
+"description": "While Turbo Charge is active, Bionic Boomerang is able to target Camo Bloons",
+"note": "Added in 30.0"
+},
+{
+"tree": "primary",
+"name": "Come On Everybody!",
+"prereq": [
+"Master Double Cross"
+],
+"points": 10,
+"mm": 500,
+"description": "Primary towers attack 5% faster if all are below tier 3, and cost 5% less if all are tier 3 or 4.",
+"note": "Added in Version 15.0.\n\n\nThe 5% attack speed bonus will be voided once any of the Primary Monkeys are upgraded to Tier 3 or above until the conditions are met again. Likewise, the 5% discount will be voided if any of the Primary Monkeys are below Tier 3 or are upgraded to Tier 5, until the conditions are met again."
+},
+{
+"tree": "primary",
+"name": "Bonus Monkey!",
+"prereq": [
+"Come On Everybody!"
+],
+"points": 10,
+"mm": 1000,
+"description": "Start each game with a free Dart Monkey!",
+"note": "Each game starts with a Free Dart Monkey, a similar effect to the Monkey City upgrade. May only choose a single free Monkey Tower per game."
+},
+{
+"tree": "primary",
+"name": "Bonus Glue Gunner",
+"prereq": [
+"Cheaper Solution"
+],
+"points": 10,
+"mm": 1000,
+"description": "Start each game with 1 free Glue Gunner! (Only 1 free Monkey Tower per game)",
+"note": "Added in 30.0\nEach game starts with a free Glue Gunner. May only choose a single free Monkey Tower per game."
+},
+{
+"tree": "primary",
+"name": "More Cash",
+"prereq": [
+"Cheaper Solution",
+"Bonus Monkey!"
+],
+"points": 0,
+"mm": 1000,
+"description": "Increase starting cash by 200.*",
+"note": "This means that the player will start with $850 on all game modes except Half Cash where players only get $425, and CHIMPS where players get $650, as Monkey Knowledge is turned off there. This is also applied before the effects of Double Cash mode, meaning that the $200 bonus becomes a $400 bonus ($200 bonus instead of $100 bonus in Half Cash). As of 18.0, this +$200 extra starting cash is split among all players evenly (+$100 for two-player, +~$66 for three-player, and $50 for four-player)."
+},
+{
+"tree": "military",
+"name": "Naval Upgrades",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Monkey Buccaneer and Monkey Sub get +1 pierce per shot.",
+"note": "Every Monkey Buccaneer or Monkey Sub attack has +1 pierce. Increases pierce of each Monkey Buccaneer dart from 4 to 5. Increases Monkey Sub default dart pierce from 2 to 3."
+},
+{
+"tree": "military",
+"name": "Airforce Upgrades",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Monkey Ace and Heli Pilot get +1 pierce per shot.",
+"note": "Increases pierce of all Monkey Aces and Heli Pilots by +1. The default dart pierce of Monkey Ace is increased from 5 to 6 per dart, while default Heli Pilot dart pierce is increased from 3 to 4."
+},
+{
+"tree": "military",
+"name": "Elite Military Training",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "All Military Monkeys get a one-off +1000 XP and earn XP in-game 5% faster permanently.",
+"note": "All Military Monkeys will earn the one-off 1000 XP bonus immediately upon starting a game, provided that this Monkey Knowledge is active."
+},
+{
+"tree": "military",
+"name": "Emergency Unlock",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Activated ability: unlocks locked Dartling Gunners and boost their swivel speed for a short time.",
+"note": "Added in Version 22.0.\n\n\n\nWhen at least one Dartling Gunner is locked to shoot in one direction, an ability will appear that allows the player to automatically unlock ALL Dartling Gunners to shoot at the targeted location. Dartling Gunners also spin faster by 50% for 15.0s."
+},
+{
+"tree": "military",
+"name": "Big Bunch",
+"prereq": [
+"Naval Upgrades"
+],
+"points": 0,
+"mm": 0,
+"description": "Grape Shot shoots 6 grapes.",
+"note": "Shoots 6 grapes instead of 5 grapes. Also applies to Hot Shot grapes. When interacting with 2-1-0 crosspathing, grapes increased from 6 to 7."
+},
+{
+"tree": "military",
+"name": "Accelerated Aerodarts",
+"prereq": [
+"Airforce Upgrades"
+],
+"points": 0,
+"mm": 0,
+"description": "Darts from Monkey Aces fly faster.",
+"note": "Darts fly 50% faster."
+},
+{
+"tree": "military",
+"name": "Ceramic Shock",
+"prereq": [
+"Elite Military Training"
+],
+"points": 0,
+"mm": 0,
+"description": "Sniper hits on Ceramic Bloons slow them down briefly.",
+"note": "Any hits by Sniper Monkeys on Ceramic Bloons will cause them -70% speed for 0.6 seconds. Slow effect is the same for all calibres of Path 1. Slow effect can also be applied to Ceramics hit with Shrapnel Shot projectiles."
+},
+{
+"tree": "military",
+"name": "Breaking Ballistic",
+"prereq": [
+"Naval Upgrades"
+],
+"points": 4,
+"mm": 0,
+"description": "Ballistic Missiles do more damage to Ceramic Bloons.",
+"note": "Deals +1 damage to Ceramic Bloons, from 5 to 6. Also affects Pre-Emptive Strike."
+},
+{
+"tree": "military",
+"name": "Faster Takedowns",
+"prereq": [
+"Big Bunch"
+],
+"points": 4,
+"mm": 0,
+"description": "MOAB Takedown Ability has 5 second faster cooldown.",
+"note": "Ability cooldown of Monkey Pirates and Pirate Lord decreases from 50 seconds and 30 seconds to 45 seconds and 25 seconds, respectively."
+},
+{
+"tree": "military",
+"name": "Targeted Pineapples",
+"prereq": [
+"Accelerated Aerodarts"
+],
+"points": 4,
+"mm": 0,
+"description": "Pineapples are only dropped near tracks.",
+"note": "Drops Pineapples only near tracks, similar to Bomber Ace's bombs."
+},
+{
+"tree": "military",
+"name": "Rapid Razors",
+"prereq": [
+"Airforce Upgrades"
+],
+"points": 4,
+"mm": 0,
+"description": "Razor Rotors pop Bloons faster.",
+"note": "Pops 25% faster than normal."
+},
+{
+"tree": "military",
+"name": "Extra Burny Stuff",
+"prereq": [],
+"points": 4,
+"mm": 0,
+"description": "Burny Stuff pops every second.",
+"note": "Added in Version 6.0.\nNapalm from Burny Stuff now burns every 1.0 seconds, rather than 1.25 seconds. Blooncineration is also affected by Extra Burny Stuff, but instead pops Bloons every 0.5s instead of every 0.75s. Shell Shock and above with Burny Stuff burns every 0.375s instead of 0.625s."
+},
+{
+"tree": "military",
+"name": "Cheaper Maiming",
+"prereq": [
+"Ceramic Shock"
+],
+"points": 4,
+"mm": 0,
+"description": "Maim MOAB cost reduced by 1000.",
+"note": "Discount is applied after price multiplier for other difficulties: the cost will always be $1000 less than normal regardless of the difficulty."
+},
+{
+"tree": "military",
+"name": "Gorgon Storm",
+"prereq": [
+"Emergency Unlock"
+],
+"points": 4,
+"mm": 0,
+"description": "Hydra Rocket Storm stuns damaged Bloons for a short time.",
+"note": "Added in Version 22.0.\n\n\nRockets spawned from the Rocket Storm ability can stun any bloon including MOAB-class. Stuns bloons for 0.5s per rocket, or 0.1s for MOAB-class. The same applies to M.A.D."
+},
+{
+"tree": "military",
+"name": "Quad Burst",
+"prereq": [
+"Breaking Ballistic"
+],
+"points": 8,
+"mm": 250,
+"description": "Airburst Darts split into 4 instead of 3.",
+"note": "With the Airburst Darts upgrade, any main darts that split into airburst darts will split into 4 instead of 3. Also applies for Triple Guns, Armor Piercing Darts, and Sub Commander."
+},
+{
+"tree": "military",
+"name": "Trade Agreements",
+"prereq": [
+"Faster Takedowns"
+],
+"points": 8,
+"mm": 250,
+"description": "Merchantman generates +$20 per round.",
+"note": "Increased income per round from $200 to $220. Also stacks with percentage income bonuses from Central Market and Monkey City. Bonus +$20 per round also applies to Favored Trades, Trade Empire, and Navarch of the Seas."
+},
+{
+"tree": "military",
+"name": "Gun Coolant",
+"prereq": [
+"Targeted Pineapples"
+],
+"points": 8,
+"mm": 250,
+"description": "Monkey Aces attack 10% faster.",
+"note": "-"
+},
+{
+"tree": "military",
+"name": "Paint Stripper",
+"prereq": [
+"Extra Burny Stuff"
+],
+"points": 8,
+"mm": 250,
+"description": "Mortar shattering shells removes Fortification from DDT Bloons.",
+"note": "Introduced in Version 6.0.\nAllows the Shattering Shells upgrade to remove DDT fortification.\n\n\nBefore Version 33.0, it also allowed Signal Flare upgrade to remove camo from DDTs."
+},
+{
+"tree": "military",
+"name": "Cross the Streams",
+"prereq": [
+"Gorgon Storm"
+],
+"points": 8,
+"mm": 250,
+"description": "Where Plasma or Doom beams cross on the track they create temporary plasma pools.",
+"note": "Introduced in Version 22.0.\nWhere two Plasma Accelerator or Ray of Doom beams meet, they will create a temporary pool of plasma similar to the Alchemist's Acid Pool. These pools have a special Damage Over Time effect, but deals extremely low damage."
+},
+{
+"tree": "military",
+"name": "Flanking Maneuvers",
+"prereq": [
+"Quad Burst",
+"Trade Agreements"
+],
+"points": 8,
+"mm": 500,
+"description": "Sniper, Monkey Sub & Monkey Buccaneer attack 10% faster when set to 'Last' targeting priority.",
+"note": "Introduced in Version 22.0.\n\n\nAny Military Monkey set on Last targeting will attack 10% faster. Setting it to any other target priority will remove this bonus until reverted back to Last."
+},
+{
+"tree": "military",
+"name": "Wingmonkey",
+"prereq": [
+"Aeronautic Subsidy"
+],
+"points": 8,
+"mm": 500,
+"description": "Advanced flight pathing that coordinates multiple Monkey Aces on staggered attack runs.",
+"note": "Introduced in Version 15.0.\n\n\nAdds a new flight path called \"Wingmonkey\" to all Monkey Aces. When a Monkey Ace is set to Wingmonkey, it will fly in a similar way to the Aircraft Carrier's planes."
+},
+{
+"tree": "military",
+"name": "Aeronautic Subsidy",
+"prereq": [
+"Gun Coolant"
+],
+"points": 8,
+"mm": 500,
+"description": "Monkey Ace tier 5 upgrades cost 10% less.",
+"note": "Sky Shredder, Tsar Bomba, and Flying Fortress will cost $37,350, $27,000 and $76,500, respectively, down from $41,500, $30,000, and $85,000 on Medium."
+},
+{
+"tree": "military",
+"name": "Charged Chinooks",
+"prereq": [
+"Rapid Razors"
+],
+"points": 8,
+"mm": 500,
+"description": "Chinook Activated Abilities give 25% more lives and cash.",
+"note": "Allows the Support Chinook to drop $2,250 and 12 lives. Also affects Special Poperations as well, to $5,625 and 31 lives."
+},
+{
+"tree": "military",
+"name": "Budget Battery",
+"prereq": [
+"Paint Stripper"
+],
+"points": 8,
+"mm": 500,
+"description": "Artillery Battery cost reduced by 600.",
+"note": "Introduced in Version 6.0.\nDiscount is applied after price multiplier for other difficulties: the cost will always be $600 less than normal regardless of the difficulty."
+},
+{
+"tree": "military",
+"name": "Master Defender",
+"prereq": [
+"Cheaper Maiming"
+],
+"points": 8,
+"mm": 500,
+"description": "Elite Defender has no cooldown.",
+"note": "Elite Defender will no longer have a cooldown for its 4x attack speed ability; it will now always trigger the 4x attack speed ability if any lives were lost within the past 7 seconds."
+},
+{
+"tree": "military",
+"name": "Sub Admiral",
+"prereq": [
+"Flanking Maneuvers"
+],
+"points": 14,
+"mm": 1000,
+"description": "Sub Commander affects all Monkey Subs on screen.",
+"note": "Sub Commander grants its +4 pierce and double damage buff to all Monkey Subs on screen."
+},
+{
+"tree": "military",
+"name": "Military Conscription",
+"prereq": [
+"Trade Agreements"
+],
+"points": 14,
+"mm": 1000,
+"description": "Purchase price of first Military Monkey each game is two thirds the normal.",
+"note": "Purchase price of first Military Monkey in each game is discounted by 33%. Once any Military Monkey is purchased, all the other price bonuses are voided, even if that specific tower was not used. Will subsequently cost $235 Sniper Monkey, $220 Monkey Sub, $370 Monkey Buccaneer, $535 Monkey Ace, $1070 Heli Pilot, $500 Mortar Monkey, and $570 Dartling Gunner on Medium difficulty. Can stack with the Advanced Logistic effect."
+},
+{
+"tree": "military",
+"name": "Door Gunner",
+"prereq": [
+"Charged Chinooks"
+],
+"points": 14,
+"mm": 1000,
+"description": "Special Poperations Heli allows tier 4 and below Monkey Towers to attack Bloons while in transit.",
+"note": "Introduced in Version 17.0.\n\n\nAllows towers that are Tier 4 or lower to attack bloons while carried by the Heli Pilot. They will continue being carried along with the Heli Pilot until placed down with the Door Gunner ability. Then the carried tower can be repositioned to anywhere on the map.\n\nWhen the Door Gunner ability is active, it also consumes the Redeploy Tower ability. Likewise, using the Redeploy Tower ability consumes the Door Gunner ability. As such, cooldown for Door Gunner is exactly the same as the Redeploy Tower ability. Cooldown for Door Gunner starts once the tower has been placed onto a new spot."
+},
+{
+"tree": "military",
+"name": "Advanced Logistics",
+"prereq": [
+"Aeronautic Subsidy",
+"Door Gunner"
+],
+"points": 14,
+"mm": 1000,
+"description": "All Military Monkeys base costs reduced by 5%.",
+"note": "Base costs on Medium difficulty are now $330 for the Sniper Monkey, $310 for the Monkey Sub, $520 for the Monkey Buccaneer, $760 for the Monkey Ace, $1,520 for the Heli Pilot, $710 for the Mortar Monkey, and $810 for the Dartling Gunner. Stackable with the Military Conscription benefit, though the 5% discount is applied after Military Conscription discount."
+},
+{
+"tree": "military",
+"name": "Big Bloon Sabotage",
+"prereq": [
+"Sub Admiral",
+"Master Defender"
+],
+"points": 14,
+"mm": 1000,
+"description": "All MOAB-Class Bloons spawn in a partially damaged state.",
+"note": "Decreases the health of all newly-spawned MOAB-Class Bloons by 10%."
+},
+{
+"tree": "magic",
+"name": "SUPER Range",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Increased range for the Super Range upgrade",
+"note": "Increases range by 3."
+},
+{
+"tree": "magic",
+"name": "Lingering Magic",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Longer projectile lifespan for Wizard Monkey, Super Monkey, Ninja Monkey, and Druid.",
+"note": "Projectiles from all Magic Monkeys except Alchemists last for 20% longer.\n\n\nMore notably, this MK increases lifespan of Wall of Fire from 4.5s to 5.4s."
+},
+{
+"tree": "magic",
+"name": "Magic Tricks",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Guided Magic and Intense Magic cost 25 less.",
+"note": "Discount is applied after price multiplier for other difficulties: the costs will always be $25 less than normal regardless of the difficulty."
+},
+{
+"tree": "magic",
+"name": "Cheaper Doubles",
+"prereq": [
+"SUPER Range"
+],
+"points": 0,
+"mm": 0,
+"description": "Ninja Double Shot cost reduced by 100.",
+"note": "Discount is applied after price multiplier for other difficulties: the costs will always be $100 less than normal regardless of the difficulty."
+},
+{
+"tree": "magic",
+"name": "Heavy Knockback",
+"prereq": [
+"SUPER Range"
+],
+"points": 0,
+"mm": 0,
+"description": "Bloons hit by Knockback from Super Monkey are knocked back slightly harder.",
+"note": "Increases knockback potency by 5%. (normal bloons move backward at 30% speed instead of 25%, leads and ceramics slowed to 5% speed for Dark Knight, move backward at 5% speed for Dark Champion and Legend Of the Night. MOAB-class are slowed to 65% speed)"
+},
+{
+"tree": "magic",
+"name": "Hot Magic",
+"prereq": [
+"Lingering Magic"
+],
+"points": 0,
+"mm": 0,
+"description": "All Magic type towers can pop Frozen Bloons.",
+"note": "All Magic Monkeys can pop Frozen Bloons, regardless of types of attack. Mainly affects Druids, Super Monkeys, and Ninja Monkeys.\n\n\nFor Druids, Hard Thorns is no longer required to pop Frozen. Laser Blasts or Tier 4 Super Monkey upgrades are no longer required for Super Monkeys to pop Frozen. Ninja Monkey shurikens can now damage Frozen without needing MIB. Most other main attacks for Magic Monkeys already can pop Frozen by default."
+},
+{
+"tree": "magic",
+"name": "Speedy Brewing",
+"prereq": [
+"Magic Tricks"
+],
+"points": 0,
+"mm": 0,
+"description": "All Alchemist's potions have 5% faster reload time.",
+"note": "Increases attack speed of Alchemist by 5%. Applies to all potions, including support potions. Stacks multiplicatively with the Faster Throwing upgrade."
+},
+{
+"tree": "magic",
+"name": "Mo' Monkey Money",
+"prereq": [
+"Speedy Brewing"
+],
+"points": 0,
+"mm": 0,
+"description": "Earn 10% extra Monkey Money from game wins on any difficulty.",
+"note": "Increases Monkey Money rewards for first time completion, replay completion and Daily Challenges. Daily Challenge bonus reward only applies to the original map reward; the Monkey Money reward for a Daily Challenge is the new original map reward plus unchanged Daily Challenge reward. For Advanced Challenges, the increased Monkey Money reward is calculated from the original Monkey Money reward (e.g. an AC that rewards {{Monkey Money BTD6}}120 rewards {{Monkey Money BTD6}}132 instead).\n\n\nBonus Monkey Money is also rounded down if its value would not be an integer ({{Monkey Money BTD6}}225, for example, becomes {{Monkey Money BTD6}}247, not {{Monkey Money BTD6}}248).\n\n These special Monkey Money bonuses do not apply to CHIMPS or any Advanced Challenges where MK is turned off."
+},
+{
+"tree": "magic",
+"name": "Diversion Tactics",
+"prereq": [
+"Cheaper Doubles"
+],
+"points": 4,
+"mm": 0,
+"description": "Increased chance to distract Bloons from Distraction upgrade.",
+"note": "Increases chance of Distraction effect occurring by an additional 2.5%."
+},
+{
+"tree": "magic",
+"name": "Strike Down The False",
+"prereq": [
+"Heavy Knockback"
+],
+"points": 4,
+"mm": 0,
+"description": "Sun Avatar can pop Purple Bloons.",
+"note": "Bonus only applies to Sun Avatar, as Sun Temple and True Sun God can pop Purple Bloons naturally."
+},
+{
+"tree": "magic",
+"name": "Warm Oak",
+"prereq": [
+"Hot Magic"
+],
+"points": 4,
+"mm": 0,
+"description": "Heart of Oak cost reduced by 100.",
+"note": "Discount is applied after price multiplier for other difficulties: the costs will always be $100 less than normal regardless of the difficulty."
+},
+{
+"tree": "magic",
+"name": "Flame Jet",
+"prereq": [
+"Hot Magic"
+],
+"points": 4,
+"mm": 0,
+"description": "Dragon's Breath flame projectiles move much faster.",
+"note": "Dragon's Breath flame projectiles fly 50% faster."
+},
+{
+"tree": "magic",
+"name": "Strong Tonic",
+"prereq": [
+"Speedy Brewing"
+],
+"points": 4,
+"mm": 0,
+"description": "Transforming Tonic lasts longer.",
+"note": "Increases duration from 20 seconds to 24 seconds. Also applies to Total Transformation."
+},
+{
+"tree": "magic",
+"name": "Cold Front",
+"prereq": [
+"Warm Oak"
+],
+"points": 4,
+"mm": 250,
+"description": "Ball Lightning's additional lightning bolts also freeze Bloons.",
+"note": "Freeze chance is 100%."
+},
+{
+"tree": "magic",
+"name": "Arcane Impale",
+"prereq": [
+"Flame Jet"
+],
+"points": 4,
+"mm": 250,
+"description": "Arcane Spike does extra damage to MOAB-Class and Ceramic Bloons.",
+"note": "Deals 17 damage instead of 16 to MOAB-Class Bloons. Deals 7 damage instead of 6 to Ceramic Bloons. Also affect Archmage."
+},
+{
+"tree": "magic",
+"name": "Acid Stability",
+"prereq": [
+"Strong Tonic"
+],
+"points": 4,
+"mm": 250,
+"description": "Alchemists' acid pools last 5 second longer.",
+"note": "Acid pools now last 12 seconds each instead of 7."
+},
+{
+"tree": "magic",
+"name": "X-Ray Ultra",
+"prereq": [
+"Strike Down The False"
+],
+"points": 4,
+"mm": 250,
+"description": "Ultravision allows Super Monkeys to see through and fire through blocking objects",
+"note": "Added in 30.0"
+},
+{
+"tree": "magic",
+"name": "Deadly Tranquility",
+"prereq": [
+"Diversion Tactics"
+],
+"points": 8,
+"mm": 500,
+"description": "Bloonjitsu and Grandmaster Ninja get an extra shuriken per throw. *",
+"note": "Increases Bloonjitsu shuriken count to 6. Increases Grandmaster Ninja and Ascended Shadow shuriken count to 9.\n\n\nAlso, perhaps unintentionally, the number of flash bombs and blue mini-Shurikens fired by the Ascended Shadow is increased by 1."
+},
+{
+"tree": "magic",
+"name": "There Can Be Only One",
+"prereq": [
+"X-Ray Ultra"
+],
+"points": 8,
+"mm": 500,
+"description": "There can be only one.",
+"note": "Added in Version 3.0\n\nA newly upgraded True Sun God with maximized sacrifices while with the other Tier 5 Super Monkeys (The Anti-Bloon and Legend of the Night) present outside of the sacrifice range, will also sacrifice the other two Tier 5 Super Monkeys to become a Vengeful True Sun God. Triples the main attack and at least doubles supplementary attacks of the True Sun God.\n\nDoes not work in Sandbox. Anti-Bloon and Legend of the Night cannot be re-bought unless Vengeful True Sun God is sold. Only one Vengeful True Sun God can be present in Co-op."
+},
+{
+"tree": "magic",
+"name": "Vine Rupture",
+"prereq": [
+"Cold Front"
+],
+"points": 8,
+"mm": 500,
+"description": "Grants Spirit of the Forest Druid a new ability to burst all track vines, doing big damage to all non-lead Bloons. New vines will regrow after each Rupture.",
+"note": "Added in Version 17.0.\n\n\nGrants the Spirit of the Forest with a second \"Vine Rupture\" ability. When the \"Vine Rupture\" ability is activated, all non-Lead Bloons (unless the Spirit of the Forest is nearby an MIB or similar) take 150 damage and are stunned for 10 seconds. Cooldown of 60 seconds."
+},
+{
+"tree": "magic",
+"name": "Tiny Tornadoes",
+"prereq": [
+"Deadly Tranquility",
+"Vine Rupture"
+],
+"points": 8,
+"mm": 1000,
+"description": "Druid tornadoes spawn 3 smaller tornadoes when they expire.",
+"note": "Added in Version 15.0. From Version 17.0 onward, requires \"Vine Rupture\" as a prerequisite upgrade.\n\n\nDruid mini-tornadoes split between 120\u00b0 from each other, and their projectile lifespans are as long as the main tornadoes. Currently does not affect the Superstorm's super tornadoes."
+},
+{
+"tree": "magic",
+"name": "Mana Shield",
+"prereq": [
+"Arcane Impale"
+],
+"points": 8,
+"mm": 1000,
+"description": "Creates a special shield that absorbs up to 25 lives for free. Recharges slowly each round if no Bloons leak.",
+"note": "Gives the player up 25 extra lives, which are spent before their normal lives. This shield regenerates 5 lives for each round where no bloons leaked. Unusable in Impoppable Mode."
+},
+{
+"tree": "support",
+"name": "Flat Pack Buildings",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Banana Farms and Monkey Village cost 2% less and sell for 2% more.",
+"note": "Discount and sell values are additive, making the sellback 72% of the original cost of the tower and all upgrades."
+},
+{
+"tree": "support",
+"name": "One More Spike",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Spike Factory stacks get +1 spike.",
+"note": "Spike stacks can pop up to 6 bloons instead of 5, Bigger Stacks from 10 to 11, Spiked Balls/Spiked Mines/Super Mines from 14 to 15, and Perma-Spike from 50 (90) to 51 (91)."
+},
+{
+"tree": "support",
+"name": "Insider Trades",
+"prereq": [
+"Flat Pack Buildings"
+],
+"points": 0,
+"mm": 0,
+"description": "Monkey Business discount increases by 2%",
+"note": "Increases discount via the Monkey Business bonus from 10% to 12%."
+},
+{
+"tree": "support",
+"name": "More Valuable Bananas",
+"prereq": [
+"Flat Pack Buildings"
+],
+"points": 0,
+"mm": 0,
+"description": "Valuable Bananas upgrade increases to 30%.",
+"note": "This is a 5% increase from what the upgrade usually provides, granting $26 per banana with this upgrade opposed to the usual $25. Banana Research Facility crates plus Valuable Bananas will earn $390 instead of $375. Banana Central's own crates plus Valuable Bananas will earn $1530 instead of $1500 ($1170 instead of $1125 before Version 11.0)."
+},
+{
+"tree": "support",
+"name": "First Last Line of Defense",
+"prereq": [
+"One More Spike"
+],
+"points": 0,
+"mm": 0,
+"description": "Purchased price of first Spike Factory each game is $150 less.",
+"note": "Introduced in Version 22.0.\nApplies after difficulty discounts. The first Spike Factory will cost $700 on Easy, $850 on Medium, $930 on Hard, and $1050 on Impoppable."
+},
+{
+"tree": "support",
+"name": "Bigger Banks",
+"prereq": [
+"Insider Trades"
+],
+"points": 3,
+"mm": 0,
+"description": "Monkey Banks can hold 2500 extra money.",
+"note": "Increases maximum capacity to $9,500 for Banks. Increases maximum capacity of IMF Loan and Monkey-Nomics to $12,500."
+},
+{
+"tree": "support",
+"name": "Farm Subsidy",
+"prereq": [
+"More Valuable Bananas"
+],
+"points": 3,
+"mm": 0,
+"description": "First Banana Farm each game costs 100 less.",
+"note": "Once first Banana Farm is bought, this discount will be voided. The cost decrease by $100 applies to Medium Difficulty cost; difficulty multipliers are applied after."
+},
+{
+"tree": "support",
+"name": "Vigilant Sentries",
+"prereq": [
+"One More Spike"
+],
+"points": 3,
+"mm": 0,
+"description": "Sentry Turrets last longer than normal",
+"note": "Increases Sentry Gun lifespan from 25 seconds to 30 seconds. Applies to all Sentries, including from Sentry Expert and Sentry Champion."
+},
+{
+"tree": "support",
+"name": "Monkey Education",
+"prereq": [],
+"points": 3,
+"mm": 0,
+"description": "All Monkeys XP earn rate increased by 8%.",
+"note": "Applies to Experience for tower upgrades and Heroes in-game level ups."
+},
+{
+"tree": "support",
+"name": "Backroom Deals",
+"prereq": [
+"Bigger Banks"
+],
+"points": 3,
+"mm": 250,
+"description": "IMF Loan grants $1000 more and repay rate is 40%.",
+"note": "The increase in profit also applies to Monkey-Nomics."
+},
+{
+"tree": "support",
+"name": "Inland Revenue Streams",
+"prereq": [
+"Farm Subsidy"
+],
+"points": 3,
+"mm": 250,
+"description": "Monkey Town cash bonus increased by 10%.",
+"note": "Increases cash bonus for bloon pops from 50% to 60%"
+},
+{
+"tree": "support",
+"name": "Thicker Foams",
+"prereq": [
+"Vigilant Sentries"
+],
+"points": 3,
+"mm": 250,
+"description": "Cleansing Foam can hit 3 more Bloons before expiring.",
+"note": "Increases pierce of each base cleansing foam blob from 10 to 13. With Oversize Nails, cleansing foam blobs increase pierce from 15 to 18."
+},
+{
+"tree": "support",
+"name": "Very Shreddy",
+"prereq": [
+"First Line of Defense"
+],
+"points": 3,
+"mm": 250,
+"description": "MOAB-SHREDR spikes deal +1 extra damage to MOAB-Class Bloons.",
+"note": "Increases damage dealt to MOAB-class bloons by +1, from 9 to 10."
+},
+{
+"tree": "support",
+"name": "To ARMS!",
+"prereq": [
+"Monkey Education"
+],
+"points": 3,
+"mm": 250,
+"description": "Call to Arms duration increased by 3 seconds.",
+"note": "Increases duration by 3 seconds, from 15 seconds to 18 seconds. Also applies to Homeland Defense."
+},
+{
+"tree": "support",
+"name": "Better Sell Deals",
+"prereq": [
+"Backroom Deals"
+],
+"points": 8,
+"mm": 500,
+"description": "All Monkeys sell for 5% more.",
+"note": "Increases sell potency from 70% to 75%. Better Sell Deals will increase sell potency of Banana Farms and Monkey Villages from 72% to 77% instead, since Flat Pack Buildings is already unlocked before unlocking Better Sell Deals. If this knowledge is active, less is needed to reach the 95% sellback cap, currently only possible with a Farm with Banana Salvage and a nearby Favored Trades, bringing it up to aforementioned cap."
+},
+{
+"tree": "support",
+"name": "Healthy Bananas",
+"prereq": [
+"Inland Revenue Streams"
+],
+"points": 8,
+"mm": 500,
+"description": "Marketplaces now produce 1 life per round and Central Markets produce 3.",
+"note": "Added in Version 15.0."
+},
+{
+"tree": "support",
+"name": "Big Traps",
+"prereq": [
+"Thicker Foams"
+],
+"points": 8,
+"mm": 500,
+"description": "Bloon Trap can hold up to 530 RBE.",
+"note": "Increased from 500 RBE to 530 RBE. Can also affect XXXL Traps, although too insignificant to make a difference."
+},
+{
+"tree": "support",
+"name": "Hi-Value Mines",
+"prereq": [
+"Very Shreddy"
+],
+"points": 8,
+"mm": 500,
+"description": "Spiked Mines cost reduced by 1500.",
+"note": "Discount is applied after price multiplier for other difficulties: the costs will always be $1500 less than normal regardless of the difficulty."
+},
+{
+"tree": "support",
+"name": "Veteran Monkey Training",
+"prereq": [
+"To Arms!"
+],
+"points": 8,
+"mm": 500,
+"description": "All Monkeys reload time reduced by 3%.",
+"note": "Attack cooldown of all towers are decreased by 0.97x. Therefore, attack speed of all towers becomes increased by approximately 3% (specifically by 3.09%)."
+},
+{
+"tree": "support",
+"name": "Global Ability Cooldowns",
+"prereq": [
+"To Arms!"
+],
+"points": 8,
+"mm": 500,
+"description": "All Ability cooldowns for all Monkeys reduced by 3%.",
+"note": "Reduces cooldowns of all abilities by 3% of their usual cooldown. Can stack with other cooldown reduction benefits."
+},
+{
+"tree": "support",
+"name": "Bank Deposits",
+"prereq": [
+"Better Sell Deals"
+],
+"points": 14,
+"mm": 1000,
+"description": "Tier 4 and above Monkey Banks can take deposits from available in game cash.",
+"note": "Added in Version 18.0.\n\n\nAllows IMF Loans and above (Monkey Banks and above until Version 27.0) to deposit a sum of money into the account via a new \"deposit\" button in the in-game tower menu. Deposits up to half its remaining capacity per deposit. Can deposit as many times as possible in a single bank, but all deposits require a delay of one round before they count as interest."
+},
+{
+"tree": "support",
+"name": "Paragon of Power",
+"prereq": [
+"Veteran Monkey Training"
+],
+"points": 14,
+"mm": 1000,
+"description": "Paragons attack faster if there are no Tier 5 of the same tower.",
+"note": "Added in Version 39.0.\n\nIncreases attack speed of Paragon by ~20% if no T5 of the same tower type is on screen."
+},
+{
+"tree": "heroes",
+"name": "Heroic Reach",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "All heroes get slightly increased range.",
+"note": "Adds approximately +3 range for all Heroes."
+},
+{
+"tree": "heroes",
+"name": "More 'Splody",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Heroes' explosives get +2 pierce per shot.",
+"note": "Applies only to explosions, benefiting Striker Jones and Captain Churchill much more than other heroes."
+},
+{
+"tree": "heroes",
+"name": "Ability Discipline",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Hero level 10 Ability cooldowns reduced by 10%.",
+"note": "-"
+},
+{
+"tree": "heroes",
+"name": "Heroic Velocity",
+"prereq": [
+"Heroic Reach"
+],
+"points": 0,
+"mm": 0,
+"description": "All Heroes' projectile speeds increased slightly.",
+"note": "-"
+},
+{
+"tree": "heroes",
+"name": "Scholarships",
+"prereq": [
+"More 'Splody"
+],
+"points": 0,
+"mm": 0,
+"description": "Hero training costs reduced by 10%.",
+"note": "Applies only to the amount of money needed to instantly level a hero up, not the heroes' base cost."
+},
+{
+"tree": "heroes",
+"name": "Quick Hands",
+"prereq": [
+"Heroic Velocity"
+],
+"points": 3,
+"mm": 0,
+"description": "Makes all heroes attack 4% faster.",
+"note": "-"
+},
+{
+"tree": "heroes",
+"name": "Self Taught Heroes",
+"prereq": [
+"Scholarships"
+],
+"points": 3,
+"mm": 0,
+"description": "Heroes earn XP 10% faster.",
+"note": "-"
+},
+{
+"tree": "heroes",
+"name": "Ability Mastery",
+"prereq": [
+"Ability Discipline"
+],
+"points": 3,
+"mm": 0,
+"description": "At level 20, Heroes' level 3 Ability cooldown reduced by 30%.",
+"note": "Was 40% before Version 22.0."
+},
+{
+"tree": "heroes",
+"name": "Hero Favors",
+"prereq": [
+"Quick Hands",
+"Self Taught Heroes"
+],
+"points": 3,
+"mm": 250,
+"description": "Heroes' base cost reduced by 10%.",
+"note": "Will subsequentially cost $485 Quincy, $655 Gwendolin, $675 Striker Jones, $585 Obyn Greenfoot, $1800 Captain Churchill, $1080 Benjamin, $540 Ezili, $720 Pat Fusty, $900 Adora, $810 Admiral Brickell, $765 Etienne, $540 Sauda, $900 Psi, $640 Geraldo, and $830 Corvus on Medium Difficulty."
+},
+{
+"tree": "heroes",
+"name": "Empowered Heroes",
+"prereq": [
+"Hero Favors"
+],
+"points": 8,
+"mm": 500,
+"description": "Heroes start each game at level 3.",
+"note": ""
+},
+{
+"tree": "heroes",
+"name": "Big Bloon Blueprints",
+"prereq": [
+"Ability Mastery"
+],
+"points": 8,
+"mm": 500,
+"description": "Heroes do +1 extra damage to MOAB-Class Bloons with their base attack.",
+"note": "Applies to base projectiles, benefiting Level 8+ Gwendolin, Level 6+ Quincy and Level 4+ Adora much more than other heroes."
+},
+{
+"tree": "heroes",
+"name": "Monkeys Together Strong",
+"prereq": [
+"Empowered Heroes"
+],
+"points": 8,
+"mm": 1000,
+"description": "Heroes receive 5% more experience per each Hero placed.",
+"note": "Added in Version 22.0.\n\n\nCan work on any game mode including non-Co-Op games, and can also apply if there's just one hero on the screen. In the case where there's only one Hero on screen, the MK only provides +5%. More heroes increases the increased XP gain to +10%, +15%, and +20% Hero XP, although split among all other heroes."
+},
+{
+"tree": "heroes",
+"name": "Weak Point",
+"prereq": [
+"Big Bloon Blueprints",
+"Monkeys Together Strong"
+],
+"points": 8,
+"mm": 1000,
+"description": "All Heroes deal +1 damage to Ceramic & Fortified Bloons.",
+"note": "Added in Version 15.0.\n\nApplies to all projectiles, benefiting Level 8+ Gwendolin, Level 6+ Quincy, Level 4+ Adora and Level 5+ Captain Churchill much more than other heroes."
+},
+{
+"tree": "powers",
+"name": "Bigger Camo Trap",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Camo Trap lasts for 600 Bloons.",
+"note": "Camo Trap increases from 500 to 600. Formerly 100 to 200, until Version 2.0 buffs to the original Camo Trap (along with the respective Knowledge)."
+},
+{
+"tree": "powers",
+"name": "Just One More",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Road Spike piles have 21 spikes in them.",
+"note": "Allows each spike pile to pop 1 extra bloon (from 20 to 21)"
+},
+{
+"tree": "powers",
+"name": "Cheaper Lakes",
+"prereq": [],
+"points": 0,
+"mm": 0,
+"description": "Portable Lake costs 40 Monkey Money.",
+"note": "Costs {{Monkey Money BTD6}}40 instead of {{Monkey Money BTD6}}50. Will still cost the original amount if Monkey Knowledge is turned off while at the Powers store."
+},
+{
+"tree": "powers",
+"name": "Mauling MOAB Mines",
+"prereq": [
+"Bigger Camo Trap"
+],
+"points": 0,
+"mm": 0,
+"description": "MOAB mine does extra damage.",
+"note": "Increases damage from 300 to 400."
+},
+{
+"tree": "powers",
+"name": "Longer Time Stop",
+"prereq": [
+"Just One More"
+],
+"points": 0,
+"mm": 0,
+"description": "Time Stop lasts longer than normal.",
+"note": "Increases effect from 10 seconds to 15 seconds."
+},
+{
+"tree": "powers",
+"name": "Budget Pontoons",
+"prereq": [
+"Cheaper Lakes"
+],
+"points": 0,
+"mm": 0,
+"description": "Pontoon costs 40 Monkey Money.",
+"note": "Costs {{Monkey Money BTD6}}40 instead of {{Monkey Money BTD6}}50. Will still cost the original amount if Monkey Knowledge is turned off while at the Powers store."
+},
+{
+"tree": "powers",
+"name": "Supersize Glue Trap",
+"prereq": [
+"Mauling MOAB Mines"
+],
+"points": 3,
+"mm": 0,
+"description": "Glue Trap can slow MOAB-Class Bloons, though the bigger the bloon, the more glue is used up.",
+"note": "A MOAB consumes 10, a BFB consumes 20, a ZOMG consumes 50, a DDT consumes 20. BADs or Bosses cannot consume Glue Traps, as the Glue Trap has no effect on them."
+},
+{
+"tree": "powers",
+"name": "Longer Boosts",
+"prereq": [
+"Longer Time Stop"
+],
+"points": 3,
+"mm": 0,
+"description": "Monkey Boost lasts longer.",
+"note": "Increases effect from 15 seconds to 18 seconds."
+},
+{
+"tree": "powers",
+"name": "Powerful Monkey Storm",
+"prereq": [
+"Budget Pontoons",
+"Longer Boosts"
+],
+"points": 3,
+"mm": 0,
+"description": "Super Monkey Storm does more damage.",
+"note": "Increases damage by 300, from 2,000 to 2,300."
+},
+{
+"tree": "powers",
+"name": "Ambush Tech",
+"prereq": [
+"Supersize Glue Trap"
+],
+"points": 3,
+"mm": 250,
+"description": "Tech Bot gains a targeting option to trigger only when Bloons enter a specific track area.",
+"note": "Added in Version 17.0.\n\n\nTech Bot gains a target priority button that allows it to only activate when bloons reach a certain area. De-linking Tech Bot from the selected tower deactivates its target map location."
+},
+{
+"tree": "powers",
+"name": "Pre-Game Prep",
+"prereq": [
+"Longer Boosts"
+],
+"points": 3,
+"mm": 250,
+"description": "Start each game with a pile of permanent Road Spikes at the end of the track.",
+"note": "This perk is able to add more than one pile of Road Spikes, adding a single pile for each exit available. e.g. 4 piles of spikes for #Ouch, one for each track.\n\n\nEach of these Road Spikes contains 21 spikes in them by default (because of the Just One More MK), allowing one Road Spike pile to fully tank Round 1 with just one spike left over."
+},
+{
+"tree": "powers",
+"name": "Fit Farmers",
+"prereq": [
+"Powerful Monkey Storm"
+],
+"points": 3,
+"mm": 250,
+"description": "Monkey Farmers have larger radius.",
+"note": "Increases Monkey Farmer's range by 20%."
+},
+{
+"tree": "powers",
+"name": "Budget Cash Drops",
+"prereq": [
+"Fit Farmer"
+],
+"points": 3,
+"mm": 500,
+"description": "Cash Drops cost 20 Monkey Money less.",
+"note": "Cash Drops are now {{Monkey Money BTD6}}180 each. Will still cost the original amount if Monkey Knowledge is turned off while at the Powers store."
+},
+{
+"tree": "powers",
+"name": "Supa-Thrive",
+"prereq": [
+"Fit Farmer"
+],
+"points": 3,
+"mm": 500,
+"description": "Thrive adds 30% instead of 25%.",
+"note": "-"
+},
+{
+"tree": "powers",
+"name": "Grand Prix Spree",
+"prereq": [
+"Budget Cash Drops"
+],
+"points": 10,
+"mm": 1000,
+"description": "Monkey Money cost to enter Races is reduced by 10%.",
+"note": "Added in Version 22.0.\n\n\nAverage saving is {{Monkey Money BTD6}}10 per additional race attempt."
+}
+]

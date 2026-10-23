@@ -1,3 +1,4 @@
+import { knowledgeHero } from './knowledge';
 import { HEROES, heroStats, heroAbilities, heroLevelXP, heroRoundXP, type HeroKind, type HeroAbility } from './heroes';
 import { BLOONS, TARGETING, type Sim, type Pt, type Bloon, type Targeting, type Tower } from './sim';
 import { newExtras, extraWeapon, updateExtras, type HeroExtras } from './hero-extras';
@@ -17,10 +18,11 @@ export function newHero(kind: HeroKind, x: number, y: number, cost: number): Her
     point: { x, y }, buffs: [], zones: [], pending: [] };
 }
 export function grantXP(s: Sim, amount: number) {
+  if (s.knowledge.has('Self Taught Heroes')) amount *= 1.1;
   const h = s.hero; if (!h || s.gameOver || !Number.isFinite(amount) || amount < 0) return false;
   h.xp += amount;
   while (h.level < 20 && h.xp >= heroLevelXP(h.kind, h.level + 1)) {
-    h.xp -= heroLevelXP(h.kind, ++h.level); h.stats = heroStats(h.kind, h.level);
+    h.xp -= heroLevelXP(h.kind, ++h.level); h.stats = knowledgeHero(s, heroStats(h.kind, h.level));
     for (const a of heroAbilities(h.kind, h.level).filter(a => a.level === h.level)) h.ready[a.id] = s.tick + a.initial * 60;
   }
   if (h.level === 20) h.xp = 0;
