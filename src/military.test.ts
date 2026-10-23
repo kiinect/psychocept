@@ -40,19 +40,81 @@ test('mortar targets stay fixed and heli moves toward the chosen point', () => {
   expect(s.towers[1].x).toBe(300);
 });
 
-// Explicitly deferred ability contracts, alongside the runnable stub checks below.
-test.skip('Support Chinook Reposition and Supply Crate move towers and grant supplies');
-test.skip('Special Poperations deploys a temporary Monkey Marine');
-test.skip('Rocket Storm launches timed missile waves');
-test.skip('M.A.D Rocket Storm launches enhanced missile waves');
-for (const type of ['heli', 'dartling'] as const) for (const tier of [4, 5]) {
-  test(`${type} tier ${tier} ability stub cannot consume a cooldown`, () => {
-    const s = new Sim([{ x: 0, y: 20 }, { x: 960, y: 20 }]); s.cash = 1e7;
-    s.placeTower(100, 100, type); for (let n = 0; n < tier; n++) s.upgrade(0, 1);
-    expect(s.towers[0].ability?.kind).toBe('stub');
-    expect(s.activate(0)).toBe(false); expect(s.towers[0].abilityReady).toBe(0);
-  });
+function abilitySim(type: 'heli' | 'dartling', tier: number) {
+  const s = new Sim([{ x: 0, y: 20 }, { x: 960, y: 20 }]); s.cash = 1e7;
+  s.placeTower(100, 100, type);
+  for (let n = 0; n < tier; n++) s.upgrade(0, 1);
+  return s;
 }
+test('Support Chinook Reposition and Supply Crate move towers and grant supplies', () => {
+  const s = abilitySim('heli', 4); s.placeTower(300, 100, 'dart');
+  s.tick = s.towers[0].abilityReady;
+  expect(s.relocate(0, 1, { x: 400, y: 100 })).toBe(true);
+  expect(s.towers[1].x).toBe(400);
+  expect(s.relocate(0, 1, { x: 500, y: 100 })).toBe(false);
+  const cash = s.cash, lives = s.lives;
+  expect(s.activate(0)).toBe(true);
+  expect(s.cash - cash).toBe(1800); expect(s.lives - lives).toBe(10);
+  expect(s.activate(0)).toBe(false);
+});
+test('Special Poperations deploys a temporary Monkey Marine', () => {
+  const s = abilitySim('heli', 5); s.setTarget(0, { x: 500, y: 60 });
+  s.tick = s.towers[0].abilityReady;
+  const cash = s.cash, lives = s.lives;
+  expect(s.activate(0)).toBe(true);
+  expect(s.cash - cash).toBe(4500); expect(s.lives - lives).toBe(25);
+  expect(s.sentries).toHaveLength(1);
+  expect(s.sentries[0]).toMatchObject({ x: 500, y: 60, until: s.tick + 1800,
+    stats: { damage: 6, pierce: 20, range: 50, camo: true, damageType: 'normal' } });
+  const target = { id: 999, type: 'ddt', dist: 500, hp: 10000, stunnedUntil: s.tick + 2000 };
+  s.bloons.push(target); s.step(); expect(target.hp).toBe(9994);
+  s.tick += 1800; s.step(); expect(s.sentries).toHaveLength(0);
+});
+for (const tier of [4, 5]) test(`${tier === 5 ? 'M.A.D Rocket Storm launches enhanced' : 'Rocket Storm launches timed'} missile waves`, () => {
+  const s = abilitySim('dartling', tier), t = s.towers[0];
+  expect(s.activate(0)).toBe(false); s.tick = t.abilityReady;
+  t.cd = 1e6;
+  s.bloons.push({ id: 999, type: 'zomg', dist: 200, hp: 1e7, stunnedUntil: s.tick + 10000 });
+  expect(s.activate(0)).toBe(true); expect(s.activate(0)).toBe(false);
+  s.step();
+  expect(s.darts).toHaveLength(10);
+  expect(s.darts[0]).toMatchObject({ damage: 5, pierce: tier === 5 ? 18 : 8,
+    moabBonus: tier === 5 ? 250 : 0, ceramicBonus: tier === 5 ? 5 : 1 });
+  for (let n = 0; n < 480; n++) s.step();
+  expect(s.bloons[0].hp).toBeLessThan(1e7 - (tier === 5 ? 200 : 0));
+  expect(t.abilityNext).toBe(t.abilityUntil);
+});
+test('relocation rejects invalid placements and heavy towers without consuming readiness', () => {
+  const s = abilitySim('heli', 4); s.placeTower(300, 100, 'dart');
+  expect(s.relocate(0, 1, { x: 400, y: 100 })).toBe(false);
+  s.tick = 900;
+  for (const point of [{ x: NaN, y: 100 }, { x: 400, y: 20 }, { x: 100, y: 100 }])
+    expect(s.relocate(0, 1, point)).toBe(false);
+  expect(s.relocate(0, 0, { x: 400, y: 100 })).toBe(false);
+  expect(s.relocate(0, 1, { x: 300, y: 100 })).toBe(true); // ignores its own footprint
+  s.lives = 0; expect(s.relocate(0, 1, { x: 400, y: 100 })).toBe(false);
+});
+for (const tier of [4, 5]) test(`heli ${tier} crate respects income multiplier and game over`, () => {
+  const s = abilitySim('heli', tier); s.rules.incomeMult = 0.25;
+  s.tick = s.towers[0].abilityReady;
+  const cash = s.cash;
+  expect(s.activate(0)).toBe(true);
+  expect(s.cash - cash).toBe((tier === 5 ? 4500 : 1800) * 0.25);
+  s.tick += 1500;
+  if (tier === 5) { const cash = s.cash; expect(s.activate(0)).toBe(true); expect(s.cash).toBe(cash); }
+  s.lives = 0; s.tick += 10000;
+  expect(s.activate(0)).toBe(false);
+});
+test('Rocket Storm emits exactly fifteen waves and stops after expiration', () => {
+  const s = abilitySim('dartling', 4), t = s.towers[0];
+  s.tick = t.abilityReady; t.cd = 1e6;
+  s.bloons.push({ id: 999, type: 'moab', dist: 800, hp: 1e7, stunnedUntil: s.tick + 10000 });
+  s.activate(0); let missiles = 0;
+  for (let n = 0; n < 500; n++) { s.step(); missiles += s.darts.length; s.darts = []; }
+  expect(missiles).toBe(150);
+  s.lives = 0; s.tick = t.abilityReady;
+  expect(s.activate(0)).toBe(false);
+});
 test('supply drop adds cash and enforces its cooldown', () => {
   const s = new Sim([{ x: 0, y: 20 }, { x: 960, y: 20 }]); s.cash = 1e6;
   s.placeTower(100, 100, 'sniper'); for (let n = 0; n < 4; n++) s.upgrade(0, 1);
