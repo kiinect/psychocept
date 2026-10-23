@@ -47,11 +47,14 @@ slots (with migration; falls back to memory if storage is blocked).
 
 ## Deploy (GitHub Pages)
 
-`.github/workflows/pages.yml` runs type check, tests and `vite build` on every push to `main` and publishes `dist/`.
-Enable it once under Settings > Pages > Source: GitHub Actions. For a custom domain, add a `public/CNAME` file containing
-the domain (Vite copies `public/` into `dist/`); the workflow serves whatever ends up in `dist/`. The build uses relative
-asset paths (`base: './'`), so it works under `user.github.io/repo/` or a custom domain alike, and makes no network
-requests at runtime.
+`psychocept.org` serves the built files from the `gh-pages` branch using GitHub Pages' branch source.
+Build from a clean source checkout with the local public Supabase configuration and `VITE_RELAY_URL` set.
+Run `npm ci --ignore-scripts`, `npx tsc --noEmit`, `npx vitest run`, and `npx vite build` before publishing.
+Copy `dist/` into a checkout of `gh-pages`, retain `CNAME` (`psychocept.org`) and `.nojekyll`, then commit and push
+that branch normally. Keep a record of the previous Pages commit for rollback. Never force-push the deployment branch.
+The previously scaffolded Actions workflow is omitted because the saved GitHub token cannot create workflows;
+these validation gates run locally before publication. The build uses relative asset paths (`base: './'`).
+Account and co-op features contact their configured Supabase and relay services at runtime.
 
 ## License
 
