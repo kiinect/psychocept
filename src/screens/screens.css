@@ -28,3 +28,12 @@
 .setting { display: flex; align-items: center; gap: 12px; font-size: 16px; }
 .result strong { display: block; font-size: 56px; color: var(--gold); }
 @media (max-width: 900px) and (orientation: landscape) { .overlay { align-items: flex-start; } .screen-panel { padding: 16px; } .screen-panel h1 { font-size: 28px; margin-bottom: 12px; } .menu-actions { margin-top: 12px; gap: 8px; } .big { min-height: 52px; font-size: 24px; } }
+.profile progress { display: block; width: 150px; height: 12px; accent-color: #ffdb65; }
+.power-store article { padding: 14px; border: 3px solid var(--ink); border-radius: 16px; background: #164b6d; }
+.power-store h2 { font-size: 20px; }
+.power-store p { font-size: 14px; overflow-wrap: anywhere; }
+.power-store button { min-height: 44px; }
+.rank-toast { padding: 12px; background: #164b6d; color: #ffe8a4; border-radius: 12px; }
+.power-list { display: grid; gap: 8px; }
+.power-list button { min-height: 48px; }
+#active-powers { font-size: 12px; max-width: 28vw; }
