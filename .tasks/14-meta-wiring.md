@@ -1,4 +1,5 @@
 # Task 14-meta-wiring (split: Opus = sim powers, gpt-6.1-sol = UI wiring). Agreed API first.
+**Status: the Opus sim part is merged on main (src/sim.ts usePower/canUsePower/powerNeedsPoint/activePowers). gpt-6.1-sol: do section 14b only. Speed powers affect main attacks only (ponytail note in sim); report anything the UI needs from the sim instead of editing src/sim.ts.**
 Shared API (Opus builds in src/sim.ts on lane/powers, merged before sol starts 14b):
 - `sim.canUsePower(id: string, point?: Pt): boolean` and `sim.usePower(id: string, point?: Pt, upgraded = false): boolean` (id = POWER_BY_ID key from src/meta/powers.ts). Point needed for traps and tower-kind powers; instant/timed ignore it.
 - `sim.powerNeedsPoint(id): boolean` so the UI knows whether to enter placement mode.
